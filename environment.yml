@@ -1,0 +1,23 @@
+name: bytedance-cv
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - jupyterlab
+  - ipykernel
+  - numpy
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - scipy
+  - pillow
+  - tqdm
+  - pip:
+      - torch
+      - torchvision
+      - torchaudio
+      - opencv-python
+      - onnxruntime
+      - insightface
+

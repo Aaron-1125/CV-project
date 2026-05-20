@@ -1,0 +1,15 @@
+cython
+mmengine>=0.7.1,<1.0.0
+mmdet==3.3.0
+numpy<2
+pandas
+matplotlib
+scikit-learn
+scipy
+pillow
+tqdm
+opencv-python
+onnxruntime
+insightface
+jupyterlab
+ipykernel

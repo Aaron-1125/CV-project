@@ -1,0 +1,14 @@
+.conda/
+.git/
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+.DS_Store
+
+outputs/
+data/
+checkpoints/
+*.pth
+*.pt
+*.onnx
+
