@@ -49,4 +49,3 @@ docker run --platform linux/amd64 --rm bytedance-cv:stage1 \
   --epochs 1
 ```
 
-说明：Docker 镜像 `bytedance-cv:stage1` 已统一包含 PyTorch、OpenCV、MMEngine、MMCV 和 MMDetection。
