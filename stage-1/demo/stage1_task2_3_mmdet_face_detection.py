@@ -107,6 +107,8 @@ def parse_prediction(prediction: dict[str, Any], score_thr: float) -> list[dict[
         label = labels[idx] if idx < len(labels) else "face"
         if idx < len(label_names):
             label = label_names[idx]
+        elif str(label).isdigit():
+            label = "face"
         detections.append(
             {
                 "bbox": [round(float(v), 2) for v in bbox],
@@ -207,7 +209,7 @@ def run_inference(args: argparse.Namespace) -> dict[str, Any]:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input-dir", required=True, help="Image file or directory of test images.")
-    parser.add_argument("--out-dir", default="reports/assets")
+    parser.add_argument("--out-dir", default="reports/assets/detection")
     parser.add_argument("--checkpoint-dir", default="checkpoints/mmdet")
     parser.add_argument("--config", default="", help="Optional local MMDetection config path.")
     parser.add_argument("--weights", default="", help="Optional local checkpoint path.")

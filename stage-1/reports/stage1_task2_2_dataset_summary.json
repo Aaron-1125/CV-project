@@ -74,9 +74,9 @@
       ]
     ],
     "assets": {
-      "attribute_top15": "reports/assets/celeba_attribute_top15.png",
-      "identity_top15": "reports/assets/celeba_identity_top15.png",
-      "samples": "reports/assets/celeba_samples.png"
+      "attribute_top15": "reports/assets/dataset/celeba_attribute_top15.png",
+      "identity_top15": "reports/assets/dataset/celeba_identity_top15.png",
+      "samples": "reports/assets/dataset/celeba_samples.png"
     },
     "num_identities": 10177,
     "top_identity_counts": [
@@ -228,8 +228,14 @@
       3
     ],
     "assets": {
-      "samples": "reports/assets/lfw_samples.png",
-      "identity_top15": "reports/assets/lfw_identity_top15.png"
+      "samples": "reports/assets/dataset/lfw_samples.png",
+      "identity_top15": "reports/assets/dataset/lfw_identity_top15.png",
+      "public_test_images": [
+        "reports/assets/inputs/public_lfw/lfw_public_00.jpg",
+        "reports/assets/inputs/public_lfw/lfw_public_01.jpg",
+        "reports/assets/inputs/public_lfw/lfw_public_02.jpg",
+        "reports/assets/inputs/public_lfw/lfw_public_03.jpg"
+      ]
     }
   }
 }

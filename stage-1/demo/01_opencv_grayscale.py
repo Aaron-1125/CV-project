@@ -11,8 +11,22 @@ from pathlib import Path
 import cv2
 
 
+def sample_image_path() -> Path:
+    candidates = [
+        Path("reports/assets/inputs/public_lfw/lfw_public_00.jpg"),
+        Path("reports/assets/dataset/lfw_samples.png"),
+    ]
+    for path in candidates:
+        if path.exists():
+            return path
+    raise FileNotFoundError(
+        "No public sample image found. Run "
+        "`python demo/stage1_task2_2_dataset_exploration.py --download --data-dir data --report-dir reports` first."
+    )
+
+
 def main() -> None:
-    input_path = Path("sample_inputs/01036a162ec6e859bb81218ad79dc1aa.jpg")
+    input_path = sample_image_path()
     output_dir = Path("outputs")
     output_path = output_dir / "opencv_grayscale_sample.jpg"
 
@@ -36,4 +50,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

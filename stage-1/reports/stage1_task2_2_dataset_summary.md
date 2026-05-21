@@ -6,7 +6,7 @@
 - Images: `202599`
 - Identities: `10177`
 - Attributes: `40`
-- Sample grid: `reports/assets/celeba_samples.png`
+- Sample grid: `reports/assets/dataset/celeba_samples.png`
 
 Top attribute positive rates:
 
@@ -28,4 +28,9 @@ Top attribute positive rates:
 - Identities: `5749`
 - 10-fold pairs: `6000`
 - Pair target counts: `{'Different persons': 3000, 'Same person': 3000}`
-- Sample grid: `reports/assets/lfw_samples.png`
+- Sample grid: `reports/assets/dataset/lfw_samples.png`
+- Public detection/landmark test images:
+  - `reports/assets/inputs/public_lfw/lfw_public_00.jpg`
+  - `reports/assets/inputs/public_lfw/lfw_public_01.jpg`
+  - `reports/assets/inputs/public_lfw/lfw_public_02.jpg`
+  - `reports/assets/inputs/public_lfw/lfw_public_03.jpg`

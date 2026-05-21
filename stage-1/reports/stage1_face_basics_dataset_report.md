@@ -26,18 +26,19 @@ image / video
 运行脚本：
 
 ```bash
-python code/stage1_task2_2_dataset_exploration.py --download --data-dir data --report-dir reports
+python demo/stage1_task2_2_dataset_exploration.py --download --data-dir data --report-dir reports
 ```
 
 输出文件：
 
 - `reports/stage1_task2_2_dataset_summary.json`
 - `reports/stage1_task2_2_dataset_summary.md`
-- `reports/assets/celeba_samples.png`
-- `reports/assets/celeba_attribute_top15.png`
-- `reports/assets/celeba_identity_top15.png`
-- `reports/assets/lfw_samples.png`
-- `reports/assets/lfw_identity_top15.png`
+- `reports/assets/dataset/celeba_samples.png`
+- `reports/assets/dataset/celeba_attribute_top15.png`
+- `reports/assets/dataset/celeba_identity_top15.png`
+- `reports/assets/dataset/lfw_samples.png`
+- `reports/assets/dataset/lfw_identity_top15.png`
+- `reports/assets/inputs/public_lfw/lfw_public_00.jpg` 到 `lfw_public_03.jpg`
 
 预期统计内容：
 
@@ -50,15 +51,16 @@ python code/stage1_task2_2_dataset_exploration.py --download --data-dir data --r
 - CelebA 属性正样本比例最高的属性包括 `No_Beard=0.8349`、`Young=0.7736`、`Attractive=0.5125`、`Mouth_Slightly_Open=0.4834`、`Smiling=0.4821`。
 - LFW：`13233` 张图像，`5749` 个身份，`6000` 对 10-fold verification pairs，其中 same/different 各 `3000` 对。
 - LFW 频次最高身份包括 `George W Bush=530`、`Colin Powell=236`、`Tony Blair=144`、`Donald Rumsfeld=121`、`Gerhard Schroeder=109`。
+- LFW 样本图已按数据实际范围做 `0..1` 到 `0..255` 的转换，公开测试图从 LFW 导出并加入留白，供检测与关键点脚本复用。
 
 ## 3. MMDetection 人脸检测
 
 运行脚本：
 
 ```bash
-python code/stage1_task2_3_mmdet_face_detection.py \
-  --input-dir ../../../sample_inputs \
-  --out-dir reports/assets \
+python demo/stage1_task2_3_mmdet_face_detection.py \
+  --input-dir reports/assets/inputs/public_lfw \
+  --out-dir reports/assets/detection \
   --checkpoint-dir checkpoints/mmdet \
   --texts "face . human face ."
 ```
@@ -72,13 +74,13 @@ python code/stage1_task2_3_mmdet_face_detection.py \
 
 输出文件：
 
-- `reports/assets/mmdet_face_detection_summary.json`
-- `reports/assets/mmdet_<image>_faces.jpg`
+- `reports/assets/detection/mmdet_face_detection_summary.json`
+- `reports/assets/detection/mmdet_<image>_faces.jpg`
 
 本次运行结果：
 
-- `01036a162ec6e859bb81218ad79dc1aa.jpg`：检测到 `2` 张脸。
-- `10ad277043b7ee0e9e185bebf7402495.jpg`：检测到 `1` 张脸。
+- 输入图像均来自 LFW 公开数据集导出的 `reports/assets/inputs/public_lfw/lfw_public_*.jpg`。
+- `lfw_public_00.jpg`、`lfw_public_01.jpg`、`lfw_public_02.jpg`、`lfw_public_03.jpg` 均检测到 `1` 张脸。
 - 脚本对 `face` / `human face` 双提示词产生的重复框做 IoU NMS 去重，保留最高分 bbox。
 
 ## 4. 关键点定位与 LFW 验证
@@ -86,11 +88,12 @@ python code/stage1_task2_3_mmdet_face_detection.py \
 运行脚本：
 
 ```bash
-python code/stage1_task2_4_landmarks_and_lfw_eval.py \
+python demo/stage1_task2_4_landmarks_and_lfw_eval.py \
   --download \
   --data-dir data \
-  --out-dir reports/assets \
-  --landmark-input-dir ../../../sample_inputs
+  --out-dir reports/assets/evaluation \
+  --landmark-input-dir reports/assets/inputs/public_lfw \
+  --landmark-out-dir reports/assets/landmarks
 ```
 
 实现选择：
@@ -101,10 +104,10 @@ python code/stage1_task2_4_landmarks_and_lfw_eval.py \
 
 输出文件：
 
-- `reports/assets/lfw_insightface_verification_summary.json`
-- `reports/assets/lfw_similarity_histogram.png`
-- `reports/assets/lfw_roc_curve.png`
-- `reports/assets/*_landmarks.jpg`
+- `reports/assets/evaluation/lfw_insightface_verification_summary.json`
+- `reports/assets/evaluation/lfw_similarity_histogram.png`
+- `reports/assets/evaluation/lfw_roc_curve.png`
+- `reports/assets/landmarks/*_landmarks.jpg`
 
 本次运行结果：
 
@@ -112,7 +115,7 @@ python code/stage1_task2_4_landmarks_and_lfw_eval.py \
 - embedding 模式：直接使用 `buffalo_l` 内的 `w600k_r50.onnx` recognition 模型处理 LFW crop；关键点可视化仍使用 `FaceAnalysis`。
 - 10-fold mean accuracy：`0.9665`，std：`0.009042`。
 - AUC：`0.989726`。
-- 关键点可视化：样例图分别检测到 `2` 张脸和 `1` 张脸，并输出 5 点/106 点关键点叠加图。
+- 关键点可视化：`lfw_public_00.jpg` 到 `lfw_public_03.jpg` 均检测到 `1` 张脸，并输出 5 点/106 点关键点叠加图。
 
 ## 5. 当前验收状态
 

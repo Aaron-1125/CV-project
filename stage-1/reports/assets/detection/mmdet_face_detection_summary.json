@@ -1,0 +1,77 @@
+{
+  "model": "MMDetection GroundingDINO",
+  "config": "checkpoints/mmdet/mmdetection_configs/configs/grounding_dino/grounding_dino_swin-t_pretrain_obj365_goldg_cap4m.py",
+  "weights": "checkpoints/mmdet/groundingdino_swint_ogc_mmdet-822d7e9d.pth",
+  "texts": "face . human face .",
+  "score_threshold": 0.25,
+  "images": [
+    {
+      "image": "reports/assets/inputs/public_lfw/lfw_public_00.jpg",
+      "visualization": "reports/assets/detection/mmdet_lfw_public_00_faces.jpg",
+      "detections": [
+        {
+          "bbox": [
+            108.13,
+            141.8,
+            406.54,
+            532.98
+          ],
+          "score": 0.6515,
+          "label": "face"
+        }
+      ],
+      "num_detections": 1
+    },
+    {
+      "image": "reports/assets/inputs/public_lfw/lfw_public_01.jpg",
+      "visualization": "reports/assets/detection/mmdet_lfw_public_01_faces.jpg",
+      "detections": [
+        {
+          "bbox": [
+            111.56,
+            148.6,
+            402.99,
+            541.15
+          ],
+          "score": 0.5415,
+          "label": "face"
+        }
+      ],
+      "num_detections": 1
+    },
+    {
+      "image": "reports/assets/inputs/public_lfw/lfw_public_02.jpg",
+      "visualization": "reports/assets/detection/mmdet_lfw_public_02_faces.jpg",
+      "detections": [
+        {
+          "bbox": [
+            103.34,
+            144.66,
+            386.92,
+            539.78
+          ],
+          "score": 0.6649,
+          "label": "face"
+        }
+      ],
+      "num_detections": 1
+    },
+    {
+      "image": "reports/assets/inputs/public_lfw/lfw_public_03.jpg",
+      "visualization": "reports/assets/detection/mmdet_lfw_public_03_faces.jpg",
+      "detections": [
+        {
+          "bbox": [
+            107.63,
+            141.07,
+            402.64,
+            540.46
+          ],
+          "score": 0.6237,
+          "label": "face"
+        }
+      ],
+      "num_detections": 1
+    }
+  ]
+}

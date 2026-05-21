@@ -2,7 +2,7 @@
 """Stage 1 task 2.2: explore CelebA and LFW datasets.
 
 The script downloads/loads CelebA and LFW, writes compact statistics, and
-saves visualization images under reports/assets. Large data stays under data/.
+saves visualization images under reports/assets/dataset. Large data stays under data/.
 """
 
 from __future__ import annotations
@@ -19,6 +19,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image, ImageOps
 
 
 CELEBA_ATTR_NAMES = [
@@ -89,6 +90,20 @@ def save_json(path: Path, payload: dict[str, Any]) -> None:
     )
 
 
+def image_to_uint8_rgb(image: Any) -> np.ndarray:
+    array = np.asarray(image)
+    if array.ndim == 2:
+        array = np.stack([array, array, array], axis=-1)
+    if array.dtype != np.uint8:
+        max_value = float(np.nanmax(array)) if array.size else 0.0
+        if max_value <= 1.0:
+            array = array * 255.0
+        array = np.clip(array, 0, 255).astype(np.uint8)
+    if array.ndim == 3 and array.shape[-1] == 4:
+        array = array[..., :3]
+    return array
+
+
 def save_image_grid(samples: list[tuple[Any, str]], output_path: Path, columns: int = 4) -> None:
     if not samples:
         return
@@ -98,7 +113,7 @@ def save_image_grid(samples: list[tuple[Any, str]], output_path: Path, columns: 
     for ax in axes_arr:
         ax.axis("off")
     for ax, (image, title) in zip(axes_arr, samples):
-        ax.imshow(image)
+        ax.imshow(image_to_uint8_rgb(image))
         ax.set_title(title, fontsize=9)
         ax.axis("off")
     fig.tight_layout()
@@ -124,6 +139,35 @@ def save_bar_chart(labels: list[str], values: list[float], title: str, output_pa
     plt.close(fig)
 
 
+def save_public_lfw_test_images(
+    people: Any,
+    sample_indices: list[int],
+    assets_dir: Path,
+    count: int = 4,
+    min_side: int = 512,
+) -> list[str]:
+    public_dir = assets_dir / "inputs" / "public_lfw"
+    public_dir.mkdir(parents=True, exist_ok=True)
+    output_paths: list[str] = []
+    for output_idx, sample_idx in enumerate(sample_indices[:count]):
+        array = image_to_uint8_rgb(people.images[sample_idx])
+        border_color = tuple(int(v) for v in np.median(array.reshape(-1, 3), axis=0))
+        image = Image.fromarray(array)
+        pad_x = max(1, int(round(image.width * 0.35)))
+        pad_y = max(1, int(round(image.height * 0.35)))
+        image = ImageOps.expand(image, border=(pad_x, pad_y), fill=border_color)
+        scale = max(1.0, min_side / max(1, min(image.size)))
+        if scale > 1.0:
+            image = image.resize(
+                (int(round(image.width * scale)), int(round(image.height * scale))),
+                Image.Resampling.BICUBIC,
+            )
+        output_path = public_dir / f"lfw_public_{output_idx:02d}.jpg"
+        image.save(output_path, quality=95)
+        output_paths.append(str(output_path))
+    return output_paths
+
+
 def load_celeba_torchvision(data_dir: Path, download: bool):
     from torchvision.datasets import CelebA
 
@@ -136,6 +180,7 @@ def load_celeba_torchvision(data_dir: Path, download: bool):
 
 
 def summarize_celeba_torchvision(dataset: Any, assets_dir: Path, sample_count: int) -> dict[str, Any]:
+    dataset_dir = assets_dir / "dataset"
     attrs = np.asarray(getattr(dataset, "attr"))
     identities = np.asarray(getattr(dataset, "identity")).reshape(-1)
     bbox = np.asarray(getattr(dataset, "bbox"))
@@ -162,18 +207,18 @@ def summarize_celeba_torchvision(dataset: Any, assets_dir: Path, sample_count: i
         identity = int(np.asarray(target[1]).reshape(-1)[0])
         samples.append((image, f"idx={idx}\nid={identity}"))
 
-    save_image_grid(samples, assets_dir / "celeba_samples.png")
+    save_image_grid(samples, dataset_dir / "celeba_samples.png")
     save_bar_chart(
         [name for name, _ in top_attrs],
         [rate for _, rate in top_attrs],
         "CelebA Top Attribute Positive Rates",
-        assets_dir / "celeba_attribute_top15.png",
+        dataset_dir / "celeba_attribute_top15.png",
     )
     save_bar_chart(
         [str(identity) for identity, _ in top_identities],
         [count for _, count in top_identities],
         "CelebA Top Identity Counts",
-        assets_dir / "celeba_identity_top15.png",
+        dataset_dir / "celeba_identity_top15.png",
     )
 
     return {
@@ -188,9 +233,9 @@ def summarize_celeba_torchvision(dataset: Any, assets_dir: Path, sample_count: i
         "bottom_attributes_positive_rate": bottom_attrs,
         "top_identity_counts": top_identities,
         "assets": {
-            "samples": "reports/assets/celeba_samples.png",
-            "attribute_top15": "reports/assets/celeba_attribute_top15.png",
-            "identity_top15": "reports/assets/celeba_identity_top15.png",
+            "samples": "reports/assets/dataset/celeba_samples.png",
+            "attribute_top15": "reports/assets/dataset/celeba_attribute_top15.png",
+            "identity_top15": "reports/assets/dataset/celeba_identity_top15.png",
         },
     }
 
@@ -208,6 +253,7 @@ def load_celeba_huggingface(data_dir: Path, download: bool):
 
 
 def summarize_celeba_huggingface(dataset: Any, assets_dir: Path, sample_count: int) -> dict[str, Any]:
+    dataset_dir = assets_dir / "dataset"
     column_names = set(dataset.column_names)
     attr_column = "attributes" if "attributes" in column_names else None
     identity_column = "identity" if "identity" in column_names else None
@@ -234,11 +280,11 @@ def summarize_celeba_huggingface(dataset: Any, assets_dir: Path, sample_count: i
             [name for name, _ in top_attrs],
             [rate for _, rate in top_attrs],
             "CelebA Top Attribute Positive Rates",
-            assets_dir / "celeba_attribute_top15.png",
+            dataset_dir / "celeba_attribute_top15.png",
         )
         summary["attributes"] = attrs.shape[1]
         summary["top_attributes_positive_rate"] = top_attrs
-        summary["assets"] = {"attribute_top15": "reports/assets/celeba_attribute_top15.png"}
+        summary["assets"] = {"attribute_top15": "reports/assets/dataset/celeba_attribute_top15.png"}
 
     if identity_column:
         identities = np.asarray(dataset[identity_column]).reshape(-1)
@@ -248,11 +294,11 @@ def summarize_celeba_huggingface(dataset: Any, assets_dir: Path, sample_count: i
             [str(identity) for identity, _ in top_identities],
             [count for _, count in top_identities],
             "CelebA Top Identity Counts",
-            assets_dir / "celeba_identity_top15.png",
+            dataset_dir / "celeba_identity_top15.png",
         )
         summary["num_identities"] = len(counts)
         summary["top_identity_counts"] = top_identities
-        summary.setdefault("assets", {})["identity_top15"] = "reports/assets/celeba_identity_top15.png"
+        summary.setdefault("assets", {})["identity_top15"] = "reports/assets/dataset/celeba_identity_top15.png"
 
     if image_column:
         rng = random.Random(20260521)
@@ -261,8 +307,8 @@ def summarize_celeba_huggingface(dataset: Any, assets_dir: Path, sample_count: i
         for idx in sample_indices:
             row = dataset[int(idx)]
             samples.append((row[image_column], f"idx={idx}"))
-        save_image_grid(samples, assets_dir / "celeba_samples.png")
-        summary.setdefault("assets", {})["samples"] = "reports/assets/celeba_samples.png"
+        save_image_grid(samples, dataset_dir / "celeba_samples.png")
+        summary.setdefault("assets", {})["samples"] = "reports/assets/dataset/celeba_samples.png"
 
     return summary
 
@@ -288,6 +334,7 @@ def summarize_celeba(data_dir: Path, assets_dir: Path, download: bool, sample_co
 def summarize_lfw(data_dir: Path, assets_dir: Path, download: bool, sample_count: int) -> dict[str, Any]:
     from sklearn.datasets import fetch_lfw_pairs, fetch_lfw_people
 
+    dataset_dir = assets_dir / "dataset"
     lfw_home = data_dir / "lfw"
     people = fetch_lfw_people(
         data_home=str(lfw_home),
@@ -318,15 +365,16 @@ def summarize_lfw(data_dir: Path, assets_dir: Path, download: bool, sample_count
     sample_indices = rng.sample(range(len(people.images)), min(sample_count, len(people.images)))
     samples = []
     for idx in sample_indices:
-        image = np.clip(people.images[idx], 0, 255).astype(np.uint8)
+        image = image_to_uint8_rgb(people.images[idx])
         samples.append((image, str(people.target_names[int(people.target[idx])])[:32]))
 
-    save_image_grid(samples, assets_dir / "lfw_samples.png")
+    save_image_grid(samples, dataset_dir / "lfw_samples.png")
+    public_test_images = save_public_lfw_test_images(people, sample_indices, assets_dir)
     save_bar_chart(
         [name for name, _ in top_people],
         [count for _, count in top_people],
         "LFW Top Identity Counts",
-        assets_dir / "lfw_identity_top15.png",
+        dataset_dir / "lfw_identity_top15.png",
     )
 
     return {
@@ -340,8 +388,12 @@ def summarize_lfw(data_dir: Path, assets_dir: Path, download: bool, sample_count
         "image_shape": list(people.images.shape[1:]),
         "pair_image_shape": list(pairs.pairs.shape[2:]),
         "assets": {
-            "samples": "reports/assets/lfw_samples.png",
-            "identity_top15": "reports/assets/lfw_identity_top15.png",
+            "samples": "reports/assets/dataset/lfw_samples.png",
+            "identity_top15": "reports/assets/dataset/lfw_identity_top15.png",
+            "public_test_images": [
+                str(Path("reports/assets/inputs/public_lfw") / Path(path).name)
+                for path in public_test_images
+            ],
         },
     }
 
@@ -362,7 +414,7 @@ def write_markdown_report(report_path: Path, summary: dict[str, Any]) -> None:
                 f"- Images: `{celeba.get('num_images')}`",
                 f"- Identities: `{celeba.get('num_identities', 'n/a')}`",
                 f"- Attributes: `{celeba.get('attributes', 'n/a')}`",
-                f"- Sample grid: `reports/assets/celeba_samples.png`",
+                f"- Sample grid: `{celeba.get('assets', {}).get('samples', 'reports/assets/dataset/celeba_samples.png')}`",
                 "",
                 "Top attribute positive rates:",
                 "",
@@ -384,9 +436,13 @@ def write_markdown_report(report_path: Path, summary: dict[str, Any]) -> None:
                 f"- Identities: `{lfw.get('people_identities')}`",
                 f"- 10-fold pairs: `{lfw.get('pairs')}`",
                 f"- Pair target counts: `{lfw.get('pair_target_counts')}`",
-                f"- Sample grid: `reports/assets/lfw_samples.png`",
+                f"- Sample grid: `{lfw.get('assets', {}).get('samples', 'reports/assets/dataset/lfw_samples.png')}`",
             ]
         )
+        public_test_images = lfw.get("assets", {}).get("public_test_images", [])
+        if public_test_images:
+            lines.append("- Public detection/landmark test images:")
+            lines.extend(f"  - `{path}`" for path in public_test_images)
     else:
         lines.append("- Status: failed")
         for error in lfw.get("errors", []):

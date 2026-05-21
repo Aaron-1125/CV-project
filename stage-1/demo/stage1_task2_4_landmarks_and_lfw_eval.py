@@ -256,7 +256,9 @@ def collect_landmark_images(input_dir: str) -> list[Path]:
 def run_lfw_eval(args: argparse.Namespace) -> dict[str, Any]:
     data_dir = Path(args.data_dir)
     out_dir = Path(args.out_dir)
+    landmark_out_dir = Path(args.landmark_out_dir) if args.landmark_out_dir else out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
+    landmark_out_dir.mkdir(parents=True, exist_ok=True)
     lfw_home = data_dir / "lfw"
     cache_path = lfw_home / f"insightface_lfw_{args.embedding_mode}_embedding_cache.pkl"
     lfw_home.mkdir(parents=True, exist_ok=True)
@@ -318,10 +320,19 @@ def run_lfw_eval(args: argparse.Namespace) -> dict[str, Any]:
     landmark_records = []
     for image_path in collect_landmark_images(args.landmark_input_dir):
         landmark_records.append(
-            draw_landmarks(landmark_app, image_path, out_dir / f"{image_path.stem}_landmarks.jpg")
+            draw_landmarks(
+                landmark_app,
+                image_path,
+                landmark_out_dir / f"{image_path.stem}_landmarks.jpg",
+            )
         )
     if not landmark_records:
-        landmark_records = save_lfw_landmark_preview(landmark_app, pairs, out_dir, args.landmark_preview_count)
+        landmark_records = save_lfw_landmark_preview(
+            landmark_app,
+            pairs,
+            landmark_out_dir,
+            args.landmark_preview_count,
+        )
 
     summary = {
         "model": "InsightFace buffalo_l",
@@ -350,7 +361,7 @@ def run_lfw_eval(args: argparse.Namespace) -> dict[str, Any]:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", default="data")
-    parser.add_argument("--out-dir", default="reports/assets")
+    parser.add_argument("--out-dir", default="reports/assets/evaluation")
     parser.add_argument("--download", action="store_true", help="Download missing LFW data.")
     parser.add_argument("--resize", type=float, default=0.5)
     parser.add_argument("--det-size", type=int, default=640)
@@ -362,6 +373,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--max-pairs", type=int, default=0, help="Optional smoke-test limit.")
     parser.add_argument("--landmark-input-dir", default="")
+    parser.add_argument("--landmark-out-dir", default="reports/assets/landmarks")
     parser.add_argument("--landmark-preview-count", type=int, default=4)
     return parser.parse_args()
 

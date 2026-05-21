@@ -88,18 +88,28 @@
     }
   ],
   "plots": {
-    "histogram": "reports/assets/lfw_similarity_histogram.png",
-    "roc_curve": "reports/assets/lfw_roc_curve.png"
+    "histogram": "reports/assets/evaluation/lfw_similarity_histogram.png",
+    "roc_curve": "reports/assets/evaluation/lfw_roc_curve.png"
   },
   "landmark_visualizations": [
     {
-      "image": "../../../sample_inputs/01036a162ec6e859bb81218ad79dc1aa.jpg",
-      "visualization": "reports/assets/01036a162ec6e859bb81218ad79dc1aa_landmarks.jpg",
-      "num_faces": 2
+      "image": "reports/assets/inputs/public_lfw/lfw_public_00.jpg",
+      "visualization": "reports/assets/landmarks/lfw_public_00_landmarks.jpg",
+      "num_faces": 1
     },
     {
-      "image": "../../../sample_inputs/10ad277043b7ee0e9e185bebf7402495.jpg",
-      "visualization": "reports/assets/10ad277043b7ee0e9e185bebf7402495_landmarks.jpg",
+      "image": "reports/assets/inputs/public_lfw/lfw_public_01.jpg",
+      "visualization": "reports/assets/landmarks/lfw_public_01_landmarks.jpg",
+      "num_faces": 1
+    },
+    {
+      "image": "reports/assets/inputs/public_lfw/lfw_public_02.jpg",
+      "visualization": "reports/assets/landmarks/lfw_public_02_landmarks.jpg",
+      "num_faces": 1
+    },
+    {
+      "image": "reports/assets/inputs/public_lfw/lfw_public_03.jpg",
+      "visualization": "reports/assets/landmarks/lfw_public_03_landmarks.jpg",
       "num_faces": 1
     }
   ]
