@@ -1,0 +1,106 @@
+{
+  "model": "InsightFace buffalo_l",
+  "embedding_mode": "crop",
+  "det_size": 640,
+  "resize": 0.5,
+  "total_pairs_requested": 6000,
+  "valid_pairs": 6000,
+  "failed_pairs": 0,
+  "failed_images": 0,
+  "target_names": [
+    "Different persons",
+    "Same person"
+  ],
+  "same_label": 1,
+  "mean_accuracy": 0.9665,
+  "std_accuracy": 0.009042,
+  "auc": 0.989726,
+  "folds": [
+    {
+      "fold": 1,
+      "threshold": 0.178262,
+      "train_accuracy": 0.966667,
+      "valid_accuracy": 0.968333,
+      "valid_pairs": 600
+    },
+    {
+      "fold": 2,
+      "threshold": 0.178262,
+      "train_accuracy": 0.966111,
+      "valid_accuracy": 0.973333,
+      "valid_pairs": 600
+    },
+    {
+      "fold": 3,
+      "threshold": 0.178262,
+      "train_accuracy": 0.966667,
+      "valid_accuracy": 0.968333,
+      "valid_pairs": 600
+    },
+    {
+      "fold": 4,
+      "threshold": 0.179082,
+      "train_accuracy": 0.967593,
+      "valid_accuracy": 0.963333,
+      "valid_pairs": 600
+    },
+    {
+      "fold": 5,
+      "threshold": 0.178262,
+      "train_accuracy": 0.969074,
+      "valid_accuracy": 0.946667,
+      "valid_pairs": 600
+    },
+    {
+      "fold": 6,
+      "threshold": 0.17712,
+      "train_accuracy": 0.966481,
+      "valid_accuracy": 0.968333,
+      "valid_pairs": 600
+    },
+    {
+      "fold": 7,
+      "threshold": 0.179403,
+      "train_accuracy": 0.967963,
+      "valid_accuracy": 0.956667,
+      "valid_pairs": 600
+    },
+    {
+      "fold": 8,
+      "threshold": 0.178262,
+      "train_accuracy": 0.966667,
+      "valid_accuracy": 0.968333,
+      "valid_pairs": 600
+    },
+    {
+      "fold": 9,
+      "threshold": 0.179403,
+      "train_accuracy": 0.965741,
+      "valid_accuracy": 0.976667,
+      "valid_pairs": 600
+    },
+    {
+      "fold": 10,
+      "threshold": 0.178262,
+      "train_accuracy": 0.965926,
+      "valid_accuracy": 0.975,
+      "valid_pairs": 600
+    }
+  ],
+  "plots": {
+    "histogram": "reports/assets/lfw_similarity_histogram.png",
+    "roc_curve": "reports/assets/lfw_roc_curve.png"
+  },
+  "landmark_visualizations": [
+    {
+      "image": "../../../sample_inputs/01036a162ec6e859bb81218ad79dc1aa.jpg",
+      "visualization": "reports/assets/01036a162ec6e859bb81218ad79dc1aa_landmarks.jpg",
+      "num_faces": 2
+    },
+    {
+      "image": "../../../sample_inputs/10ad277043b7ee0e9e185bebf7402495.jpg",
+      "visualization": "reports/assets/10ad277043b7ee0e9e185bebf7402495_landmarks.jpg",
+      "num_faces": 1
+    }
+  ]
+}

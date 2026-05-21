@@ -1,0 +1,235 @@
+{
+  "celeba": {
+    "status": "ok",
+    "source": "datasets.load_dataset('eurecom-ds/celeba', split='train+validation+test')",
+    "num_images": 202599,
+    "columns": [
+      "image",
+      "attributes",
+      "identity",
+      "bbox",
+      "landmarks"
+    ],
+    "attributes": 40,
+    "top_attributes_positive_rate": [
+      [
+        "No_Beard",
+        0.8349
+      ],
+      [
+        "Young",
+        0.7736
+      ],
+      [
+        "Attractive",
+        0.5125
+      ],
+      [
+        "Mouth_Slightly_Open",
+        0.4834
+      ],
+      [
+        "Smiling",
+        0.4821
+      ],
+      [
+        "Wearing_Lipstick",
+        0.4724
+      ],
+      [
+        "High_Cheekbones",
+        0.455
+      ],
+      [
+        "Male",
+        0.4168
+      ],
+      [
+        "Heavy_Makeup",
+        0.3869
+      ],
+      [
+        "Wavy_Hair",
+        0.3196
+      ],
+      [
+        "Oval_Face",
+        0.2841
+      ],
+      [
+        "Pointy_Nose",
+        0.2774
+      ],
+      [
+        "Arched_Eyebrows",
+        0.267
+      ],
+      [
+        "Big_Lips",
+        0.2408
+      ],
+      [
+        "Black_Hair",
+        0.2393
+      ]
+    ],
+    "assets": {
+      "attribute_top15": "reports/assets/celeba_attribute_top15.png",
+      "identity_top15": "reports/assets/celeba_identity_top15.png",
+      "samples": "reports/assets/celeba_samples.png"
+    },
+    "num_identities": 10177,
+    "top_identity_counts": [
+      [
+        2820,
+        35
+      ],
+      [
+        3782,
+        35
+      ],
+      [
+        3227,
+        35
+      ],
+      [
+        3745,
+        34
+      ],
+      [
+        3699,
+        34
+      ],
+      [
+        8968,
+        32
+      ],
+      [
+        9152,
+        32
+      ],
+      [
+        9256,
+        32
+      ],
+      [
+        4262,
+        31
+      ],
+      [
+        4887,
+        31
+      ],
+      [
+        6568,
+        31
+      ],
+      [
+        1757,
+        31
+      ],
+      [
+        2114,
+        31
+      ],
+      [
+        9840,
+        31
+      ],
+      [
+        4126,
+        31
+      ]
+    ],
+    "fallback_errors": [
+      "torchvision CelebA failed: Failed to retrieve file url:\n\n\tToo many users have viewed or downloaded this file recently. Please\n\ttry accessing the file again later. If the file you are trying to\n\taccess is particularly large or is shared with many people, it may\n\ttake up to 24 hours to be able to view or download the file. If you\n\tstill can't access a file after 24 hours, contact your domain\n\tadministrator.\n\nYou may still be able to access the file from the browser:\n\n\thttps://drive.google.com/uc?id=0B7EVK8r0v71pZjFTYXZWM3FlRnM\n\nbut Gdown can't. Please check connections and permissions."
+    ]
+  },
+  "lfw": {
+    "status": "ok",
+    "source": "sklearn.datasets.fetch_lfw_people/fetch_lfw_pairs",
+    "people_images": 13233,
+    "people_identities": 5749,
+    "pairs": 6000,
+    "pair_target_counts": {
+      "Different persons": 3000,
+      "Same person": 3000
+    },
+    "top_identity_counts": [
+      [
+        "George W Bush",
+        530
+      ],
+      [
+        "Colin Powell",
+        236
+      ],
+      [
+        "Tony Blair",
+        144
+      ],
+      [
+        "Donald Rumsfeld",
+        121
+      ],
+      [
+        "Gerhard Schroeder",
+        109
+      ],
+      [
+        "Ariel Sharon",
+        77
+      ],
+      [
+        "Hugo Chavez",
+        71
+      ],
+      [
+        "Junichiro Koizumi",
+        60
+      ],
+      [
+        "Jean Chretien",
+        55
+      ],
+      [
+        "John Ashcroft",
+        53
+      ],
+      [
+        "Jacques Chirac",
+        52
+      ],
+      [
+        "Serena Williams",
+        52
+      ],
+      [
+        "Vladimir Putin",
+        49
+      ],
+      [
+        "Luiz Inacio Lula da Silva",
+        48
+      ],
+      [
+        "Gloria Macapagal Arroyo",
+        44
+      ]
+    ],
+    "image_shape": [
+      62,
+      47,
+      3
+    ],
+    "pair_image_shape": [
+      62,
+      47,
+      3
+    ],
+    "assets": {
+      "samples": "reports/assets/lfw_samples.png",
+      "identity_top15": "reports/assets/lfw_identity_top15.png"
+    }
+  }
+}

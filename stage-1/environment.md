@@ -25,6 +25,10 @@
 | insightface | 0.7.3 |
 | matplotlib | 3.10.8 |
 | numpy | 2.4.4 |
+| gdown | 6.0.0 |
+| datasets | 4.8.5 |
+| huggingface_hub | 0.36.2 |
+| transformers | 4.37.2 |
 
 设备后端：
 
@@ -43,6 +47,10 @@
 | mmengine | 0.10.7 |
 | mmcv | 2.0.0 |
 | mmdet | 3.3.0 |
+| gdown | 需按 `docker/requirements-docker.txt` 安装 |
+| datasets | 需按 `docker/requirements-docker.txt` 安装 |
+| huggingface_hub | 需按 `docker/requirements-docker.txt` 安装 |
+| transformers | 需按 `docker/requirements-docker.txt` 安装 |
 
 ## 4. 环境配置步骤
 
@@ -80,7 +88,7 @@ docker build --platform linux/amd64 -t bytedance-cv:stage1 -f docker/Dockerfile 
 
 ```bash
 conda run --no-capture-output --prefix "/Users/aaron/Documents/字节实习/.conda/bytedance-cv" \
-  python -c "import torch, cv2, onnxruntime, insightface; print(torch.__version__, cv2.__version__, onnxruntime.__version__, insightface.__version__)"
+  python -c "import torch, cv2, onnxruntime, insightface, datasets, transformers; print(torch.__version__, cv2.__version__, onnxruntime.__version__, insightface.__version__, datasets.__version__, transformers.__version__)"
 ```
 
 ### 5.2 Docker 环境验证
@@ -92,22 +100,30 @@ docker run --platform linux/amd64 --rm bytedance-cv:stage1
 ### 5.3 Hello World 程序
 
 ```bash
-docker run --platform linux/amd64 --rm bytedance-cv:stage1 python demo/00_hello_docker.py
+docker run --platform linux/amd64 --rm bytedance-cv:stage1 python code/00_hello_docker.py
 ```
 
 ### 5.4 OpenCV 图像处理程序
 
 ```bash
-docker run --platform linux/amd64 --rm bytedance-cv:stage1 python demo/01_opencv_grayscale.py
+docker run --platform linux/amd64 --rm bytedance-cv:stage1 python code/01_opencv_grayscale.py
 ```
 
 ### 5.5 PyTorch 训练验证
 
 ```bash
 docker run --platform linux/amd64 --rm bytedance-cv:stage1 \
-  python demo/01_pytorch_minimal_training.py \
+  python code/01_pytorch_minimal_training.py \
   --dataset fake \
   --epochs 1
+```
+
+### 5.6 阶段一人脸识别基础任务
+
+```bash
+python code/stage1_task2_2_dataset_exploration.py --download --data-dir data --report-dir reports
+python code/stage1_task2_3_mmdet_face_detection.py --input-dir ../../../sample_inputs --out-dir reports/assets
+python code/stage1_task2_4_landmarks_and_lfw_eval.py --download --data-dir data --out-dir reports/assets --landmark-input-dir ../../../sample_inputs
 ```
 
 ## 6. 验收结果
@@ -122,5 +138,8 @@ docker run --platform linux/amd64 --rm bytedance-cv:stage1 \
 | OpenCV 灰度化程序 | 通过 |
 | PyTorch smoke test | 通过 |
 | MMDetection 依赖验证 | 通过 |
+| CelebA/LFW 数据探索脚本 | 待完整数据下载完成后复核 |
+| MMDetection 开放词人脸检测脚本 | 待 checkpoint 下载完成后复核 |
+| InsightFace 关键点与 LFW 验证脚本 | 待 LFW 下载完成后复核 |
 
 说明：本机 Conda 环境用于轻量开发；Docker 镜像用于统一复现 PyTorch、OpenCV 和 MMDetection 环境。
