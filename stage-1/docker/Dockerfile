@@ -17,6 +17,7 @@ RUN apt-get update \
         libgl1 \
         libsm6 \
         libxext6 \
+        fonts-noto-cjk \
     && rm -rf /var/lib/apt/lists/*
 
 COPY docker/requirements-docker.txt /tmp/requirements-docker.txt

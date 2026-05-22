@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import platform
 import sys
-from pathlib import Path
 
 import cv2
 import mmcv
@@ -30,13 +29,11 @@ def main() -> None:
     print("cuda_available", torch.cuda.is_available())
     print("mps_available", hasattr(torch.backends, "mps") and torch.backends.mps.is_available())
 
-    sample = Path("sample_inputs/01036a162ec6e859bb81218ad79dc1aa.jpg")
-    image = cv2.imread(str(sample))
-    if image is None:
-        raise FileNotFoundError(f"Could not read sample image: {sample}")
-
+    image = np.zeros((64, 64, 3), dtype=np.uint8)
+    image[:, :, 0] = np.linspace(0, 255, image.shape[1], dtype=np.uint8)
+    image[:, :, 1] = np.linspace(255, 0, image.shape[0], dtype=np.uint8)[:, None]
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    print("sample_image", sample)
+    print("sample_image", "synthetic_gradient")
     print("bgr_shape", image.shape)
     print("gray_shape", gray.shape)
     print("gray_mean", round(float(np.mean(gray)), 2))

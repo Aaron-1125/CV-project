@@ -17,3 +17,4 @@ gdown
 datasets
 huggingface_hub>=0.19,<1.0
 transformers==4.37.2
+reportlab

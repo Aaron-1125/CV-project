@@ -16,7 +16,8 @@
 - InsightFace 关键点定位与 LFW 验证：`demo/stage1_task2_4_landmarks_and_lfw_eval.py`
 - 环境验证脚本：`docker/verify_environment.py`
 - 验收报告、结果图：`reports/`
-- 第一周周报：`reports/week1_weekly_report_2026-05-21.md`
+- 第一周周报：`reports/weekly/week1_report_2026-05-21.md`
+- 第一周周报 PDF：`reports/weekly/week1_report_2026-05-21.pdf`
 
 ## 目录约定
 
@@ -26,6 +27,8 @@
 - `reports/assets/detection/` 存放 MMDetection 人脸检测结果图和摘要 JSON。
 - `reports/assets/landmarks/` 存放 InsightFace 关键点可视化结果图。
 - `reports/assets/evaluation/` 存放 LFW 验证 ROC、分数分布图和评估摘要 JSON。
+- `reports/assets/weekly/` 存放周报中引用的真实终端截图。
+- `reports/weekly/` 存放每周周报 Markdown 源文件和导出的 PDF。
 - `data/` 存放原始数据集和缓存，`checkpoints/` 存放模型权重，二者不提交 Git。
 
 ## Docker 运行
@@ -121,4 +124,28 @@ python demo/stage1_task2_4_landmarks_and_lfw_eval.py \
 
 ```text
 reports/stage1_face_basics_dataset_report.md
+```
+
+## 第一周周报 PDF
+
+生成真实终端截图：
+
+```bash
+python demo/capture_week1_terminal_screenshots.py \
+  --python-bin /Users/aaron/Documents/字节实习/.conda/bytedance-cv/bin/python
+```
+
+导出 PDF：
+
+```bash
+python demo/export_weekly_report_pdf.py \
+  --source reports/weekly/week1_report_2026-05-21.md \
+  --output reports/weekly/week1_report_2026-05-21.pdf
+```
+
+渲染检查：
+
+```bash
+mkdir -p tmp/pdfs
+pdftoppm -png reports/weekly/week1_report_2026-05-21.pdf tmp/pdfs/week1_report
 ```
