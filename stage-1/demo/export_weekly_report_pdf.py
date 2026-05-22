@@ -23,9 +23,9 @@ from reportlab.lib.units import cm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
+    CondPageBreak,
     Image,
     KeepTogether,
-    PageBreak,
     Paragraph,
     Preformatted,
     SimpleDocTemplate,
@@ -180,7 +180,17 @@ def image_flowables(source_dir: Path, alt: str, path_text: str, styles: dict[str
         return [Paragraph(f"[missing image] {markdown_inline(path_text)}", styles["body"])]
 
     max_width = A4[0] - 3.4 * cm
-    max_height = 12.5 * cm
+    normalized_path = path_text.replace("\\", "/")
+    if "/detection/" in normalized_path or "/landmarks/" in normalized_path:
+        max_height = 7.4 * cm
+    elif "/evaluation/" in normalized_path:
+        max_height = 8.7 * cm
+    elif "/dataset/" in normalized_path and "samples" in normalized_path:
+        max_height = 7.2 * cm
+    elif "/dataset/" in normalized_path:
+        max_height = 8.0 * cm
+    else:
+        max_height = 11.0 * cm
     with PILImage.open(image_path) as img:
         width, height = img.size
     scale = min(max_width / width, max_height / height, 1.0)
@@ -256,7 +266,7 @@ def parse_markdown(source: Path, styles: dict[str, ParagraphStyle]):
 
         if line == "---PAGEBREAK---":
             flush_paragraph()
-            flowables.append(PageBreak())
+            flowables.append(CondPageBreak(7.2 * cm))
             continue
 
         paragraph_parts.append(line)
@@ -281,8 +291,8 @@ def export_pdf(source: Path, output: Path) -> None:
         pagesize=A4,
         rightMargin=1.7 * cm,
         leftMargin=1.7 * cm,
-        topMargin=1.55 * cm,
-        bottomMargin=1.45 * cm,
+        topMargin=1.3 * cm,
+        bottomMargin=1.25 * cm,
         title=source.stem,
         author="CV Project",
     )

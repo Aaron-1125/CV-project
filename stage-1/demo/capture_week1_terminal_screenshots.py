@@ -52,7 +52,33 @@ def crop_terminal(full_path: Path, output_path: Path) -> None:
         min(image.width, int(right * scale) + CAPTURE_PADDING_PX),
         min(image.height, int(bottom * scale) + CAPTURE_PADDING_PX),
     )
-    image.crop(crop_box).save(output_path)
+    trim_terminal_blank_bottom(image.crop(crop_box)).save(output_path)
+
+
+def trim_terminal_blank_bottom(image: Image.Image) -> Image.Image:
+    """Remove unused blank rows below the last visible Terminal output line."""
+    rgb = image.convert("RGB")
+    width, height = rgb.size
+    left = max(20, int(width * 0.04))
+    right = min(width - 20, int(width * 0.96))
+    top = max(60, int(height * 0.06))
+    bottom_limit = max(top + 1, height - max(24, int(height * 0.04)))
+    pixels = rgb.load()
+
+    last_content_y = top
+    for y in range(bottom_limit - 1, top - 1, -1):
+        for x in range(left, right, 3):
+            r, g, b = pixels[x, y]
+            if (r + g + b) / 3 < 215:
+                last_content_y = y
+                break
+        if last_content_y == y:
+            break
+
+    margin = max(52, int(height * 0.055))
+    crop_bottom = min(height, last_content_y + margin)
+    min_bottom = min(height, top + int(height * 0.22))
+    return image.crop((0, 0, width, max(crop_bottom, min_bottom)))
 
 
 def start_terminal(command: str, done_path: Path, cwd: Path) -> None:
