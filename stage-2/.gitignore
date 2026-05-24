@@ -1,0 +1,10 @@
+data/
+checkpoints/
+work_dirs/
+tmp/
+__pycache__/
+*.py[cod]
+*.pth
+*.pt
+*.onnx
+.DS_Store

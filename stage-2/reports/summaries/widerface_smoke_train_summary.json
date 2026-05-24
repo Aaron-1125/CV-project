@@ -1,0 +1,16 @@
+{
+  "work_dir": "work_dirs/ssd300_widerface_smoke",
+  "latest_checkpoint": "/workspace/work_dirs/ssd300_widerface_smoke/epoch_1.pth",
+  "num_logged_train_steps": 12,
+  "first_loss": 48.492760467529294,
+  "last_loss": 11.71587124824524,
+  "min_loss": 11.71587124824524,
+  "validation": {
+    "pascal_voc/mAP": 0.000344352622050792,
+    "pascal_voc/AP50": 0.0,
+    "data_time": 0.007145829498767853,
+    "time": 0.6127050258219242,
+    "step": 1
+  },
+  "loss_curve": "reports/assets/training/smoke_loss_curve.png"
+}

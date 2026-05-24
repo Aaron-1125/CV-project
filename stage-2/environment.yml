@@ -1,0 +1,22 @@
+name: bytedance-cv-stage2
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy<2
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - scipy
+  - pillow
+  - tqdm
+  - pip:
+      - torch==2.0.0
+      - torchvision==0.15.1
+      - torchaudio==2.0.1
+      - opencv-python
+      - gdown
+      - mmengine>=0.7.1,<1.0.0
+      - mmdet==3.3.0
+      - reportlab

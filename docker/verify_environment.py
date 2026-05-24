@@ -1,28 +1,40 @@
 #!/usr/bin/env python3
-"""Verify the Docker CV environment for stage 1 task 1.3."""
+"""Verify the unified Docker CV environment for all project stages."""
 
 from __future__ import annotations
 
 import platform
 import sys
-
-import cv2
-import mmcv
-import mmdet
-import mmengine
-import numpy as np
-import onnxruntime
-import torch
-import torchvision
+from pathlib import Path
 
 
 def main() -> None:
+    import cv2
+    import datasets
+    import huggingface_hub
+    import insightface
+    import mmcv
+    import mmdet
+    import mmengine
+    import numpy as np
+    import onnxruntime
+    import reportlab
+    import torch
+    import torchvision
+    import transformers
+    from mmengine.config import Config
+
     print("python", sys.version.split()[0])
     print("platform", platform.platform())
     print("torch", torch.__version__)
     print("torchvision", torchvision.__version__)
     print("opencv", cv2.__version__)
     print("onnxruntime", onnxruntime.__version__)
+    print("insightface", getattr(insightface, "__version__", "unknown"))
+    print("datasets", datasets.__version__)
+    print("huggingface_hub", huggingface_hub.__version__)
+    print("transformers", transformers.__version__)
+    print("reportlab", reportlab.Version)
     print("mmengine", mmengine.__version__)
     print("mmcv", mmcv.__version__)
     print("mmdet", mmdet.__version__)
@@ -37,6 +49,13 @@ def main() -> None:
     print("bgr_shape", image.shape)
     print("gray_shape", gray.shape)
     print("gray_mean", round(float(np.mean(gray)), 2))
+
+    stage2_config = Path("stage-2/configs/mmdet/ssd300_widerface_smoke.py")
+    if stage2_config.exists():
+        cfg = Config.fromfile(stage2_config)
+        assert cfg.model.bbox_head.num_classes == 1
+        print("stage2_config", stage2_config)
+    print("unified docker environment ok")
 
 
 if __name__ == "__main__":

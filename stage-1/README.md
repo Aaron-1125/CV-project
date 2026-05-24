@@ -6,15 +6,15 @@
 
 - 环境配置文档：`environment.md`
 - Conda 环境定义：`environment.yml`
-- Docker 镜像配置：`docker/Dockerfile`
-- Docker Compose 配置：`docker-compose.yml`
+- 统一 Docker 镜像配置：`../docker/Dockerfile`
+- 统一 Docker Compose 配置：`../docker-compose.yml`
 - Docker Hello World：`demo/00_hello_docker.py`
 - OpenCV 灰度化 demo：`demo/01_opencv_grayscale.py`
 - PyTorch smoke test：`demo/01_pytorch_minimal_training.py`
 - CelebA/LFW 数据集探索：`demo/stage1_task2_2_dataset_exploration.py`
 - MMDetection 开放词人脸检测：`demo/stage1_task2_3_mmdet_face_detection.py`
 - InsightFace 关键点定位与 LFW 验证：`demo/stage1_task2_4_landmarks_and_lfw_eval.py`
-- 环境验证脚本：`docker/verify_environment.py`
+- 环境验证脚本：`../docker/verify_environment.py`
 - 验收报告、结果图：`reports/`
 - 第一周周报：`reports/weekly/week1_report_2026-05-21.md`
 - 第一周周报 PDF：`reports/weekly/week1_report_2026-05-21.pdf`
@@ -33,34 +33,47 @@
 
 ## Docker 运行
 
-构建镜像：
+以下 Docker 命令在 `CV project/` 项目根目录运行，stage-1 任务通过 `-w /workspace/stage-1` 指定工作目录。
+
+构建统一镜像：
 
 ```bash
-docker build --platform linux/amd64 -t bytedance-cv:stage1 -f docker/Dockerfile .
+docker build --platform linux/amd64 -t bytedance-cv:project -f docker/Dockerfile .
 ```
 
 运行环境验证：
 
 ```bash
-docker run --platform linux/amd64 --rm bytedance-cv:stage1
+docker run --platform linux/amd64 --rm bytedance-cv:project
 ```
 
 运行 Hello World：
 
 ```bash
-docker run --platform linux/amd64 --rm bytedance-cv:stage1 python demo/00_hello_docker.py
+docker run --platform linux/amd64 --rm \
+  -v "$PWD":/workspace \
+  -w /workspace/stage-1 \
+  bytedance-cv:project \
+  python demo/00_hello_docker.py
 ```
 
 运行 OpenCV 图像处理 demo：
 
 ```bash
-docker run --platform linux/amd64 --rm bytedance-cv:stage1 python demo/01_opencv_grayscale.py
+docker run --platform linux/amd64 --rm \
+  -v "$PWD":/workspace \
+  -w /workspace/stage-1 \
+  bytedance-cv:project \
+  python demo/01_opencv_grayscale.py
 ```
 
 运行 PyTorch 最小训练 smoke test：
 
 ```bash
-docker run --platform linux/amd64 --rm bytedance-cv:stage1 \
+docker run --platform linux/amd64 --rm \
+  -v "$PWD":/workspace \
+  -w /workspace/stage-1 \
+  bytedance-cv:project \
   python demo/01_pytorch_minimal_training.py \
   --dataset fake \
   --epochs 1
@@ -97,8 +110,8 @@ python demo/stage1_task2_3_mmdet_face_detection.py \
 ```bash
 docker run --platform linux/amd64 --rm \
   -v "$PWD":/workspace \
-  -w /workspace \
-  bytedance-cv:stage1 \
+  -w /workspace/stage-1 \
+  bytedance-cv:project \
   sh -lc "python -m pip install 'huggingface_hub>=0.19,<1.0' transformers==4.37.2 >/tmp/pip-mmdet.log && \
   python demo/stage1_task2_3_mmdet_face_detection.py \
     --input-dir reports/assets/inputs/public_lfw \

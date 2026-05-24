@@ -8,7 +8,7 @@
 | 本机环境管理 | Anaconda |
 | 本机 Python 环境 | `/Users/aaron/Documents/字节实习/.conda/bytedance-cv` |
 | Python 版本 | 3.11.15 |
-| Docker 镜像 | `bytedance-cv:stage1` |
+| Docker 镜像 | `bytedance-cv:project` |
 | Docker 镜像平台 | linux/amd64 |
 | Docker Engine | 29.4.3 linux/aarch64 |
 | Docker Compose | v5.1.3 |
@@ -47,10 +47,10 @@
 | mmengine | 0.10.7 |
 | mmcv | 2.0.0 |
 | mmdet | 3.3.0 |
-| gdown | 需按 `docker/requirements-docker.txt` 安装 |
-| datasets | 需按 `docker/requirements-docker.txt` 安装 |
-| huggingface_hub | 需按 `docker/requirements-docker.txt` 安装 |
-| transformers | 需按 `docker/requirements-docker.txt` 安装 |
+| gdown | 需按 `../docker/requirements-docker.txt` 安装 |
+| datasets | 需按 `../docker/requirements-docker.txt` 安装 |
+| huggingface_hub | 需按 `../docker/requirements-docker.txt` 安装 |
+| transformers | 需按 `../docker/requirements-docker.txt` 安装 |
 
 ## 4. 环境配置步骤
 
@@ -79,7 +79,8 @@ conda run --prefix "/Users/aaron/Documents/字节实习/.conda/bytedance-cv" \
 ### 4.3 Docker 环境
 
 ```bash
-docker build --platform linux/amd64 -t bytedance-cv:stage1 -f docker/Dockerfile .
+cd "/Users/aaron/Documents/字节实习/task/CV project"
+docker build --platform linux/amd64 -t bytedance-cv:project -f docker/Dockerfile .
 ```
 
 ## 5. 验证命令
@@ -94,25 +95,40 @@ conda run --no-capture-output --prefix "/Users/aaron/Documents/字节实习/.con
 ### 5.2 Docker 环境验证
 
 ```bash
-docker run --platform linux/amd64 --rm bytedance-cv:stage1
+cd "/Users/aaron/Documents/字节实习/task/CV project"
+docker run --platform linux/amd64 --rm bytedance-cv:project
 ```
 
 ### 5.3 Hello World 程序
 
 ```bash
-docker run --platform linux/amd64 --rm bytedance-cv:stage1 python demo/00_hello_docker.py
+cd "/Users/aaron/Documents/字节实习/task/CV project"
+docker run --platform linux/amd64 --rm \
+  -v "$PWD":/workspace \
+  -w /workspace/stage-1 \
+  bytedance-cv:project \
+  python demo/00_hello_docker.py
 ```
 
 ### 5.4 OpenCV 图像处理程序
 
 ```bash
-docker run --platform linux/amd64 --rm bytedance-cv:stage1 python demo/01_opencv_grayscale.py
+cd "/Users/aaron/Documents/字节实习/task/CV project"
+docker run --platform linux/amd64 --rm \
+  -v "$PWD":/workspace \
+  -w /workspace/stage-1 \
+  bytedance-cv:project \
+  python demo/01_opencv_grayscale.py
 ```
 
 ### 5.5 PyTorch 训练验证
 
 ```bash
-docker run --platform linux/amd64 --rm bytedance-cv:stage1 \
+cd "/Users/aaron/Documents/字节实习/task/CV project"
+docker run --platform linux/amd64 --rm \
+  -v "$PWD":/workspace \
+  -w /workspace/stage-1 \
+  bytedance-cv:project \
   python demo/01_pytorch_minimal_training.py \
   --dataset fake \
   --epochs 1

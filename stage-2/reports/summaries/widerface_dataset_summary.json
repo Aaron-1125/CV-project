@@ -1,0 +1,141 @@
+{
+  "data_root": "data/WIDERFace",
+  "source_root": "data/widerface",
+  "train": {
+    "split": "train",
+    "images": 12337,
+    "faces": 153352,
+    "invalid_or_empty_faces": 6072,
+    "mean_faces_per_image": 12.430250466077652,
+    "median_faces_per_image": 3.0,
+    "top_events": [
+      [
+        "2--Demonstration",
+        990
+      ],
+      [
+        "12--Group",
+        577
+      ],
+      [
+        "13--Interview",
+        551
+      ],
+      [
+        "35--Basketball",
+        481
+      ],
+      [
+        "0--Parade",
+        459
+      ],
+      [
+        "9--Press_Conference",
+        307
+      ],
+      [
+        "51--Dresses",
+        288
+      ],
+      [
+        "41--Swimming",
+        285
+      ],
+      [
+        "39--Ice_Skating",
+        282
+      ],
+      [
+        "20--Family_Group",
+        231
+      ],
+      [
+        "55--Sports_Coach_Trainer",
+        223
+      ],
+      [
+        "10--People_Marching",
+        222
+      ]
+    ],
+    "face_area_p50": 294.0,
+    "face_area_p90": 4050.0
+  },
+  "val": {
+    "split": "val",
+    "images": 3079,
+    "faces": 38042,
+    "invalid_or_empty_faces": 1666,
+    "mean_faces_per_image": 12.355310165638194,
+    "median_faces_per_image": 3.0,
+    "top_events": [
+      [
+        "2--Demonstration",
+        249
+      ],
+      [
+        "12--Group",
+        145
+      ],
+      [
+        "13--Interview",
+        139
+      ],
+      [
+        "35--Basketball",
+        122
+      ],
+      [
+        "0--Parade",
+        112
+      ],
+      [
+        "9--Press_Conference",
+        77
+      ],
+      [
+        "39--Ice_Skating",
+        75
+      ],
+      [
+        "51--Dresses",
+        72
+      ],
+      [
+        "41--Swimming",
+        70
+      ],
+      [
+        "20--Family_Group",
+        58
+      ],
+      [
+        "10--People_Marching",
+        56
+      ],
+      [
+        "52--Photographers",
+        54
+      ]
+    ],
+    "face_area_p50": 288.0,
+    "face_area_p90": 4248.0
+  },
+  "smoke_train_images": 128,
+  "smoke_train_faces": 1213,
+  "smoke_val_images": 64,
+  "smoke_val_faces": 680,
+  "smoke_train_ann_file": "data/WIDERFace/smoke_train.txt",
+  "smoke_val_ann_file": "data/WIDERFace/smoke_val.txt",
+  "exported_public_val_inputs": [
+    "reports/assets/inputs/wider_val/input_00_0_Parade_Parade_0_286.jpg",
+    "reports/assets/inputs/wider_val/input_01_0_Parade_Parade_0_459.jpg",
+    "reports/assets/inputs/wider_val/input_02_0_Parade_Parade_0_688.jpg",
+    "reports/assets/inputs/wider_val/input_03_0_Parade_marchingband_1_653.jpg"
+  ],
+  "assets": {
+    "sample_grid": "reports/assets/dataset/widerface_val_samples_with_boxes.png",
+    "smoke_train_faces_per_image": "reports/assets/dataset/widerface_smoke_train_faces_per_image.png",
+    "smoke_val_faces_per_image": "reports/assets/dataset/widerface_smoke_val_faces_per_image.png"
+  }
+}

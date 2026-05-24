@@ -1,0 +1,54 @@
+name: bytedance-cv
+
+services:
+  cv:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: bytedance-cv:project
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command: python docker/verify_environment.py
+
+  stage1:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: bytedance-cv:project
+    working_dir: /workspace/stage-1
+    volumes:
+      - .:/workspace
+    command: python demo/00_hello_docker.py
+
+  stage2:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: bytedance-cv:project
+    working_dir: /workspace/stage-2
+    volumes:
+      - .:/workspace
+    command: python code/train/stage2_task3_2_run_mmdet.py --help
+
+  jupyter:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: bytedance-cv:project
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    ports:
+      - "8888:8888"
+    command: >
+      jupyter lab
+      --ip=0.0.0.0
+      --port=8888
+      --no-browser
+      --allow-root
+      --ServerApp.token=bytedance-cv

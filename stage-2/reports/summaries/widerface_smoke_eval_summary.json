@@ -1,0 +1,579 @@
+{
+  "config": "configs/mmdet/ssd300_widerface_smoke.py",
+  "checkpoint": "work_dirs/ssd300_widerface_smoke/epoch_1.pth",
+  "data_root": "data/WIDERFace",
+  "ann_file": "smoke_val.txt",
+  "split": "val",
+  "score_threshold": 0.05,
+  "visualization_top_k": 5,
+  "metrics": {
+    "iou_threshold": 0.5,
+    "images": 64,
+    "gt_faces": 680,
+    "tp": 14,
+    "fp": 12786,
+    "fn": 666,
+    "precision": 0.00109375,
+    "recall": 0.020588235294117647,
+    "ap50": 3.897054172618744e-05,
+    "per_image": [
+      {
+        "image_id": "0_Parade_Parade_0_286",
+        "gt_faces": 26,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 25
+      },
+      {
+        "image_id": "0_Parade_Parade_0_459",
+        "gt_faces": 7,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 6
+      },
+      {
+        "image_id": "0_Parade_Parade_0_688",
+        "gt_faces": 18,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 18
+      },
+      {
+        "image_id": "0_Parade_marchingband_1_653",
+        "gt_faces": 76,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 76
+      },
+      {
+        "image_id": "0_Parade_marchingband_1_910",
+        "gt_faces": 13,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 13
+      },
+      {
+        "image_id": "10_People_Marching_People_Marching_2_34",
+        "gt_faces": 145,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 145
+      },
+      {
+        "image_id": "12_Group_Group_12_Group_Group_12_315",
+        "gt_faces": 8,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 8
+      },
+      {
+        "image_id": "13_Interview_Interview_2_People_Visible_13_254",
+        "gt_faces": 6,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 6
+      },
+      {
+        "image_id": "13_Interview_Interview_On_Location_13_166",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 0
+      },
+      {
+        "image_id": "13_Interview_Interview_On_Location_13_287",
+        "gt_faces": 3,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 3
+      },
+      {
+        "image_id": "13_Interview_Interview_On_Location_13_394",
+        "gt_faces": 2,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 2
+      },
+      {
+        "image_id": "13_Interview_Interview_On_Location_13_510",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 0
+      },
+      {
+        "image_id": "13_Interview_Interview_On_Location_13_728",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 0
+      },
+      {
+        "image_id": "13_Interview_Interview_Sequences_13_89",
+        "gt_faces": 4,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 4
+      },
+      {
+        "image_id": "17_Ceremony_Ceremony_17_592",
+        "gt_faces": 13,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 13
+      },
+      {
+        "image_id": "18_Concerts_Concerts_18_1038",
+        "gt_faces": 8,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 7
+      },
+      {
+        "image_id": "18_Concerts_Concerts_18_706",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 1
+      },
+      {
+        "image_id": "18_Concerts_Concerts_18_872",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 1
+      },
+      {
+        "image_id": "1_Handshaking_Handshaking_1_522",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 1
+      },
+      {
+        "image_id": "20_Family_Group_Family_Group_20_648",
+        "gt_faces": 5,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 5
+      },
+      {
+        "image_id": "21_Festival_Festival_21_660",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 0
+      },
+      {
+        "image_id": "22_Picnic_Picnic_22_732",
+        "gt_faces": 30,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 30
+      },
+      {
+        "image_id": "23_Shoppers_Shoppers_23_65",
+        "gt_faces": 3,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 3
+      },
+      {
+        "image_id": "27_Spa_Spa_27_38",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 0
+      },
+      {
+        "image_id": "28_Sports_Fan_Sports_Fan_28_448",
+        "gt_faces": 2,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 2
+      },
+      {
+        "image_id": "28_Sports_Fan_Sports_Fan_28_507",
+        "gt_faces": 4,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 4
+      },
+      {
+        "image_id": "28_Sports_Fan_Sports_Fan_28_590",
+        "gt_faces": 9,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 9
+      },
+      {
+        "image_id": "29_Students_Schoolkids_Students_Schoolkids_29_494",
+        "gt_faces": 15,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 15
+      },
+      {
+        "image_id": "2_Demonstration_Demonstration_Or_Protest_2_453",
+        "gt_faces": 22,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 22
+      },
+      {
+        "image_id": "2_Demonstration_Demonstration_Or_Protest_2_512",
+        "gt_faces": 27,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 26
+      },
+      {
+        "image_id": "2_Demonstration_Demonstration_Or_Protest_2_600",
+        "gt_faces": 74,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 74
+      },
+      {
+        "image_id": "2_Demonstration_Demonstration_Or_Protest_2_813",
+        "gt_faces": 8,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 8
+      },
+      {
+        "image_id": "2_Demonstration_Political_Rally_2_566",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 1
+      },
+      {
+        "image_id": "2_Demonstration_Protesters_2_1033",
+        "gt_faces": 10,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 10
+      },
+      {
+        "image_id": "31_Waiter_Waitress_Waiter_Waitress_31_195",
+        "gt_faces": 2,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 1
+      },
+      {
+        "image_id": "32_Worker_Laborer_Worker_Laborer_32_812",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 1
+      },
+      {
+        "image_id": "35_Basketball_playingbasketball_35_251",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 1
+      },
+      {
+        "image_id": "36_Football_americanfootball_ball_36_114",
+        "gt_faces": 6,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 6
+      },
+      {
+        "image_id": "37_Soccer_soccer_ball_37_867",
+        "gt_faces": 7,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 7
+      },
+      {
+        "image_id": "38_Tennis_Tennis_38_131",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 1
+      },
+      {
+        "image_id": "39_Ice_Skating_iceskiing_39_595",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 1
+      },
+      {
+        "image_id": "3_Riot_Riot_3_101",
+        "gt_faces": 6,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 6
+      },
+      {
+        "image_id": "40_Gymnastics_Gymnastics_40_484",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 1
+      },
+      {
+        "image_id": "41_Swimming_Swimmer_41_935",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 0
+      },
+      {
+        "image_id": "44_Aerobics_Aerobics_44_216",
+        "gt_faces": 11,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 11
+      },
+      {
+        "image_id": "45_Balloonist_Balloonist_45_1028",
+        "gt_faces": 2,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 2
+      },
+      {
+        "image_id": "47_Matador_Bullfighter_Matador_Bullfighter_47_468",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 1
+      },
+      {
+        "image_id": "49_Greeting_peoplegreeting_49_192",
+        "gt_faces": 3,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 3
+      },
+      {
+        "image_id": "49_Greeting_peoplegreeting_49_203",
+        "gt_faces": 1,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 0
+      },
+      {
+        "image_id": "49_Greeting_peoplegreeting_49_307",
+        "gt_faces": 8,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 8
+      },
+      {
+        "image_id": "50_Celebration_Or_Party_birthdayparty_50_18",
+        "gt_faces": 14,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 14
+      },
+      {
+        "image_id": "50_Celebration_Or_Party_houseparty_50_345",
+        "gt_faces": 4,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 4
+      },
+      {
+        "image_id": "51_Dresses_wearingdress_51_150",
+        "gt_faces": 2,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 2
+      },
+      {
+        "image_id": "51_Dresses_wearingdress_51_549",
+        "gt_faces": 4,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 3
+      },
+      {
+        "image_id": "51_Dresses_wearingdress_51_691",
+        "gt_faces": 2,
+        "detections": 200,
+        "tp": 1,
+        "fp": 199,
+        "fn": 1
+      },
+      {
+        "image_id": "53_Raid_policeraid_53_489",
+        "gt_faces": 2,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 2
+      },
+      {
+        "image_id": "56_Voter_peoplevoting_56_344",
+        "gt_faces": 14,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 14
+      },
+      {
+        "image_id": "57_Angler_peoplefishing_57_51",
+        "gt_faces": 5,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 5
+      },
+      {
+        "image_id": "58_Hockey_icehockey_puck_58_248",
+        "gt_faces": 6,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 6
+      },
+      {
+        "image_id": "58_Hockey_icehockey_puck_58_653",
+        "gt_faces": 5,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 5
+      },
+      {
+        "image_id": "59_peopledrivingcar_peopledrivingcar_59_202",
+        "gt_faces": 2,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 2
+      },
+      {
+        "image_id": "5_Car_Accident_Accident_5_474",
+        "gt_faces": 8,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 8
+      },
+      {
+        "image_id": "61_Street_Battle_streetfight_61_606",
+        "gt_faces": 5,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 5
+      },
+      {
+        "image_id": "9_Press_Conference_Press_Conference_9_60",
+        "gt_faces": 7,
+        "detections": 200,
+        "tp": 0,
+        "fp": 200,
+        "fn": 7
+      }
+    ]
+  },
+  "metrics_plot": "reports/assets/evaluation/widerface_smoke_eval_metrics.png",
+  "visualizations": [
+    "reports/assets/detection/detection_00_0_Parade_Parade_0_286.jpg",
+    "reports/assets/detection/detection_01_0_Parade_Parade_0_459.jpg",
+    "reports/assets/detection/detection_02_0_Parade_Parade_0_688.jpg",
+    "reports/assets/detection/detection_03_0_Parade_marchingband_1_653.jpg"
+  ],
+  "visualization_pairs": [
+    {
+      "index": 0,
+      "image_id": "0_Parade_Parade_0_286",
+      "input": "reports/assets/inputs/wider_val/input_00_0_Parade_Parade_0_286.jpg",
+      "detection": "reports/assets/detection/detection_00_0_Parade_Parade_0_286.jpg",
+      "gt_color": "orange",
+      "prediction_color": "green",
+      "prediction_top_k": 5
+    },
+    {
+      "index": 1,
+      "image_id": "0_Parade_Parade_0_459",
+      "input": "reports/assets/inputs/wider_val/input_01_0_Parade_Parade_0_459.jpg",
+      "detection": "reports/assets/detection/detection_01_0_Parade_Parade_0_459.jpg",
+      "gt_color": "orange",
+      "prediction_color": "green",
+      "prediction_top_k": 5
+    },
+    {
+      "index": 2,
+      "image_id": "0_Parade_Parade_0_688",
+      "input": "reports/assets/inputs/wider_val/input_02_0_Parade_Parade_0_688.jpg",
+      "detection": "reports/assets/detection/detection_02_0_Parade_Parade_0_688.jpg",
+      "gt_color": "orange",
+      "prediction_color": "green",
+      "prediction_top_k": 5
+    },
+    {
+      "index": 3,
+      "image_id": "0_Parade_marchingband_1_653",
+      "input": "reports/assets/inputs/wider_val/input_03_0_Parade_marchingband_1_653.jpg",
+      "detection": "reports/assets/detection/detection_03_0_Parade_marchingband_1_653.jpg",
+      "gt_color": "orange",
+      "prediction_color": "green",
+      "prediction_top_k": 5
+    }
+  ]
+}
