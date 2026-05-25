@@ -23,7 +23,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from torchvision.datasets import WIDERFace
-from torchvision.datasets.utils import download_and_extract_archive, download_file_from_google_drive, extract_archive
+from torchvision.datasets.utils import (
+    check_integrity,
+    download_and_extract_archive,
+    download_file_from_google_drive,
+    extract_archive,
+)
 
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp"}
@@ -117,7 +122,7 @@ def ensure_widerface_train_val_download(root: Path) -> None:
         extracted_dir = target_root / Path(filename).stem
         if extracted_dir.exists():
             continue
-        download_file_from_google_drive(file_id, str(target_root), filename, md5)
+        download_google_drive_zip(file_id, md5, target_root / filename)
         extract_archive(str(target_root / filename))
     if not (target_root / "wider_face_split").exists():
         download_and_extract_archive(
@@ -130,6 +135,24 @@ def ensure_widerface_train_val_download(root: Path) -> None:
     # even when only train/val are needed for this task. Keep it empty so we do
     # not download public test images that are outside the stage-2 scope.
     (target_root / "WIDER_test").mkdir(exist_ok=True)
+
+
+def download_google_drive_zip(file_id: str, md5: str, output_path: Path) -> None:
+    if check_integrity(str(output_path), md5):
+        return
+    output_path.unlink(missing_ok=True)
+    try:
+        download_file_from_google_drive(file_id, str(output_path.parent), output_path.name, md5)
+        return
+    except RuntimeError:
+        output_path.unlink(missing_ok=True)
+
+    import gdown
+
+    result = gdown.download(id=file_id, output=str(output_path), quiet=False)
+    if not result or not check_integrity(str(output_path), md5):
+        output_path.unlink(missing_ok=True)
+        raise RuntimeError(f"Failed to download valid Google Drive archive: {output_path.name}")
 
 
 def load_split(root: Path, split: str) -> WIDERFace:

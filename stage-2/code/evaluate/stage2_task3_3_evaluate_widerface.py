@@ -217,7 +217,7 @@ def plot_metrics(metrics: dict[str, Any], output_path: Path) -> None:
     bars = plt.bar(labels, values, color=["#2563eb", "#16a34a", "#f97316"])
     plt.ylim(0, max(0.05, max(values) * 1.25))
     plt.ylabel("score")
-    plt.title("WIDER FACE Smoke Evaluation (IoU=0.5)")
+    plt.title("WIDER FACE Evaluation (IoU=0.5)")
     plt.grid(axis="y", alpha=0.25)
     for bar, value in zip(bars, values):
         plt.text(

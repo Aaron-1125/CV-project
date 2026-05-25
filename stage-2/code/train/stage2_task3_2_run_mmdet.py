@@ -48,7 +48,7 @@ def plot_loss(rows: list[dict[str, Any]], output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(7.5, 4.2))
     plt.plot(xs, ys, color="#2563eb", linewidth=1.8)
-    plt.title("Smoke Training Loss")
+    plt.title("WIDER FACE Training Loss")
     plt.xlabel("step")
     plt.ylabel("loss")
     plt.grid(alpha=0.25)

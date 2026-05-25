@@ -1,6 +1,8 @@
 name: bytedance-cv
 
 services:
+  # CPU/Mac-friendly smoke environment. This keeps the original portable path
+  # for machines without NVIDIA GPU support.
   cv:
     platform: linux/amd64
     build:
@@ -10,6 +12,23 @@ services:
     working_dir: /workspace
     volumes:
       - .:/workspace
+    command: python docker/verify_environment.py
+
+  # NVIDIA GPU environment for full WIDER FACE training on CUDA-capable hosts.
+  cv-gpu:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.gpu
+    image: bytedance-cv:gpu
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    gpus: all
+    shm_size: "8gb"
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
     command: python docker/verify_environment.py
 
   stage1:
@@ -32,6 +51,22 @@ services:
     working_dir: /workspace/stage-2
     volumes:
       - .:/workspace
+    command: python code/train/stage2_task3_2_run_mmdet.py --help
+
+  stage2-gpu:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.gpu
+    image: bytedance-cv:gpu
+    working_dir: /workspace/stage-2
+    volumes:
+      - .:/workspace
+    gpus: all
+    shm_size: "8gb"
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
     command: python code/train/stage2_task3_2_run_mmdet.py --help
 
   jupyter:

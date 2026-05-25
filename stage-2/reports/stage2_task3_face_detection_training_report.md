@@ -23,7 +23,7 @@ stage-2/
 ```
 
 原始数据、模型权重和训练输出分别进入 `data/`、`checkpoints/`、`work_dirs/`，均由 `.gitignore` 排除。
-Docker 环境统一放在项目根目录 `docker/`，stage-1 和 stage-2 共用 `bytedance-cv:project` 镜像。
+Docker 环境统一放在项目根目录 `docker/`。`bytedance-cv:project` 保留为 CPU/Mac smoke 环境，`bytedance-cv:gpu` 用于 NVIDIA GPU 全量训练。
 
 ## 3. 任务 3.1：算法原理整理
 
@@ -77,6 +77,7 @@ python code/prepare/stage2_task3_2_prepare_widerface.py \
 | --- | --- | --- |
 | `configs/mmdet/ssd300_widerface_smoke.py` | 本地 smoke training | 1 epoch、小 batch、随机初始化，验证训练链路 |
 | `configs/mmdet/ssd300_widerface_full.py` | 全量 WIDER FACE training | 基于官方 SSD300 WIDER FACE 配置，保留完整训练入口 |
+| `configs/mmdet/ssd300_widerface_full_gpu.py` | GPU 全量 WIDER FACE training | 使用完整 train/val 和 24 epoch，batch size 调整为适合 8GB NVIDIA GPU |
 
 Smoke 训练命令：
 
@@ -153,17 +154,7 @@ Smoke 自定义评估结果：
 
 ![Smoke evaluation metrics](assets/evaluation/widerface_smoke_eval_metrics.png)
 
-检测结果示例：
-
-输入原图与检测结果成对保存：
-
-![WIDER FACE input 1](assets/inputs/wider_val/input_00_0_Parade_Parade_0_286.jpg)
-
-![WIDER FACE smoke detection 1](assets/detection/detection_00_0_Parade_Parade_0_286.jpg)
-
-![WIDER FACE input 2](assets/inputs/wider_val/input_01_0_Parade_Parade_0_459.jpg)
-
-![WIDER FACE smoke detection 2](assets/detection/detection_01_0_Parade_Parade_0_459.jpg)
+Smoke 可视化只用于验证链路，最终检测图由第 7 节的 GPU 全量评估重新生成。
 
 ## 6. 当前验收状态
 
@@ -175,10 +166,15 @@ Smoke 自定义评估结果：
 - `reports/assets/dataset/widerface_val_samples_with_boxes.png`
 - `reports/assets/training/smoke_loss_curve.png`
 - `reports/assets/evaluation/widerface_smoke_eval_metrics.png`
+- `reports/summaries/widerface_full_train_summary.json`
+- `reports/summaries/widerface_full_eval_summary.json`
+- `reports/assets/training/full_loss_curve.png`
+- `reports/assets/evaluation/widerface_full_eval_metrics.png`
+- `work_dirs/ssd300_widerface_full_gpu/epoch_24.pth`
 - `reports/assets/inputs/wider_val/input_*.jpg`
 - `reports/assets/detection/detection_*.jpg`
 
-当前 smoke 指标较低，绿色预测框质量差是正常现象：smoke 配置只训练 1 个 epoch 且随机初始化，目标是证明数据转换、训练、评估和可视化链路完整；模型效果需要使用 full config 在 GPU 上进行更长时间训练。
+Smoke 指标较低，绿色预测框质量差是正常现象：smoke 配置只训练 1 个 epoch 且随机初始化，目标是证明数据转换、训练、评估和可视化链路完整；最终效果以 GPU 全量训练后的 `epoch_24.pth` 和完整 `val.txt` 评估为准。
 
 本次工程修正记录：
 
@@ -189,33 +185,80 @@ Smoke 自定义评估结果：
 
 ## 7. 全量训练路径
 
-全量训练使用：
+全量训练使用 NVIDIA GPU Docker 环境：
 
 ```bash
-cd "/Users/aaron/Documents/字节实习/task/CV project"
-docker run --platform linux/amd64 --rm \
-  -v "$PWD":/workspace \
-  -w /workspace/stage-2 \
-  bytedance-cv:project \
+docker compose build stage2-gpu
+docker compose run --rm stage2-gpu python /workspace/docker/verify_environment.py
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
   python code/train/stage2_task3_2_run_mmdet.py train \
-    --config configs/mmdet/ssd300_widerface_full.py \
-    --work-dir work_dirs/ssd300_widerface_full
+    --config configs/mmdet/ssd300_widerface_full_gpu.py \
+    --work-dir work_dirs/ssd300_widerface_full_gpu \
+    --summary-out reports/summaries/widerface_full_train_summary.json \
+    --loss-plot-out reports/assets/training/full_loss_curve.png
 ```
 
-全量评估时将 checkpoint 替换为完整训练得到的权重，并将 `--ann-file` 改为 `val.txt`：
+全量评估使用完整验证集 `val.txt` 和完整训练得到的 `epoch_24.pth`：
 
 ```bash
-cd "/Users/aaron/Documents/字节实习/task/CV project"
-docker run --platform linux/amd64 --rm \
-  -v "$PWD":/workspace \
-  -w /workspace/stage-2 \
-  bytedance-cv:project \
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
   python code/evaluate/stage2_task3_3_evaluate_widerface.py \
-    --config configs/mmdet/ssd300_widerface_full.py \
-    --checkpoint work_dirs/ssd300_widerface_full/epoch_24.pth \
+    --config configs/mmdet/ssd300_widerface_full_gpu.py \
+    --checkpoint work_dirs/ssd300_widerface_full_gpu/epoch_24.pth \
     --data-root data/WIDERFace \
     --ann-file val.txt \
+    --split val \
+    --input-dir reports/assets/inputs/wider_val \
     --out-dir reports/assets/detection \
     --summary-out reports/summaries/widerface_full_eval_summary.json \
-    --device cpu
+    --device cuda:0 \
+    --score-thr 0.05 \
+    --iou-thr 0.5 \
+    --visualize-count 4 \
+    --vis-top-k 20 \
+    --metrics-plot-out reports/assets/evaluation/widerface_full_eval_metrics.png
 ```
+
+本次 GPU 全量训练已经完成，数据集规模如下：
+
+| split | images | faces |
+| --- | ---: | ---: |
+| train | 12,337 | 153,352 |
+| val | 3,079 | 38,042 |
+
+训练输出：
+
+| 指标 | 数值 |
+| --- | ---: |
+| checkpoint | `work_dirs/ssd300_widerface_full_gpu/epoch_24.pth` |
+| logged train steps | 720 |
+| first loss | 16.0925 |
+| last loss | 2.5795 |
+| min loss | 2.1986 |
+| MMDetection val mAP | 0.39098 |
+| MMDetection val AP50 | 0.39100 |
+
+![Full training loss](assets/training/full_loss_curve.png)
+
+完整验证集自定义评估结果：
+
+| 指标 | 数值 |
+| --- | ---: |
+| images | 3,079 |
+| GT faces | 38,042 |
+| TP / FP / FN | 16,778 / 380,906 / 21,264 |
+| precision | 0.04219 |
+| recall | 0.44104 |
+| AP50 | 0.36889 |
+
+![Full evaluation metrics](assets/evaluation/widerface_full_eval_metrics.png)
+
+全量 checkpoint 生成的检测结果示例：
+
+![WIDER FACE full detection 1](assets/detection/detection_00_0_Parade_Parade_0_102.jpg)
+
+![WIDER FACE full detection 2](assets/detection/detection_01_0_Parade_Parade_0_12.jpg)
+
+![WIDER FACE full detection 3](assets/detection/detection_02_0_Parade_Parade_0_120.jpg)
+
+![WIDER FACE full detection 4](assets/detection/detection_03_0_Parade_Parade_0_125.jpg)

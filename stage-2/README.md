@@ -31,12 +31,26 @@ python code/prepare/stage2_task3_2_prepare_widerface.py \
 
 Docker 命令从 `CV project/` 项目根目录运行，stage-2 任务通过 `-w /workspace/stage-2` 指定工作目录。
 
+根目录保留两套 Docker 环境：
+
+- `docker/Dockerfile` / `bytedance-cv:project`：CPU/Mac 友好的 smoke 环境，用于快速验证链路。
+- `docker/Dockerfile.gpu` / `bytedance-cv:gpu`：NVIDIA GPU 环境，用于 CUDA 加速的完整 WIDER FACE 训练。
+
 构建 Docker 环境：
 
 ```bash
 cd "/Users/aaron/Documents/字节实习/task/CV project"
 docker build --platform linux/amd64 -t bytedance-cv:project -f docker/Dockerfile .
 ```
+
+构建并验证 NVIDIA GPU 环境：
+
+```bash
+docker compose build stage2-gpu
+docker compose run --rm stage2-gpu python /workspace/docker/verify_environment.py
+```
+
+GPU 验证输出中 `cuda_available` 应为 `True`。
 
 Smoke 训练：
 
@@ -83,16 +97,36 @@ docker run --platform linux/amd64 --rm \
 - `input_XX_<image_id>.jpg` 与 `detection_XX_<image_id>.jpg` 一一对应，检测图是在同一张 input 原图上叠加框生成。
 - 检测图中橙色框为 WIDER FACE GT 标注，绿色框为 smoke 模型预测框；绿色框质量差是 1 epoch 短训和随机初始化导致的预期现象。
 
-全量训练入口：
+GPU 全量训练入口：
 
 ```bash
-docker run --platform linux/amd64 --rm \
-  -v "$PWD":/workspace \
-  -w /workspace/stage-2 \
-  bytedance-cv:project \
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
   python code/train/stage2_task3_2_run_mmdet.py train \
-    --config configs/mmdet/ssd300_widerface_full.py \
-    --work-dir work_dirs/ssd300_widerface_full
+    --config configs/mmdet/ssd300_widerface_full_gpu.py \
+    --work-dir work_dirs/ssd300_widerface_full_gpu \
+    --summary-out reports/summaries/widerface_full_train_summary.json \
+    --loss-plot-out reports/assets/training/full_loss_curve.png
+```
+
+GPU 全量评估与检测可视化：
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/evaluate/stage2_task3_3_evaluate_widerface.py \
+    --config configs/mmdet/ssd300_widerface_full_gpu.py \
+    --checkpoint work_dirs/ssd300_widerface_full_gpu/epoch_24.pth \
+    --data-root data/WIDERFace \
+    --ann-file val.txt \
+    --split val \
+    --input-dir reports/assets/inputs/wider_val \
+    --out-dir reports/assets/detection \
+    --summary-out reports/summaries/widerface_full_eval_summary.json \
+    --device cuda:0 \
+    --score-thr 0.05 \
+    --iou-thr 0.5 \
+    --visualize-count 4 \
+    --vis-top-k 20 \
+    --metrics-plot-out reports/assets/evaluation/widerface_full_eval_metrics.png
 ```
 
 ## 报告入口

@@ -1,0 +1,16 @@
+{
+  "work_dir": "/workspace/stage-2/work_dirs/ssd300_widerface_full_gpu",
+  "latest_checkpoint": "/workspace/stage-2/work_dirs/ssd300_widerface_full_gpu/epoch_24.pth",
+  "num_logged_train_steps": 720,
+  "first_loss": 16.092507629394532,
+  "last_loss": 2.579511024951935,
+  "min_loss": 2.198595881462097,
+  "validation": {
+    "pascal_voc/mAP": 0.3909795880317688,
+    "pascal_voc/AP50": 0.391,
+    "data_time": 0.0029274751613666485,
+    "time": 0.023593010376026104,
+    "step": 24
+  },
+  "loss_curve": "reports/assets/training/full_loss_curve.png"
+}
