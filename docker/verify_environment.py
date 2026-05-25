@@ -38,6 +38,11 @@ def main() -> None:
     print("mmengine", mmengine.__version__)
     print("mmcv", mmcv.__version__)
     print("mmdet", mmdet.__version__)
+    try:
+        import mmpose
+    except ImportError:
+        mmpose = None
+    print("mmpose", mmpose.__version__ if mmpose else "not installed")
     print("cuda_available", torch.cuda.is_available())
     print("mps_available", hasattr(torch.backends, "mps") and torch.backends.mps.is_available())
 
@@ -55,6 +60,11 @@ def main() -> None:
         cfg = Config.fromfile(stage2_config)
         assert cfg.model.bbox_head.num_classes == 1
         print("stage2_config", stage2_config)
+    task4_config = Path("stage-2/configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu.py")
+    if task4_config.exists():
+        cfg = Config.fromfile(task4_config)
+        assert cfg.model.head.out_channels == 68
+        print("stage2_task4_config", task4_config)
     print("unified docker environment ok")
 
 

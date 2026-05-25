@@ -1,0 +1,18 @@
+{
+  "config": "configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu.py",
+  "work_dir": "/workspace/stage-2/work_dirs/task4/hrnetv2_w18_300w_full",
+  "best_checkpoint": "/workspace/stage-2/work_dirs/task4/hrnetv2_w18_300w_full/best.pth",
+  "num_logged_train_steps": 240,
+  "first_loss": 0.0018123617977835239,
+  "last_loss": 0.00031093042984139176,
+  "min_loss": 0.0003049451834522188,
+  "last_epoch": 60,
+  "best_logged_nme": 0.034204535629648945,
+  "last_validation": {
+    "NME": 0.03435457800043888,
+    "data_time": 0.054518388665240745,
+    "time": 0.5023832424827244,
+    "step": 60
+  },
+  "loss_curve": "reports/task4/assets/training/300w_full_loss_curve.png"
+}

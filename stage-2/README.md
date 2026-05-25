@@ -133,3 +133,70 @@ docker compose run --rm -w /workspace/stage-2 stage2-gpu \
 
 - `reports/task3_1_detection_algorithms.md`
 - `reports/stage2_task3_face_detection_training_report.md`
+
+## Stage2 Task 4.x
+
+Task 4.x deliverables are isolated under `reports/task4/` and do not overwrite the task 3.x WIDER FACE outputs.
+
+- Task 4.1 report: `reports/task4/task4_1_landmark_algorithms.md`
+- Task 4.x report: `reports/task4/stage2_task4_landmark_alignment_report.md`
+- Task 4.x code: `code/task4/`
+- Task 4.x config: `configs/task4_mmpose/`
+- 8GB fallback config: `configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu_bs16.py`
+- Task 4.x data: `data/task4_300w/`
+- Task 4.x work dirs: `work_dirs/task4/`
+
+Prepare 300W:
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task4/stage2_task4_2_prepare_300w.py \
+    --download \
+    --data-dir data/task4_300w \
+    --report-dir reports/task4
+```
+
+The prepare script accepts either the official multipart archive or an unpacked
+Kaggle `ibug_300W_large_face_landmark_dataset` directory placed under
+`data/task4_300w/raw/`. The Kaggle package does not include the official
+`Test/` images, so training and valid/common/challenge evaluation can run while
+the official test split is recorded as skipped.
+
+Train HRNetv2-W18:
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task4/stage2_task4_run_mmpose.py train \
+    --config configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu.py \
+    --work-dir work_dirs/task4/hrnetv2_w18_300w_full \
+    --summary-out reports/task4/summaries/300w_full_train_summary.json \
+    --loss-plot-out reports/task4/assets/training/300w_full_loss_curve.png \
+    --device cuda:0
+```
+
+If the 8GB GPU runs out of memory with batch size 32, rerun the same command with
+`--config configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu_bs16.py`; that
+fallback uses batch size 16 and Adam lr `6.25e-5` while keeping full 300W data
+and 60 epochs.
+
+Evaluate and align:
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task4/stage2_task4_run_mmpose.py test \
+    --config configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu.py \
+    --checkpoint work_dirs/task4/hrnetv2_w18_300w_full/best.pth \
+    --summary-out reports/task4/summaries/300w_full_eval_summary.json \
+    --metrics-plot-out reports/task4/assets/evaluation/300w_nme_metrics.png \
+    --device cuda:0
+
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task4/stage2_task4_3_align_faces.py \
+    --config configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu.py \
+    --checkpoint work_dirs/task4/hrnetv2_w18_300w_full/best.pth \
+    --data-dir data/task4_300w/mmpose/300w \
+    --out-dir reports/task4/assets/alignment \
+    --summary-out reports/task4/summaries/300w_alignment_summary.json \
+    --visualize-count 8 \
+    --device cuda:0
+```

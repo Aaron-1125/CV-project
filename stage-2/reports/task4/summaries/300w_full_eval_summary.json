@@ -1,0 +1,32 @@
+{
+  "config": "configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu.py",
+  "checkpoint": "work_dirs/task4/hrnetv2_w18_300w_full/best.pth",
+  "metrics": {
+    "valid": {
+      "NME": 0.034204535629648945
+    },
+    "common": {
+      "NME": 0.029078634460151107
+    },
+    "challenge": {
+      "NME": 0.055240729171985636
+    },
+    "full": {
+      "NME": 0.034204535629648945
+    },
+    "test": {
+      "skipped": true,
+      "ann_file": "annotations/face_landmarks_300w_test.json",
+      "missing_images": 600,
+      "reason": "Official 300W Test/ images are not present in the prepared data root."
+    }
+  },
+  "nme": {
+    "valid": 0.034204535629648945,
+    "common": 0.029078634460151107,
+    "challenge": 0.055240729171985636,
+    "full": 0.034204535629648945,
+    "test": null
+  },
+  "metrics_plot": "reports/task4/assets/evaluation/300w_nme_metrics.png"
+}

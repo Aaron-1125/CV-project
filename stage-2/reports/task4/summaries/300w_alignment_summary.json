@@ -1,0 +1,168 @@
+{
+  "config": "configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu.py",
+  "checkpoint": "work_dirs/task4/hrnetv2_w18_300w_full/best.pth",
+  "data_dir": "data/task4_300w/mmpose/300w",
+  "ann_file": "annotations/face_landmarks_300w_valid.json",
+  "records": [
+    {
+      "image": "data/task4_300w/mmpose/300w/images/lfpw/testset/image_0208.png",
+      "landmark_overlay": "reports/task4/assets/alignment/00_lfpw_testset_image_0208_landmarks.jpg",
+      "aligned_face": "reports/task4/assets/alignment/00_lfpw_testset_image_0208_aligned.jpg",
+      "before_after": "reports/task4/assets/alignment/00_lfpw_testset_image_0208_before_after.jpg",
+      "num_keypoints": 68,
+      "mean_keypoint_score": 0.7794241905212402,
+      "affine_matrix": [
+        [
+          0.6159676909446716,
+          -0.0318753644824028,
+          -29.088916778564453
+        ],
+        [
+          0.0318753644824028,
+          0.6159676909446716,
+          -38.95811462402344
+        ]
+      ]
+    },
+    {
+      "image": "data/task4_300w/mmpose/300w/images/helen/testset/3045921676_1.jpg",
+      "landmark_overlay": "reports/task4/assets/alignment/01_helen_testset_3045921676_1_landmarks.jpg",
+      "aligned_face": "reports/task4/assets/alignment/01_helen_testset_3045921676_1_aligned.jpg",
+      "before_after": "reports/task4/assets/alignment/01_helen_testset_3045921676_1_before_after.jpg",
+      "num_keypoints": 68,
+      "mean_keypoint_score": 0.7886669635772705,
+      "affine_matrix": [
+        [
+          0.2022634595632553,
+          -0.07456095516681671,
+          -1.3867719173431396
+        ],
+        [
+          0.07456095516681671,
+          0.2022634595632553,
+          -34.32810974121094
+        ]
+      ]
+    },
+    {
+      "image": "data/task4_300w/mmpose/300w/images/helen/testset/2984236559_1.jpg",
+      "landmark_overlay": "reports/task4/assets/alignment/02_helen_testset_2984236559_1_landmarks.jpg",
+      "aligned_face": "reports/task4/assets/alignment/02_helen_testset_2984236559_1_aligned.jpg",
+      "before_after": "reports/task4/assets/alignment/02_helen_testset_2984236559_1_before_after.jpg",
+      "num_keypoints": 68,
+      "mean_keypoint_score": 0.7173076868057251,
+      "affine_matrix": [
+        [
+          0.2739143669605255,
+          0.0034578675404191017,
+          -13.524714469909668
+        ],
+        [
+          -0.0034578675404191017,
+          0.2739143669605255,
+          -32.47834396362305
+        ]
+      ]
+    },
+    {
+      "image": "data/task4_300w/mmpose/300w/images/lfpw/testset/image_0205.png",
+      "landmark_overlay": "reports/task4/assets/alignment/03_lfpw_testset_image_0205_landmarks.jpg",
+      "aligned_face": "reports/task4/assets/alignment/03_lfpw_testset_image_0205_aligned.jpg",
+      "before_after": "reports/task4/assets/alignment/03_lfpw_testset_image_0205_before_after.jpg",
+      "num_keypoints": 68,
+      "mean_keypoint_score": 0.7850181460380554,
+      "affine_matrix": [
+        [
+          0.6830434203147888,
+          0.07527047395706177,
+          -40.09943771362305
+        ],
+        [
+          -0.07527047395706177,
+          0.6830434203147888,
+          -14.670141220092773
+        ]
+      ]
+    },
+    {
+      "image": "data/task4_300w/mmpose/300w/images/ibug/image_103.jpg",
+      "landmark_overlay": "reports/task4/assets/alignment/04_ibug_image_103_landmarks.jpg",
+      "aligned_face": "reports/task4/assets/alignment/04_ibug_image_103_aligned.jpg",
+      "before_after": "reports/task4/assets/alignment/04_ibug_image_103_before_after.jpg",
+      "num_keypoints": 68,
+      "mean_keypoint_score": 0.7387750744819641,
+      "affine_matrix": [
+        [
+          0.32986053824424744,
+          -0.01031468901783228,
+          -176.6168212890625
+        ],
+        [
+          0.01031468901783228,
+          0.32986053824424744,
+          -130.8754119873047
+        ]
+      ]
+    },
+    {
+      "image": "data/task4_300w/mmpose/300w/images/helen/testset/3155317888_1.jpg",
+      "landmark_overlay": "reports/task4/assets/alignment/05_helen_testset_3155317888_1_landmarks.jpg",
+      "aligned_face": "reports/task4/assets/alignment/05_helen_testset_3155317888_1_aligned.jpg",
+      "before_after": "reports/task4/assets/alignment/05_helen_testset_3155317888_1_before_after.jpg",
+      "num_keypoints": 68,
+      "mean_keypoint_score": 0.7838174700737,
+      "affine_matrix": [
+        [
+          0.1394338458776474,
+          -0.0020451620221138,
+          -66.50194549560547
+        ],
+        [
+          0.0020451620221138,
+          0.1394338458776474,
+          -42.96382522583008
+        ]
+      ]
+    },
+    {
+      "image": "data/task4_300w/mmpose/300w/images/helen/testset/3261640996_1.jpg",
+      "landmark_overlay": "reports/task4/assets/alignment/06_helen_testset_3261640996_1_landmarks.jpg",
+      "aligned_face": "reports/task4/assets/alignment/06_helen_testset_3261640996_1_aligned.jpg",
+      "before_after": "reports/task4/assets/alignment/06_helen_testset_3261640996_1_before_after.jpg",
+      "num_keypoints": 68,
+      "mean_keypoint_score": 0.8094218373298645,
+      "affine_matrix": [
+        [
+          0.1505892127752304,
+          -0.021181361749768257,
+          -55.80928039550781
+        ],
+        [
+          0.021181361749768257,
+          0.1505892127752304,
+          -64.53925323486328
+        ]
+      ]
+    },
+    {
+      "image": "data/task4_300w/mmpose/300w/images/ibug/image_049_1.jpg",
+      "landmark_overlay": "reports/task4/assets/alignment/07_ibug_image_049_1_landmarks.jpg",
+      "aligned_face": "reports/task4/assets/alignment/07_ibug_image_049_1_aligned.jpg",
+      "before_after": "reports/task4/assets/alignment/07_ibug_image_049_1_before_after.jpg",
+      "num_keypoints": 68,
+      "mean_keypoint_score": 0.7452763319015503,
+      "affine_matrix": [
+        [
+          0.4324197769165039,
+          -0.10686462372541428,
+          -6.878979682922363
+        ],
+        [
+          0.10686462372541428,
+          0.4324197769165039,
+          -33.42687225341797
+        ]
+      ]
+    }
+  ]
+}

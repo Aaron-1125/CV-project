@@ -1,0 +1,51 @@
+{
+  "data_root": "data/task4_300w/mmpose/300w",
+  "raw_dir": "data/task4_300w/raw",
+  "annotation_counts": {
+    "face_landmarks_300w_train.json": {
+      "images": 3148,
+      "annotations": 3148,
+      "expected_images": 3148,
+      "missing_images": 0,
+      "ok": true
+    },
+    "face_landmarks_300w_valid.json": {
+      "images": 689,
+      "annotations": 689,
+      "expected_images": 689,
+      "missing_images": 0,
+      "ok": true
+    },
+    "face_landmarks_300w_valid_common.json": {
+      "images": 554,
+      "annotations": 554,
+      "expected_images": 554,
+      "missing_images": 0,
+      "ok": true
+    },
+    "face_landmarks_300w_valid_challenge.json": {
+      "images": 135,
+      "annotations": 135,
+      "expected_images": 135,
+      "missing_images": 0,
+      "ok": true
+    },
+    "face_landmarks_300w_test.json": {
+      "images": 600,
+      "annotations": 600,
+      "expected_images": 600,
+      "missing_images": 600,
+      "ok": false
+    }
+  },
+  "image_dirs": {
+    "afw": "/workspace/stage-2/data/task4_300w/raw/ibug_300W_large_face_landmark_dataset/afw",
+    "helen": "/workspace/stage-2/data/task4_300w/raw/ibug_300W_large_face_landmark_dataset/helen",
+    "ibug": "/workspace/stage-2/data/task4_300w/raw/ibug_300W_large_face_landmark_dataset/ibug",
+    "lfpw": "/workspace/stage-2/data/task4_300w/raw/ibug_300W_large_face_landmark_dataset/lfpw",
+    "Test": ""
+  },
+  "ready": true,
+  "all_splits_ready": false,
+  "test_split_note": "The Kaggle ibug_300W_large_face_landmark_dataset commonly omits the official Test/ images. Training and validation are ready when ready=true; official test NME needs Test/ images."
+}
