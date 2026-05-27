@@ -200,3 +200,65 @@ docker compose run --rm -w /workspace/stage-2 stage2-gpu \
     --visualize-count 8 \
     --device cuda:0
 ```
+
+## Stage2 Task 5.x
+
+Task 5.x deliverables are isolated under `reports/task5/` and do not overwrite
+task 3.x detection outputs or task 4.x landmark/alignment outputs.
+
+- Task 5.1 report: `reports/task5/task5_1_face_recognition_algorithms.md`
+- Task 5.x report: `reports/task5/stage2_task5_arcface_training_report.md`
+- Task 5.x code: `code/task5/`
+- Task 5.x config: `configs/task5_arcface/`
+- Task 5.x data: `data/task5_ms1mv3/` and `data/task5_lfw/`
+- Task 5.x work dirs: `work_dirs/task5/`
+
+Prepare MS1MV3 subset:
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task5/stage2_task5_2_prepare_ms1mv3.py \
+    --dataset gaunernst/ms1mv3-wds-gz \
+    --data-dir data/task5_ms1mv3 \
+    --report-dir reports/task5 \
+    --target-hours 7 \
+    --mode subset
+```
+
+Prepare LFW:
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task5/stage2_task5_3_prepare_lfw.py \
+    --data-dir data/task5_lfw \
+    --report-dir reports/task5
+```
+
+Train ResNet50/IResNet50 + ArcFace:
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task5/stage2_task5_run_arcface.py train \
+    --config configs/task5_arcface/resnet50_arcface_ms1mv3_subset_gpu.py \
+    --work-dir work_dirs/task5/resnet50_arcface_ms1mv3 \
+    --summary-out reports/task5/summaries/ms1mv3_train_summary.json \
+    --loss-plot-out reports/task5/assets/training/ms1mv3_loss_acc_curve.png \
+    --device cuda:0
+```
+
+Evaluate LFW:
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task5/stage2_task5_run_arcface.py eval-lfw \
+    --config configs/task5_arcface/resnet50_arcface_ms1mv3_subset_gpu.py \
+    --checkpoint work_dirs/task5/resnet50_arcface_ms1mv3/best.pth \
+    --lfw-dir data/task5_lfw \
+    --summary-out reports/task5/summaries/lfw_eval_summary.json \
+    --roc-plot-out reports/task5/assets/evaluation/lfw_roc_curve.png \
+    --device cuda:0
+```
+
+If the first subset is too sparse for the 98.5% LFW target, use the dense
+fallback config `configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py`
+with `data/task5_ms1mv3_dense/` and `work_dirs/task5/resnet50_arcface_ms1mv3_dense/`.

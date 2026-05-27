@@ -17,8 +17,13 @@ dependencies:
       - torchaudio==2.0.1
       - opencv-python
       - gdown
+      - datasets
+      - huggingface_hub>=0.19,<1.0
       - mmengine>=0.7.1,<1.0.0
       - mmdet==3.3.0
       - mmpose==1.3.2
+      - pyarrow
+      - torchmetrics
+      - webdataset
       - xtcocotools>=1.12
       - reportlab

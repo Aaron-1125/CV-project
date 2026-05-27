@@ -18,10 +18,13 @@ def main() -> None:
     import mmengine
     import numpy as np
     import onnxruntime
+    import pyarrow
     import reportlab
     import torch
+    import torchmetrics
     import torchvision
     import transformers
+    import webdataset
     from mmengine.config import Config
 
     print("python", sys.version.split()[0])
@@ -33,7 +36,10 @@ def main() -> None:
     print("insightface", getattr(insightface, "__version__", "unknown"))
     print("datasets", datasets.__version__)
     print("huggingface_hub", huggingface_hub.__version__)
+    print("pyarrow", pyarrow.__version__)
+    print("torchmetrics", torchmetrics.__version__)
     print("transformers", transformers.__version__)
+    print("webdataset", webdataset.__version__)
     print("reportlab", reportlab.Version)
     print("mmengine", mmengine.__version__)
     print("mmcv", mmcv.__version__)
@@ -65,6 +71,12 @@ def main() -> None:
         cfg = Config.fromfile(task4_config)
         assert cfg.model.head.out_channels == 68
         print("stage2_task4_config", task4_config)
+    task5_config = Path("stage-2/configs/task5_arcface/resnet50_arcface_ms1mv3_subset_gpu.py")
+    if task5_config.exists():
+        cfg = Config.fromfile(task5_config)
+        assert cfg.model.embedding_size == 512
+        assert cfg.loss.margin == 0.5
+        print("stage2_task5_config", task5_config)
     print("unified docker environment ok")
 
 

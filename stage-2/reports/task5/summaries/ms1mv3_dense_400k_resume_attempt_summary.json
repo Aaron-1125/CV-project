@@ -1,0 +1,24 @@
+{
+  "task": "stage2_task5_dense_400k_resume_attempt",
+  "config": "configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py",
+  "work_dir": "work_dirs/task5/resnet50_arcface_ms1mv3_dense",
+  "train_index": "data/task5_ms1mv3_dense/index/train_subset.csv",
+  "dataset_images": 400000,
+  "dataset_identities": 10000,
+  "resume_from": "work_dirs/task5/resnet50_arcface_ms1mv3_dense/last.pth",
+  "start_epoch": 14,
+  "completed_new_epochs": 0,
+  "new_checkpoint_written": false,
+  "observed_progress": {
+    "epoch": 14,
+    "approx_completed_steps": 370,
+    "total_steps": 3125,
+    "approx_epoch_progress": 0.1184
+  },
+  "previous_best_checkpoint": "work_dirs/task5/resnet50_arcface_ms1mv3_dense/best.pth",
+  "previous_best_lfw_accuracy": 0.779,
+  "target_lfw_accuracy": 0.985,
+  "target_met": false,
+  "stopped_reason": "The 400k resume run was stopped after confirming that the local RTX 4060 8GB throughput would not finish a useful continuation in the remaining practical window. The user accepted normal delivery if the 400k attempt did not reach the 98.5% LFW target.",
+  "status": "stopped_before_new_checkpoint"
+}

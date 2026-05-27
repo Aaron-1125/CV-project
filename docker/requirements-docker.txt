@@ -16,5 +16,8 @@ ipykernel
 gdown
 datasets
 huggingface_hub>=0.19,<1.0
+pyarrow
+torchmetrics
 transformers==4.37.2
+webdataset
 reportlab
