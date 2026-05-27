@@ -1,8 +1,8 @@
-"""Dense MS1MV3 subset config for Stage2 task 5.x.
+"""Dense MS1MV3 subset config for Stage2 task 5.x on AutoDL A800.
 
-This fallback is used when the first time-budgeted subset has too few samples
-per identity. It keeps fewer identities and more images per identity, which is
-more suitable for ArcFace convergence and LFW verification.
+This config is tuned for a single A800/A100 80GB cloud GPU and the 800k dense
+MS1MV3 subset. It keeps enough identities and per-identity samples for a serious
+LFW 98.5% target attempt while preserving the same report/work-dir layout.
 """
 
 task_name = "stage2_task5_resnet50_arcface_ms1mv3_dense"
@@ -14,7 +14,9 @@ data = dict(
     identity_map="data/task5_ms1mv3_dense/index/identity_map.json",
     lfw_root="data/task5_lfw",
     image_size=112,
-    num_workers=4,
+    num_workers=12,
+    persistent_workers=True,
+    prefetch_factor=4,
 )
 
 model = dict(
@@ -31,18 +33,27 @@ loss = dict(
 
 train = dict(
     epochs=60,
-    batch_size=128,
-    effective_batch_size=256,
+    batch_size=512,
+    effective_batch_size=512,
     optimizer="sgd",
     lr=0.1,
     momentum=0.9,
     weight_decay=5e-4,
     amp=True,
-    log_interval=50,
+    cudnn_benchmark=True,
+    log_interval=25,
     lfw_eval_interval=1,
     target_lfw_accuracy=0.985,
     stop_on_target=True,
-    save_every_epoch=True,
-    max_hours=7.0,
+    save_every_epoch=False,
+    max_hours=36.0,
     resume=True,
+)
+
+autodl = dict(
+    recommended_gpu="A800/A100 80GB",
+    recommended_images=800000,
+    recommended_identities=20000,
+    recommended_images_per_identity_cap=80,
+    expected_runtime_hours="12-28",
 )

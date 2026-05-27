@@ -210,55 +210,61 @@ task 3.x detection outputs or task 4.x landmark/alignment outputs.
 - Task 5.x report: `reports/task5/stage2_task5_arcface_training_report.md`
 - Task 5.x code: `code/task5/`
 - Task 5.x config: `configs/task5_arcface/`
-- Task 5.x data: `data/task5_ms1mv3/` and `data/task5_lfw/`
+- Task 5.x data: `data/task5_ms1mv3_dense/` and `data/task5_lfw/`
 - Task 5.x work dirs: `work_dirs/task5/`
 
-Prepare MS1MV3 subset:
+AutoDL A800 80GB recommendation: run the dense 800k MS1MV3 subset directly.
+Use at least a 150-200 GB data disk. The config
+`configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py` is tuned for one
+A800/A100 80GB GPU with batch size 512, 12 workers, AMP, 60 epochs, and a
+36-hour training budget. It saves `best.pth` and `last.pth` only to avoid
+filling the cloud data disk with per-epoch checkpoints.
+
+Prepare MS1MV3 dense 800k:
 
 ```bash
-docker compose run --rm -w /workspace/stage-2 stage2-gpu \
-  python code/task5/stage2_task5_2_prepare_ms1mv3.py \
-    --dataset gaunernst/ms1mv3-wds-gz \
-    --data-dir data/task5_ms1mv3 \
-    --report-dir reports/task5 \
-    --target-hours 7 \
-    --mode subset
+python code/task5/stage2_task5_2_prepare_ms1mv3.py \
+  --dataset gaunernst/ms1mv3-wds-gz \
+  --data-dir data/task5_ms1mv3_dense \
+  --report-dir reports/task5 \
+  --mode subset \
+  --max-images 800000 \
+  --max-identities 20000 \
+  --images-per-identity-cap 80 \
+  --output-tag ms1mv3_dense \
+  --max-stream-retries 20
 ```
 
 Prepare LFW:
 
 ```bash
-docker compose run --rm -w /workspace/stage-2 stage2-gpu \
-  python code/task5/stage2_task5_3_prepare_lfw.py \
-    --data-dir data/task5_lfw \
-    --report-dir reports/task5
+python code/task5/stage2_task5_3_prepare_lfw.py \
+  --data-dir data/task5_lfw \
+  --report-dir reports/task5
 ```
 
 Train ResNet50/IResNet50 + ArcFace:
 
 ```bash
-docker compose run --rm -w /workspace/stage-2 stage2-gpu \
-  python code/task5/stage2_task5_run_arcface.py train \
-    --config configs/task5_arcface/resnet50_arcface_ms1mv3_subset_gpu.py \
-    --work-dir work_dirs/task5/resnet50_arcface_ms1mv3 \
-    --summary-out reports/task5/summaries/ms1mv3_train_summary.json \
-    --loss-plot-out reports/task5/assets/training/ms1mv3_loss_acc_curve.png \
-    --device cuda:0
+python code/task5/stage2_task5_run_arcface.py train \
+  --config configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py \
+  --work-dir work_dirs/task5/resnet50_arcface_ms1mv3_dense \
+  --summary-out reports/task5/summaries/ms1mv3_dense_train_summary.json \
+  --loss-plot-out reports/task5/assets/training/ms1mv3_dense_loss_acc_curve.png \
+  --device cuda:0
 ```
 
 Evaluate LFW:
 
 ```bash
-docker compose run --rm -w /workspace/stage-2 stage2-gpu \
-  python code/task5/stage2_task5_run_arcface.py eval-lfw \
-    --config configs/task5_arcface/resnet50_arcface_ms1mv3_subset_gpu.py \
-    --checkpoint work_dirs/task5/resnet50_arcface_ms1mv3/best.pth \
-    --lfw-dir data/task5_lfw \
-    --summary-out reports/task5/summaries/lfw_eval_summary.json \
-    --roc-plot-out reports/task5/assets/evaluation/lfw_roc_curve.png \
-    --device cuda:0
+python code/task5/stage2_task5_run_arcface.py eval-lfw \
+  --config configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py \
+  --checkpoint work_dirs/task5/resnet50_arcface_ms1mv3_dense/best.pth \
+  --lfw-dir data/task5_lfw \
+  --summary-out reports/task5/summaries/lfw_eval_summary.json \
+  --roc-plot-out reports/task5/assets/evaluation/lfw_roc_curve.png \
+  --device cuda:0
 ```
 
-If the first subset is too sparse for the 98.5% LFW target, use the dense
-fallback config `configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py`
-with `data/task5_ms1mv3_dense/` and `work_dirs/task5/resnet50_arcface_ms1mv3_dense/`.
+If 800k still misses the 98.5% LFW target, rerun preparation with 1M+ images
+and resume the same work dir.

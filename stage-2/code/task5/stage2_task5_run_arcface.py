@@ -90,7 +90,8 @@ class ArcFaceImageDataset(Dataset):
 
     def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         row = self.rows[idx]
-        image = Image.open(row["path"]).convert("RGB")
+        with Image.open(row["path"]) as handle:
+            image = handle.convert("RGB")
         return self.transform(image), torch.tensor(int(row["label"]), dtype=torch.long)
 
 
@@ -110,7 +111,8 @@ class LFWImageDataset(Dataset):
 
     def __getitem__(self, idx: int) -> tuple[torch.Tensor, str]:
         path = self.paths[idx]
-        image = Image.open(path).convert("RGB")
+        with Image.open(path) as handle:
+            image = handle.convert("RGB")
         return self.transform(image), path
 
 
@@ -260,15 +262,27 @@ def is_oom(exc: RuntimeError) -> bool:
     return "out of memory" in message or "cuda error: out of memory" in message
 
 
+def dataloader_kwargs(cfg: Any) -> dict[str, Any]:
+    num_workers = int(cfg.data.num_workers)
+    kwargs: dict[str, Any] = {
+        "num_workers": num_workers,
+        "pin_memory": True,
+    }
+    if num_workers > 0:
+        kwargs["persistent_workers"] = bool(cfg.data.get("persistent_workers", False))
+        if cfg.data.get("prefetch_factor", None) is not None:
+            kwargs["prefetch_factor"] = int(cfg.data.prefetch_factor)
+    return kwargs
+
+
 def build_train_loader(rows: list[dict[str, Any]], cfg: Any, batch_size: int) -> DataLoader:
     dataset = ArcFaceImageDataset(rows, cfg.data.image_size, train=True)
     return DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=int(cfg.data.num_workers),
-        pin_memory=True,
         drop_last=True,
+        **dataloader_kwargs(cfg),
     )
 
 
@@ -407,8 +421,7 @@ def compute_lfw_embeddings(
         dataset,
         batch_size=batch_size,
         shuffle=False,
-        num_workers=int(cfg.data.num_workers),
-        pin_memory=True,
+        **dataloader_kwargs(cfg),
     )
     backbone.eval()
     embeddings: dict[str, np.ndarray] = {}
@@ -571,6 +584,8 @@ def run_train(args: argparse.Namespace) -> None:
     if args.device == "cpu":
         os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
     device = torch.device(args.device if torch.cuda.is_available() or args.device == "cpu" else "cpu")
+    if device.type == "cuda":
+        torch.backends.cudnn.benchmark = bool(cfg.train.get("cudnn_benchmark", True))
     train_rows = load_train_rows(Path(cfg.data.train_index))
     num_classes = max(int(row["label"]) for row in train_rows) + 1
     work_dir = Path(args.work_dir)
