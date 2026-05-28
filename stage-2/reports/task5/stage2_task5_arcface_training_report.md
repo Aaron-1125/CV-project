@@ -34,6 +34,16 @@ The training loss dropped to a very low value while LFW stayed far below the
 custom subset/pipeline, not merely an unfinished epoch count. The checkpoint is
 kept as a failed baseline and is not treated as the final task result.
 
+![Cloud 800k training curve, split into loss, closed-set top-1, and LFW accuracy panels.](assets/training/ms1mv3_dense_loss_acc_curve.png)
+
+LFW accuracy starts near 0.75-0.80 after epoch 1 because one epoch already means
+a full pass over 800k aligned face images, and LFW is an aligned 1:1 verification
+protocol with a threshold selected on each training fold. Later oscillation near
+0.8 shows that the model keeps improving the closed-set training classification
+objective while the open-set embedding quality does not improve. In other words,
+the plateau is mainly a data/pipeline/generalization issue, not simply "too few
+epochs" or "learning rate too low".
+
 ## Official InsightFace Route
 
 The new main route uses the official InsightFace ArcFace Torch implementation:
