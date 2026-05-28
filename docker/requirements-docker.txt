@@ -1,7 +1,7 @@
 cython
 mmengine>=0.7.1,<1.0.0
 mmdet==3.3.0
-numpy<2
+numpy<1.24
 pandas
 matplotlib
 scikit-learn
@@ -9,6 +9,9 @@ scipy
 pillow
 tqdm
 opencv-python
+easydict
+tensorboard
+onnx
 onnxruntime
 insightface
 jupyterlab
@@ -16,8 +19,11 @@ ipykernel
 gdown
 datasets
 huggingface_hub>=0.19,<1.0
+hf_transfer
+hf_xet
 pyarrow
 torchmetrics
 transformers==4.37.2
 webdataset
 reportlab
+mxnet==1.9.1; python_version < "3.10"

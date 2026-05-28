@@ -1,0 +1,207 @@
+{
+  "task": "Stage2 Task 6.3 ONNX export and inference",
+  "config": "configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py",
+  "source_checkpoint": "work_dirs/task6/source_arcface_8167/best.pth",
+  "checkpoint_epoch": 38,
+  "checkpoint_best_lfw_accuracy": 0.8166666666666667,
+  "onnx_model": "work_dirs/task6/onnx/arcface_iresnet50_8167.onnx",
+  "onnx_size_mb": 166.321608543396,
+  "opset": 17,
+  "providers": [
+    "CPUExecutionProvider"
+  ],
+  "full_lfw_protocol": true,
+  "max_pairs": null,
+  "pytorch_reference": {
+    "pairs": 6000,
+    "positive_pairs": 3000,
+    "negative_pairs": 3000,
+    "accuracy": 0.8168333333333333,
+    "accuracy_std": 0.023622611578269198,
+    "mean_threshold": 0.44800000000000006,
+    "roc_auc": 0.879144,
+    "folds": [
+      {
+        "fold": 0,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8190740740740741,
+        "test_accuracy": 0.7966666666666666
+      },
+      {
+        "fold": 1,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.817962962962963,
+        "test_accuracy": 0.8066666666666666
+      },
+      {
+        "fold": 2,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8183333333333334,
+        "test_accuracy": 0.8033333333333333
+      },
+      {
+        "fold": 3,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8196296296296296,
+        "test_accuracy": 0.7916666666666666
+      },
+      {
+        "fold": 4,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8151851851851852,
+        "test_accuracy": 0.8316666666666667
+      },
+      {
+        "fold": 5,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8157407407407408,
+        "test_accuracy": 0.8266666666666667
+      },
+      {
+        "fold": 6,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8114814814814815,
+        "test_accuracy": 0.865
+      },
+      {
+        "fold": 7,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.82,
+        "test_accuracy": 0.7883333333333333
+      },
+      {
+        "fold": 8,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8172222222222222,
+        "test_accuracy": 0.8133333333333334
+      },
+      {
+        "fold": 9,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8137037037037037,
+        "test_accuracy": 0.845
+      }
+    ],
+    "tpr_at_far": {
+      "tpr@far=0.001": 0.25833333333333336,
+      "tpr@far=0.01": 0.449,
+      "tpr@far=0.1": 0.7316666666666667
+    },
+    "score_mean_same": 0.5269196033477783,
+    "score_mean_different": 0.30315345525741577,
+    "embedding_speed": {
+      "images": 7701,
+      "elapsed_seconds": 492.1874354800002,
+      "latency_ms_per_image": 63.9121458875471,
+      "throughput_images_per_second": 15.646478241545697,
+      "batch_size": 256,
+      "device": "cpu"
+    },
+    "full_protocol": true
+  },
+  "onnx": {
+    "pairs": 6000,
+    "positive_pairs": 3000,
+    "negative_pairs": 3000,
+    "accuracy": 0.8168333333333333,
+    "accuracy_std": 0.023622611578269198,
+    "mean_threshold": 0.44800000000000006,
+    "roc_auc": 0.8791441666666667,
+    "folds": [
+      {
+        "fold": 0,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8190740740740741,
+        "test_accuracy": 0.7966666666666666
+      },
+      {
+        "fold": 1,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.817962962962963,
+        "test_accuracy": 0.8066666666666666
+      },
+      {
+        "fold": 2,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8183333333333334,
+        "test_accuracy": 0.8033333333333333
+      },
+      {
+        "fold": 3,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8196296296296296,
+        "test_accuracy": 0.7916666666666666
+      },
+      {
+        "fold": 4,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8151851851851852,
+        "test_accuracy": 0.8316666666666667
+      },
+      {
+        "fold": 5,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8157407407407408,
+        "test_accuracy": 0.8266666666666667
+      },
+      {
+        "fold": 6,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8114814814814815,
+        "test_accuracy": 0.865
+      },
+      {
+        "fold": 7,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.82,
+        "test_accuracy": 0.7883333333333333
+      },
+      {
+        "fold": 8,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8172222222222222,
+        "test_accuracy": 0.8133333333333334
+      },
+      {
+        "fold": 9,
+        "threshold": 0.44799999999999995,
+        "train_accuracy": 0.8137037037037037,
+        "test_accuracy": 0.845
+      }
+    ],
+    "tpr_at_far": {
+      "tpr@far=0.001": 0.25833333333333336,
+      "tpr@far=0.01": 0.449,
+      "tpr@far=0.1": 0.7316666666666667
+    },
+    "score_mean_same": 0.5269196033477783,
+    "score_mean_different": 0.30315345525741577,
+    "embedding_speed": {
+      "images": 7701,
+      "elapsed_seconds": 345.4672768540004,
+      "latency_ms_per_image": 44.86005412985331,
+      "throughput_images_per_second": 22.291546887245584,
+      "batch_size": 256,
+      "providers": [
+        "CPUExecutionProvider"
+      ]
+    },
+    "full_protocol": true
+  },
+  "consistency": {
+    "samples": 64.0,
+    "max_abs_diff": 5.550682544708252e-07,
+    "mean_abs_diff": 8.462201606107556e-08,
+    "mean_cosine": 1.0,
+    "min_cosine": 0.9999999403953552
+  },
+  "comparison": {
+    "accuracy_delta": 0.0,
+    "latency_speedup": 1.4247005967167363,
+    "size_ratio_to_checkpoint": 0.40465494645147515
+  },
+  "artifacts": {
+    "comparison_plot": "reports/task6/assets/evaluation/task6_onnx_comparison.png",
+    "onnx_roc_plot": "reports/task6/assets/evaluation/task6_onnx_lfw_roc.png"
+  }
+}

@@ -10,6 +10,11 @@ venv/
 outputs/
 data/
 checkpoints/
+stage-2/external/
+stage-2/reports/task5/logs/
+stage-2/reports/task5/*.tar.gz
+*.rec
+*.idx
 *.pth
 *.pt
 *.onnx

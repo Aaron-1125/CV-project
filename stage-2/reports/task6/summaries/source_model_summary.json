@@ -1,0 +1,24 @@
+{
+  "source": "Task5 first-version self-contained IResNet50 + ArcFace cloud run",
+  "cloud_archive": "stage-2\\reports\\task5\\task5_cloud_results_8167.tar.gz",
+  "checkpoint": "stage-2\\work_dirs\\task6\\source_arcface_8167\\best.pth",
+  "checkpoint_sha256": "6572f81a0516d3bf76212a51b7ff49ef62b9933ed08c19a504069c79addf03a6",
+  "checkpoint_size_mb": 411.0208215713501,
+  "source_lfw_accuracy": 0.8166666666666667,
+  "source_roc_auc": 0.8791463333333334,
+  "source_pairs": 6000,
+  "source_train_images": 800000,
+  "source_train_identities": 20000,
+  "source_epochs_completed": 60,
+  "source_best_lfw_accuracy": 0.8166666666666667,
+  "extracted": {
+    "work_dirs/task5/resnet50_arcface_ms1mv3_dense/best.pth": "stage-2\\work_dirs\\task6\\source_arcface_8167\\best.pth",
+    "work_dirs/task5/resnet50_arcface_ms1mv3_dense/last.pth": "stage-2\\work_dirs\\task6\\source_arcface_8167\\last.pth",
+    "reports/task5/summaries/lfw_eval_summary.json": "stage-2\\reports\\task6\\source_task5\\lfw_eval_summary_8167.json",
+    "reports/task5/summaries/ms1mv3_dense_train_summary.json": "stage-2\\reports\\task6\\source_task5\\ms1mv3_dense_train_summary_8167.json",
+    "reports/task5/assets/evaluation/lfw_roc_curve.png": "stage-2\\reports\\task6\\source_task5\\assets\\lfw_roc_curve.png",
+    "reports/task5/assets/evaluation/lfw_similarity_histogram.png": "stage-2\\reports\\task6\\source_task5\\assets\\lfw_similarity_histogram.png",
+    "reports/task5/assets/training/ms1mv3_dense_loss_acc_curve.png": "stage-2\\reports\\task6\\source_task5\\assets\\ms1mv3_dense_loss_acc_curve.png"
+  },
+  "note": "This copies only the first-version Task5 cloud checkpoint and summaries into Task6 paths; Task5 work_dirs are not overwritten."
+}

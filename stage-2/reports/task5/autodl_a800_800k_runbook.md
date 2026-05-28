@@ -1,19 +1,14 @@
-# AutoDL A800 800k Runbook
+# AutoDL A800 Official InsightFace Full MS1MV3 Runbook
 
-This runbook is for finishing Stage2 Task 5.x on one AutoDL A800/A100 80GB GPU.
-It keeps all artifacts under the Task5 paths:
-
-- data: `data/task5_ms1mv3_dense/`, `data/task5_lfw/`
-- work dir: `work_dirs/task5/resnet50_arcface_ms1mv3_dense/`
-- reports: `reports/task5/`
+This runbook replaces the earlier 800k JPEG subset path. It uses the official
+InsightFace ArcFace Torch training pipeline and full MS1MV3 RecordIO data.
 
 ## Instance
 
-Recommended AutoDL instance:
-
 - GPU: 1 x A800/A100 80GB
-- data disk: at least 150 GB, preferably 200 GB
-- image: PyTorch with CUDA and Python 3.10
+- data disk: at least 120 GB; 200 GB is safer for archives, logs, and outputs
+- Python: 3.8 is recommended because `mxnet==1.9.1` is needed by InsightFace
+  RecordIO and validation helpers
 
 ## Setup
 
@@ -23,20 +18,22 @@ git clone <your-repo-url> CV-project
 cd /root/autodl-tmp/CV-project
 
 pip install -U pip
-pip install mmengine numpy pandas matplotlib scikit-learn pillow tqdm \
-  opencv-python datasets huggingface_hub pyarrow torchmetrics webdataset
+pip install numpy==1.23.5 easydict tensorboard mxnet==1.9.1 \
+  mmengine pandas matplotlib scikit-learn scipy pillow tqdm opencv-python \
+  datasets huggingface_hub hf_transfer hf_xet pyarrow torchmetrics webdataset
 
 python - <<'PY'
-import torch, torchvision, mmengine, webdataset, pyarrow, torchmetrics, cv2
+import torch, mxnet, easydict
 print("cuda:", torch.cuda.is_available())
 print("gpu:", torch.cuda.get_device_name(0))
+print("mxnet:", mxnet.__version__)
 PY
 ```
 
 Do not reinstall `torch` or `torchvision` unless the AutoDL image is missing
-them; use the PyTorch build that comes with the CUDA image.
+them. Use the PyTorch build that matches the CUDA image.
 
-## Prepare Data
+## Data
 
 ```bash
 cd /root/autodl-tmp/CV-project/stage-2
@@ -45,52 +42,54 @@ python code/task5/stage2_task5_3_prepare_lfw.py \
   --data-dir data/task5_lfw \
   --report-dir reports/task5
 
-python code/task5/stage2_task5_2_prepare_ms1mv3.py \
-  --dataset gaunernst/ms1mv3-wds-gz \
-  --data-dir data/task5_ms1mv3_dense \
-  --report-dir reports/task5 \
-  --mode subset \
-  --max-images 800000 \
-  --max-identities 20000 \
-  --images-per-identity-cap 80 \
-  --output-tag ms1mv3_dense \
-  --max-stream-retries 20
+python code/task5/stage2_task5_4_prepare_ms1mv3_recordio.py \
+  --download \
+  --dataset gaunernst/ms1mv3-recordio \
+  --data-dir data/task5_ms1mv3_full_recordio \
+  --lfw-dir data/task5_lfw \
+  --report-dir reports/task5
 ```
+
+If AutoDL download is slow, run the same RecordIO preparation locally, archive
+`stage-2/data/task5_ms1mv3_full_recordio/`, upload it to AutoDL, and extract it
+back to the same path.
+
+If Hugging Face Xet connections are unstable, retry the same command; it is
+resume-safe. As a fallback, set `HF_HUB_DISABLE_XET=1` before running the
+prepare command and let the Hub client use the regular HTTP path.
 
 ## Train
 
 ```bash
 cd /root/autodl-tmp/CV-project/stage-2
 
-python code/task5/stage2_task5_run_arcface.py train \
-  --config configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py \
-  --work-dir work_dirs/task5/resnet50_arcface_ms1mv3_dense \
-  --summary-out reports/task5/summaries/ms1mv3_dense_train_summary.json \
-  --loss-plot-out reports/task5/assets/training/ms1mv3_dense_loss_acc_curve.png \
-  --device cuda:0
+python code/task5/stage2_task5_5_run_insightface.py setup \
+  --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
+  --summary-out reports/task5/summaries/insightface_full_setup_summary.json
+
+python code/task5/stage2_task5_5_run_insightface.py train \
+  --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
+  --summary-out reports/task5/summaries/insightface_full_train_summary.json
 ```
 
-The cloud config uses batch size 512, effective batch size 512, 12 DataLoader
-workers, AMP, CUDNN benchmark, 60 epochs, and a 36-hour max training budget.
-It keeps `best.pth` and `last.pth`; per-epoch checkpoint saving is disabled to
-avoid wasting cloud disk space.
+The generated official config is written into the runtime clone at
+`external/insightface/recognition/arcface_torch/configs/stage2_ms1mv3_r50_full.py`.
+Training outputs go to `work_dirs/task5/insightface_ms1mv3_r50_full/`.
 
-## Evaluate LFW
+## Evaluate
 
 ```bash
-cd /root/autodl-tmp/CV-project/stage-2
-
-python code/task5/stage2_task5_run_arcface.py eval-lfw \
-  --config configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py \
-  --checkpoint work_dirs/task5/resnet50_arcface_ms1mv3_dense/best.pth \
-  --lfw-dir data/task5_lfw \
-  --summary-out reports/task5/summaries/lfw_eval_summary.json \
-  --roc-plot-out reports/task5/assets/evaluation/lfw_roc_curve.png \
-  --device cuda:0
+python code/task5/stage2_task5_5_run_insightface.py eval-summary \
+  --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
+  --checkpoint work_dirs/task5/insightface_ms1mv3_r50_full/model.pt \
+  --summary-out reports/task5/summaries/insightface_full_lfw_eval_summary.json
 ```
 
-Success target: `reports/task5/summaries/lfw_eval_summary.json` has
-`"accuracy" >= 0.985`.
+Success target:
 
-If 800k still misses the target, expand to 1M+ images and resume the same work
-dir rather than switching datasets.
+- `accuracy >= 0.985`
+- `target_met: true`
+- checkpoint exists at `work_dirs/task5/insightface_ms1mv3_r50_full/model.pt`
+
+The previous `81.67%` result remains a failed baseline and is not the final
+Task5 result.

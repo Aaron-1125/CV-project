@@ -210,30 +210,12 @@ task 3.x detection outputs or task 4.x landmark/alignment outputs.
 - Task 5.x report: `reports/task5/stage2_task5_arcface_training_report.md`
 - Task 5.x code: `code/task5/`
 - Task 5.x config: `configs/task5_arcface/`
-- Task 5.x data: `data/task5_ms1mv3_dense/` and `data/task5_lfw/`
+- Task 5.x data: `data/task5_ms1mv3_full_recordio/` and `data/task5_lfw/`
 - Task 5.x work dirs: `work_dirs/task5/`
 
-AutoDL A800 80GB recommendation: run the dense 800k MS1MV3 subset directly.
-Use at least a 150-200 GB data disk. The config
-`configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py` is tuned for one
-A800/A100 80GB GPU with batch size 512, 12 workers, AMP, 60 epochs, and a
-36-hour training budget. It saves `best.pth` and `last.pth` only to avoid
-filling the cloud data disk with per-epoch checkpoints.
-
-Prepare MS1MV3 dense 800k:
-
-```bash
-python code/task5/stage2_task5_2_prepare_ms1mv3.py \
-  --dataset gaunernst/ms1mv3-wds-gz \
-  --data-dir data/task5_ms1mv3_dense \
-  --report-dir reports/task5 \
-  --mode subset \
-  --max-images 800000 \
-  --max-identities 20000 \
-  --images-per-identity-cap 80 \
-  --output-tag ms1mv3_dense \
-  --max-stream-retries 20
-```
+The previous dense 800k custom trainer result is kept as a failed baseline
+(`81.67%` LFW). The main route now uses the official InsightFace
+`recognition/arcface_torch` pipeline with full MS1MV3 RecordIO.
 
 Prepare LFW:
 
@@ -243,28 +225,97 @@ python code/task5/stage2_task5_3_prepare_lfw.py \
   --report-dir reports/task5
 ```
 
-Train ResNet50/IResNet50 + ArcFace:
+Prepare full MS1MV3 RecordIO and official LFW validation bin:
 
 ```bash
-python code/task5/stage2_task5_run_arcface.py train \
-  --config configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py \
-  --work-dir work_dirs/task5/resnet50_arcface_ms1mv3_dense \
-  --summary-out reports/task5/summaries/ms1mv3_dense_train_summary.json \
-  --loss-plot-out reports/task5/assets/training/ms1mv3_dense_loss_acc_curve.png \
-  --device cuda:0
-```
-
-Evaluate LFW:
-
-```bash
-python code/task5/stage2_task5_run_arcface.py eval-lfw \
-  --config configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py \
-  --checkpoint work_dirs/task5/resnet50_arcface_ms1mv3_dense/best.pth \
+python code/task5/stage2_task5_4_prepare_ms1mv3_recordio.py \
+  --download \
+  --dataset gaunernst/ms1mv3-recordio \
+  --data-dir data/task5_ms1mv3_full_recordio \
   --lfw-dir data/task5_lfw \
-  --summary-out reports/task5/summaries/lfw_eval_summary.json \
-  --roc-plot-out reports/task5/assets/evaluation/lfw_roc_curve.png \
+  --report-dir reports/task5
+```
+
+Set up the runtime-cloned official InsightFace source:
+
+```bash
+python code/task5/stage2_task5_5_run_insightface.py setup \
+  --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
+  --summary-out reports/task5/summaries/insightface_full_setup_summary.json
+```
+
+Train official ResNet50 + ArcFace on full MS1MV3:
+
+```bash
+python code/task5/stage2_task5_5_run_insightface.py train \
+  --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
+  --summary-out reports/task5/summaries/insightface_full_train_summary.json
+```
+
+Parse official LFW validation:
+
+```bash
+python code/task5/stage2_task5_5_run_insightface.py eval-summary \
+  --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
+  --checkpoint work_dirs/task5/insightface_ms1mv3_r50_full/model.pt \
+  --summary-out reports/task5/summaries/insightface_full_lfw_eval_summary.json
+```
+
+Success requires `accuracy >= 0.985` and `target_met: true`.
+
+## Stage2 Task 6.x
+
+Task 6.x deliverables are isolated under `reports/task6/` and use the Task 5
+first-version self-contained `IResNet50 + ArcFace` checkpoint from
+`reports/task5/task5_cloud_results_8167.tar.gz`. The optional 6.4 ByteNN task is
+not included.
+
+- Task 6.1 report: `reports/task6/task6_1_optimization_methods.md`
+- Task 6.x report: `reports/task6/stage2_task6_model_optimization_report.md`
+- Task 6.x code: `code/task6/`
+- Task 6.x summaries: `reports/task6/summaries/`
+- Task 6.x models and ONNX artifacts: `work_dirs/task6/`
+- Weekly report PDF: `reports/weekly/week2_report_2026-05-28.pdf`
+
+Prepare the Task 5 first-version cloud checkpoint for Task 6:
+
+```bash
+python code/task6/stage2_task6_prepare_source_model.py \
+  --cloud-archive reports/task5/task5_cloud_results_8167.tar.gz \
+  --out-dir work_dirs/task6/source_arcface_8167 \
+  --summary-out reports/task6/summaries/source_model_summary.json
+```
+
+Run dynamic quantization and LFW comparison:
+
+```bash
+python code/task6/stage2_task6_2_quantize_arcface.py \
+  --config configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py \
+  --checkpoint work_dirs/task6/source_arcface_8167/best.pth \
+  --lfw-dir data/task5_lfw \
+  --summary-out reports/task6/summaries/quantization_summary.json \
+  --comparison-plot-out reports/task6/assets/evaluation/task6_quantization_comparison.png \
+  --device cpu
+```
+
+Export ONNX and test ONNX Runtime inference:
+
+```bash
+python code/task6/stage2_task6_3_export_onnx.py \
+  --config configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py \
+  --checkpoint work_dirs/task6/source_arcface_8167/best.pth \
+  --lfw-dir data/task5_lfw \
+  --onnx-out work_dirs/task6/onnx/arcface_iresnet50_8167.onnx \
+  --summary-out reports/task6/summaries/onnx_summary.json \
+  --comparison-plot-out reports/task6/assets/evaluation/task6_onnx_comparison.png \
   --device cuda:0
 ```
 
-If 800k still misses the 98.5% LFW target, rerun preparation with 1M+ images
-and resume the same work dir.
+Generate reports and weekly PDF:
+
+```bash
+python code/task6/stage2_task6_write_reports.py
+python code/task6/stage2_task6_export_weekly_pdf.py \
+  --source reports/weekly/week2_report_2026-05-28.md \
+  --output reports/weekly/week2_report_2026-05-28.pdf
+```

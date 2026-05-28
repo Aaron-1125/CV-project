@@ -1,0 +1,203 @@
+{
+  "task": "Stage2 Task 6.2 dynamic quantization",
+  "config": "configs/task5_arcface/resnet50_arcface_ms1mv3_dense_gpu.py",
+  "source_checkpoint": "work_dirs/task6/source_arcface_8167/best.pth",
+  "checkpoint_epoch": 38,
+  "checkpoint_best_lfw_accuracy": 0.8166666666666667,
+  "lfw_dir": "data/task5_lfw",
+  "full_lfw_protocol": true,
+  "max_pairs": null,
+  "artifacts": {
+    "fp32_backbone_state_dict": "work_dirs/task6/quantization/arcface_fp32_backbone_state_dict.pth",
+    "dynamic_quantized_model": "work_dirs/task6/quantization/arcface_dynamic_quantized.pt",
+    "comparison_plot": "reports/task6/assets/evaluation/task6_quantization_comparison.png",
+    "fp32_roc_plot": "reports/task6/assets/evaluation/task6_fp32_lfw_roc.png",
+    "quantized_roc_plot": "reports/task6/assets/evaluation/task6_dynamic_quant_lfw_roc.png"
+  },
+  "fp32": {
+    "model_size_mb": 166.58358764648438,
+    "metrics": {
+      "pairs": 6000,
+      "positive_pairs": 3000,
+      "negative_pairs": 3000,
+      "accuracy": 0.8168333333333333,
+      "accuracy_std": 0.023622611578269198,
+      "mean_threshold": 0.44800000000000006,
+      "roc_auc": 0.879144,
+      "folds": [
+        {
+          "fold": 0,
+          "threshold": 0.44799999999999995,
+          "train_accuracy": 0.8190740740740741,
+          "test_accuracy": 0.7966666666666666
+        },
+        {
+          "fold": 1,
+          "threshold": 0.44799999999999995,
+          "train_accuracy": 0.817962962962963,
+          "test_accuracy": 0.8066666666666666
+        },
+        {
+          "fold": 2,
+          "threshold": 0.44799999999999995,
+          "train_accuracy": 0.8183333333333334,
+          "test_accuracy": 0.8033333333333333
+        },
+        {
+          "fold": 3,
+          "threshold": 0.44799999999999995,
+          "train_accuracy": 0.8196296296296296,
+          "test_accuracy": 0.7916666666666666
+        },
+        {
+          "fold": 4,
+          "threshold": 0.44799999999999995,
+          "train_accuracy": 0.8151851851851852,
+          "test_accuracy": 0.8316666666666667
+        },
+        {
+          "fold": 5,
+          "threshold": 0.44799999999999995,
+          "train_accuracy": 0.8157407407407408,
+          "test_accuracy": 0.8266666666666667
+        },
+        {
+          "fold": 6,
+          "threshold": 0.44799999999999995,
+          "train_accuracy": 0.8114814814814815,
+          "test_accuracy": 0.865
+        },
+        {
+          "fold": 7,
+          "threshold": 0.44799999999999995,
+          "train_accuracy": 0.82,
+          "test_accuracy": 0.7883333333333333
+        },
+        {
+          "fold": 8,
+          "threshold": 0.44799999999999995,
+          "train_accuracy": 0.8172222222222222,
+          "test_accuracy": 0.8133333333333334
+        },
+        {
+          "fold": 9,
+          "threshold": 0.44799999999999995,
+          "train_accuracy": 0.8137037037037037,
+          "test_accuracy": 0.845
+        }
+      ],
+      "tpr_at_far": {
+        "tpr@far=0.001": 0.25833333333333336,
+        "tpr@far=0.01": 0.449,
+        "tpr@far=0.1": 0.7316666666666667
+      },
+      "score_mean_same": 0.5269196033477783,
+      "score_mean_different": 0.30315345525741577,
+      "embedding_speed": {
+        "images": 7701,
+        "elapsed_seconds": 480.60606851800003,
+        "latency_ms_per_image": 62.40826756499156,
+        "throughput_images_per_second": 16.023518021207792,
+        "batch_size": 256,
+        "device": "cpu"
+      },
+      "full_protocol": true
+    }
+  },
+  "dynamic_quantized": {
+    "model_size_mb": 129.86122608184814,
+    "metrics": {
+      "pairs": 6000,
+      "positive_pairs": 3000,
+      "negative_pairs": 3000,
+      "accuracy": 0.8168333333333333,
+      "accuracy_std": 0.023171462333367452,
+      "mean_threshold": 0.45,
+      "roc_auc": 0.878968611111111,
+      "folds": [
+        {
+          "fold": 0,
+          "threshold": 0.44999999999999996,
+          "train_accuracy": 0.8190740740740741,
+          "test_accuracy": 0.7966666666666666
+        },
+        {
+          "fold": 1,
+          "threshold": 0.44999999999999996,
+          "train_accuracy": 0.8177777777777778,
+          "test_accuracy": 0.8083333333333333
+        },
+        {
+          "fold": 2,
+          "threshold": 0.44999999999999996,
+          "train_accuracy": 0.8183333333333334,
+          "test_accuracy": 0.8033333333333333
+        },
+        {
+          "fold": 3,
+          "threshold": 0.44999999999999996,
+          "train_accuracy": 0.8196296296296296,
+          "test_accuracy": 0.7916666666666666
+        },
+        {
+          "fold": 4,
+          "threshold": 0.44999999999999996,
+          "train_accuracy": 0.8155555555555556,
+          "test_accuracy": 0.8283333333333334
+        },
+        {
+          "fold": 5,
+          "threshold": 0.44999999999999996,
+          "train_accuracy": 0.8157407407407408,
+          "test_accuracy": 0.8266666666666667
+        },
+        {
+          "fold": 6,
+          "threshold": 0.44999999999999996,
+          "train_accuracy": 0.8114814814814815,
+          "test_accuracy": 0.865
+        },
+        {
+          "fold": 7,
+          "threshold": 0.44999999999999996,
+          "train_accuracy": 0.8198148148148148,
+          "test_accuracy": 0.79
+        },
+        {
+          "fold": 8,
+          "threshold": 0.44999999999999996,
+          "train_accuracy": 0.8172222222222222,
+          "test_accuracy": 0.8133333333333334
+        },
+        {
+          "fold": 9,
+          "threshold": 0.44999999999999996,
+          "train_accuracy": 0.8137037037037037,
+          "test_accuracy": 0.845
+        }
+      ],
+      "tpr_at_far": {
+        "tpr@far=0.001": 0.25966666666666666,
+        "tpr@far=0.01": 0.45566666666666666,
+        "tpr@far=0.1": 0.731
+      },
+      "score_mean_same": 0.5270479321479797,
+      "score_mean_different": 0.30348271131515503,
+      "embedding_speed": {
+        "images": 7701,
+        "elapsed_seconds": 484.66311034200044,
+        "latency_ms_per_image": 62.935087695364295,
+        "throughput_images_per_second": 15.88938756771858,
+        "batch_size": 256,
+        "device": "cpu"
+      },
+      "full_protocol": true
+    }
+  },
+  "comparison": {
+    "accuracy_delta": 0.0,
+    "latency_speedup": 0.9916291507700316,
+    "size_ratio": 0.779555944955594
+  },
+  "note": "Dynamic quantization only affects Linear layers, so the convolution-heavy IResNet50 backbone may show modest gains."
+}

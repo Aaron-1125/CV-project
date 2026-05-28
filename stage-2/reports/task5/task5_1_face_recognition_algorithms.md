@@ -4,7 +4,7 @@
 
 Task 5.x focuses on closed-set training and open-set verification:
 
-- Train a face embedding model with a ResNet50/IResNet50 backbone.
+- Train a face embedding model with an InsightFace ResNet50/IResNet50 backbone.
 - Optimize the embedding space with ArcFace additive angular margin loss.
 - Validate the trained checkpoint with the official LFW 6000-pair, 10-fold protocol.
 
@@ -37,25 +37,39 @@ parameters are the common ArcFace values `s=64` and `m=0.5`.
 
 The original Microsoft MS-Celeb-1M release is no longer a practical normal
 download path. Task 5.x therefore uses the cleaned MS-Celeb-1M derivative
-MS1MV3/MS1M-RetinaFace subset from Hugging Face:
+MS1MV3/MS1M-RetinaFace full RecordIO data from Hugging Face:
 
-- source dataset: `gaunernst/ms1mv3-wds-gz`
-- image format: aligned 112x112 face JPEG
-- label field: `cls`
+- source dataset: `gaunernst/ms1mv3-recordio`
+- official-compatible layout: `ms1m-retinaface-t1/{train.rec,train.idx,property}`
+- full size: `93431` identities and `5179510` images
+- validation target: generated `lfw.bin`
 
-The preparation script exports a time-budgeted subset by default and can be
-rerun with a larger `--max-images` or `--mode full` when the LFW target has not
-yet been reached.
+The earlier `gaunernst/ms1mv3-wds-gz` JPEG subset route is retained only as a
+failed baseline. The official route avoids the custom CSV/JPEG loader and uses
+InsightFace's own RecordIO training pipeline.
+
+## Official InsightFace Pipeline
+
+The final route runtime-clones `deepinsight/insightface` and runs
+`recognition/arcface_torch/train_v2.py` with a generated config based on the
+official `ms1mv3_r50_onegpu.py` settings:
+
+- network: `r50`
+- batch size: `128`
+- learning rate: `0.02`
+- epochs: `20`
+- fp16: enabled
+- val targets: `["lfw"]`
 
 ## LFW Verification
 
-LFW is evaluated as 1:1 face verification, not classification. The wrapper
-computes embeddings for every image referenced in `pairs.txt`, scores each pair
-with cosine similarity, and follows the 10-fold protocol:
+LFW is evaluated as 1:1 face verification, not classification. The official
+InsightFace validation callback loads `lfw.bin`, evaluates flipped embeddings,
+and reports the 10-fold verification accuracy.
 
-- train threshold on nine folds
-- test on the held-out fold
-- report mean accuracy and standard deviation over ten folds
+The project-local 6000-pair evaluator is kept only as a secondary diagnostic
+tool for older checkpoints. The acceptance metric for the official route is the
+LFW accuracy parsed from official InsightFace validation logs.
 
 The acceptance target for this task is `accuracy >= 0.985` from the checkpoint
 trained in this project run.
