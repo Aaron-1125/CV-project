@@ -196,7 +196,9 @@ def image_flowables(source_dir: Path, alt: str, path_text: str, styles: dict[str
 
     max_width = A4[0] - 3.4 * cm
     normalized_path = path_text.replace("\\", "/")
-    if "/evaluation/" in normalized_path:
+    if "/assets/weekly/" in normalized_path:
+        max_height = 7.2 * cm
+    elif "/evaluation/" in normalized_path:
         max_height = 8.2 * cm
     elif "/training/" in normalized_path:
         max_height = 7.6 * cm
