@@ -63,6 +63,48 @@ def arcface_dir(cfg: Any) -> Path:
     return Path(cfg.insightface.external_dir) / cfg.insightface.arcface_subdir
 
 
+def patch_verification_interp(arcface_root: Path) -> dict[str, Any]:
+    """Patch official LFW verification for newer SciPy duplicate-x handling."""
+    verification_path = arcface_root / "eval" / "verification.py"
+    marker = "# Stage2 patch: deduplicate FAR values before scipy interpolation."
+    if not verification_path.exists():
+        raise FileNotFoundError(f"Missing official verification.py: {verification_path}")
+    text = verification_path.read_text(encoding="utf-8")
+    if marker in text:
+        return {"path": str(verification_path), "applied": False, "reason": "already patched"}
+
+    old = """        if np.max(far_train) >= far_target:
+            f = interpolate.interp1d(far_train, thresholds, kind='slinear')
+            threshold = f(far_target)
+        else:
+            threshold = 0.0
+"""
+    new = f"""        if np.max(far_train) >= far_target:
+            {marker}
+            unique_far, unique_indices = np.unique(far_train, return_index=True)
+            unique_thresholds = thresholds[unique_indices]
+            order = np.argsort(unique_far)
+            unique_far = unique_far[order]
+            unique_thresholds = unique_thresholds[order]
+            if unique_far.size < 2:
+                threshold = unique_thresholds[0]
+            else:
+                f = interpolate.interp1d(
+                    unique_far,
+                    unique_thresholds,
+                    kind='slinear',
+                    bounds_error=False,
+                    fill_value=(unique_thresholds[0], unique_thresholds[-1]))
+                threshold = f(far_target)
+        else:
+            threshold = 0.0
+"""
+    if old not in text:
+        raise RuntimeError("Could not find the expected scipy interp1d block in official verification.py")
+    verification_path.write_text(text.replace(old, new), encoding="utf-8")
+    return {"path": str(verification_path), "applied": True, "reason": "patched duplicate FAR handling"}
+
+
 def official_config_text(cfg: Any, rec_dir: Path, output_dir: Path) -> str:
     official = cfg.official
     return f'''from easydict import EasyDict as edict
@@ -145,11 +187,13 @@ def collect_training_logs(output_dir: Path) -> str:
 
 def setup(args: argparse.Namespace, cfg: Any) -> dict[str, Any]:
     repo = ensure_repo(cfg.insightface.repo_url, args.insightface_ref or cfg.insightface.ref, Path(cfg.insightface.external_dir))
+    verification_patch = patch_verification_interp(arcface_dir(cfg))
     config_path = write_official_config(cfg)
     layout = validate_recordio_layout(cfg)
     summary = {
         "task": cfg.task_name,
         "repo": repo,
+        "verification_patch": verification_patch,
         "official_config": str(config_path),
         "recordio": layout,
         "output_dir": str(Path(cfg.official.output)),
