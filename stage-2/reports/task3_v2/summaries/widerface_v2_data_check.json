@@ -1,0 +1,26 @@
+{
+  "data_root": "stage-2\\data\\WIDERFace",
+  "train": {
+    "ann_file": "stage-2\\data\\WIDERFace\\train.txt",
+    "split": "train",
+    "images": 12337,
+    "faces": 153352,
+    "zero_face_images": 0,
+    "missing_count": 0,
+    "missing_examples": []
+  },
+  "val": {
+    "ann_file": "stage-2\\data\\WIDERFace\\val.txt",
+    "split": "val",
+    "images": 3079,
+    "faces": 38042,
+    "zero_face_images": 0,
+    "missing_count": 0,
+    "missing_examples": []
+  },
+  "expected": {
+    "train_images": 12337,
+    "val_images": 3079
+  },
+  "matches_expected_counts": true
+}

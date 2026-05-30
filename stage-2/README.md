@@ -319,3 +319,52 @@ python code/task6/stage2_task6_export_weekly_pdf.py \
   --source reports/weekly/week2_report_2026-05-28.md \
   --output reports/weekly/week2_report_2026-05-28.pdf
 ```
+
+## Stage2 Task 3 v2
+
+Task 3 v2 is the second-round WIDER FACE detection improvement track. It keeps
+the SSD300 baseline artifacts under `reports/task3/` and writes all new
+diagnostics, figures, and summaries under `reports/task3_v2/`.
+
+- Task 3 v2 report: `reports/task3_v2/stage2_task3_v2_detection_improvement_plan.md`
+- Task 3 v2 configs: `configs/mmdet/scrfd_like_r50_fpn_widerface_640_*.py`
+- Task 3 v2 code: `code/task3/stage2_task3_v2_check_widerface.py` and `code/task3/stage2_task3_4_threshold_sweep.py`
+- Task 3 v2 work dirs: `work_dirs/task3_v2/`
+
+Data check:
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task3/stage2_task3_v2_check_widerface.py \
+    --data-root data/WIDERFace \
+    --summary-out reports/task3_v2/summaries/widerface_v2_data_check.json
+```
+
+SSD300 threshold diagnosis:
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task3/stage2_task3_4_threshold_sweep.py \
+    --config configs/mmdet/ssd300_widerface_full_gpu.py \
+    --checkpoint work_dirs/ssd300_widerface_full_gpu/epoch_24.pth \
+    --data-root data/WIDERFace \
+    --ann-file val.txt \
+    --split val \
+    --device cuda:0 \
+    --score-thrs 0.05,0.1,0.2,0.3,0.5 \
+    --max-per-img-values 50,100,200 \
+    --summary-out reports/task3_v2/summaries/ssd300_threshold_sweep_summary.json \
+    --plot-out reports/task3_v2/assets/diagnostics/ssd300_threshold_sweep.png
+```
+
+SCRFD-like 640 FPN smoke:
+
+```bash
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task3/stage2_task3_2_run_mmdet.py train \
+    --config configs/mmdet/scrfd_like_r50_fpn_widerface_640_smoke_gpu.py \
+    --work-dir work_dirs/task3_v2/scrfd_like_r50_fpn_widerface_640_smoke_gpu \
+    --summary-out reports/task3_v2/summaries/scrfd_like_640_smoke_train_summary.json \
+    --loss-plot-out reports/task3_v2/assets/training/scrfd_like_640_smoke_loss_curve.png \
+    --device cuda:0
+```
