@@ -81,6 +81,26 @@ def xml_node(parent: ET.Element, name: str, text: str | int) -> ET.Element:
     return node
 
 
+def indent_xml(element: ET.Element, level: int = 0) -> None:
+    """Pretty-print XML on Python 3.8 where ET.indent is unavailable."""
+
+    if hasattr(ET, "indent"):
+        ET.indent(element, space="  ")
+        return
+    indent = "\n" + level * "  "
+    child_indent = "\n" + (level + 1) * "  "
+    children = list(element)
+    if children:
+        if not element.text or not element.text.strip():
+            element.text = child_indent
+        for child in children:
+            indent_xml(child, level + 1)
+        if not element.tail or not element.tail.strip():
+            element.tail = indent
+    elif level and (not element.tail or not element.tail.strip()):
+        element.tail = indent
+
+
 def write_voc_xml(xml_path: Path, folder: str, filename: str, width: int, height: int, boxes: list[list[int]]) -> None:
     annotation = ET.Element("annotation")
     xml_node(annotation, "folder", folder)
@@ -102,7 +122,7 @@ def write_voc_xml(xml_path: Path, folder: str, filename: str, width: int, height
         xml_node(bndbox, "xmax", min(width - 1, x2))
         xml_node(bndbox, "ymax", min(height - 1, y2))
 
-    ET.indent(annotation, space="  ")
+    indent_xml(annotation)
     xml_path.parent.mkdir(parents=True, exist_ok=True)
     ET.ElementTree(annotation).write(xml_path, encoding="utf-8", xml_declaration=True)
 

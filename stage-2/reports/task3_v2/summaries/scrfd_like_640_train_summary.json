@@ -1,0 +1,16 @@
+{
+  "work_dir": "/root/autodl-tmp/CV-project/stage-2/work_dirs/task3_v2/scrfd_like_r50_fpn_widerface_640_gpu",
+  "latest_checkpoint": "/root/autodl-tmp/CV-project/stage-2/work_dirs/task3_v2/scrfd_like_r50_fpn_widerface_640_gpu/epoch_24.pth",
+  "num_logged_train_steps": 2952,
+  "first_loss": 1.952100806236267,
+  "last_loss": 0.2658299116790295,
+  "min_loss": 0.2192608378827572,
+  "validation": {
+    "pascal_voc/mAP": 0.5984687209129333,
+    "pascal_voc/AP50": 0.598,
+    "data_time": 0.001602593877098777,
+    "time": 0.016891446980563076,
+    "step": 24
+  },
+  "loss_curve": "reports/task3_v2/assets/training/scrfd_like_640_loss_curve.png"
+}

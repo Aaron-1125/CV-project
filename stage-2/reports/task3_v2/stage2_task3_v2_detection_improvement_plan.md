@@ -137,3 +137,28 @@ docker compose run --rm -w /workspace/stage-2 stage2-gpu \
 Use the 1-epoch smoke run to estimate runtime. If 24 epochs exceed 18 hours or
 the model only fits with batch size 1 and unstable throughput, move the same
 config to the A800/A100 cloud machine.
+
+## Cloud A800 Result
+
+The 24-epoch SCRFD-like 640 FPN run was completed on cloud GPU and evaluated on
+the full WIDER FACE validation split with the same custom IoU=0.5 protocol used
+for the SSD300 baseline.
+
+| Model | Score Thr | AP50 | Precision | Recall | TP | FP | FN |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| SSD300 baseline | 0.05 | 0.3689 | 0.0422 | 0.4410 | 16,778 | 380,906 | 21,264 |
+| SCRFD-like 640 FPN | 0.10 | 0.5997 | 0.3006 | 0.6596 | 25,091 | 58,389 | 12,951 |
+
+Compared with the original SSD300 result:
+
+- AP50 improves by `+0.2308` absolute, about `+62.6%` relative.
+- Precision improves from `0.0422` to `0.3006`, about `7.1x`.
+- Recall improves from `0.4410` to `0.6596`, about `+49.5%` relative.
+- False positives drop from `380,906` to `58,389`, about `84.7%` fewer.
+
+This solves the specific Task3 v2 target: AP50 and precision are both clearly
+higher than the baseline, while recall is also higher rather than sacrificed.
+The remaining issue is that precision is still not production-grade; qualitative
+samples still show some false positives on flags, costumes, and heavy occlusion.
+For the coursework feedback, however, the second-round detector is a substantial
+and defensible improvement over the original SSD300 delivery.

@@ -1,0 +1,37 @@
+{
+  "baseline": {
+    "model": "SSD300",
+    "config": "configs/mmdet/ssd300_widerface_full_gpu.py",
+    "checkpoint": "work_dirs/ssd300_widerface_full_gpu/epoch_24.pth",
+    "score_threshold": 0.05,
+    "ap50": 0.36889000664387905,
+    "precision": 0.04218927590750445,
+    "recall": 0.44103885179538405,
+    "tp": 16778,
+    "fp": 380906,
+    "fn": 21264
+  },
+  "task3_v2": {
+    "model": "SCRFD-like RetinaFace-inspired R50-FPN 640",
+    "config": "configs/mmdet/scrfd_like_r50_fpn_widerface_640_gpu.py",
+    "checkpoint": "work_dirs/task3_v2/scrfd_like_r50_fpn_widerface_640_gpu/epoch_24.pth",
+    "score_threshold": 0.1,
+    "ap50": 0.5996689342758964,
+    "precision": 0.300563009103977,
+    "recall": 0.6595604857788759,
+    "tp": 25091,
+    "fp": 58389,
+    "fn": 12951
+  },
+  "improvement": {
+    "ap50_absolute": 0.23077892763201737,
+    "precision_absolute": 0.25837373319647253,
+    "recall_absolute": 0.21852163398349186,
+    "ap50_relative": 0.6256048802568534,
+    "precision_multiplier": 7.124159306925657,
+    "recall_relative": 0.4954702642641943,
+    "false_positive_reduction": 0.8467099342110846
+  },
+  "verdict": "pass_for_task3_v2_target",
+  "note": "The second-round detector clearly improves AP50, precision, recall, and false positives versus SSD300. Precision is still not production-grade, but the mentor-flagged false-positive problem is substantially reduced."
+}

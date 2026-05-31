@@ -201,6 +201,40 @@ docker compose run --rm -w /workspace/stage-2 stage2-gpu \
     --device cuda:0
 ```
 
+## Stage2 Task 4 v2
+
+Task 4 v2 is the third-step landmark improvement track for the mentor feedback
+about higher NME on the 300W challenge split. It is isolated from the original
+Task 4.x outputs.
+
+- Task 4 v2 report: `reports/task4_v2/stage2_task4_v2_landmark_improvement_plan.md`
+- Main cloud config: `configs/task4_mmpose/td-hm_hrnetv2-w32_300w_aug_cloud.py`
+- Ablation config: `configs/task4_mmpose/td-hm_hrnetv2-w18_300w_aug_cloud.py`
+- Task 4 v2 work dirs: `work_dirs/task4_v2/`
+
+Train HRNetv2-W32 with stronger augmentation on A800:
+
+```bash
+python code/task4/stage2_task4_run_mmpose.py train \
+  --config configs/task4_mmpose/td-hm_hrnetv2-w32_300w_aug_cloud.py \
+  --work-dir work_dirs/task4_v2/hrnetv2_w32_300w_aug_cloud \
+  --summary-out reports/task4_v2/summaries/300w_w32_aug_train_summary.json \
+  --loss-plot-out reports/task4_v2/assets/training/300w_w32_aug_loss_curve.png \
+  --device cuda:0
+```
+
+Evaluate common/challenge/full NME:
+
+```bash
+python code/task4/stage2_task4_run_mmpose.py test \
+  --config configs/task4_mmpose/td-hm_hrnetv2-w32_300w_aug_cloud.py \
+  --checkpoint work_dirs/task4_v2/hrnetv2_w32_300w_aug_cloud/best.pth \
+  --work-dir work_dirs/task4_v2/hrnetv2_w32_300w_aug_cloud_eval \
+  --summary-out reports/task4_v2/summaries/300w_w32_aug_eval_summary.json \
+  --metrics-plot-out reports/task4_v2/assets/evaluation/300w_w32_aug_nme_metrics.png \
+  --device cuda:0
+```
+
 ## Stage2 Task 5.x
 
 Task 5.x deliverables are isolated under `reports/task5/` and do not overwrite

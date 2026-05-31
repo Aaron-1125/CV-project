@@ -1,7 +1,7 @@
 {
-  "data_root": "stage-2\\data\\WIDERFace",
+  "data_root": "data/WIDERFace",
   "train": {
-    "ann_file": "stage-2\\data\\WIDERFace\\train.txt",
+    "ann_file": "data/WIDERFace/train.txt",
     "split": "train",
     "images": 12337,
     "faces": 153352,
@@ -10,7 +10,7 @@
     "missing_examples": []
   },
   "val": {
-    "ann_file": "stage-2\\data\\WIDERFace\\val.txt",
+    "ann_file": "data/WIDERFace/val.txt",
     "split": "val",
     "images": 3079,
     "faces": 38042,
