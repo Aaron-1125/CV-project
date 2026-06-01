@@ -1,0 +1,28 @@
+{
+  "baseline": {
+    "config": "configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu.py",
+    "common": 0.029078634460151107,
+    "challenge": 0.055240729171985636,
+    "full": 0.034204535629648945
+  },
+  "round1_w32_strongaug_384": {
+    "config": "configs/task4_mmpose/td-hm_hrnetv2-w32_300w_aug_cloud.py",
+    "common": 0.029359284062931354,
+    "challenge": 0.056059241866234344,
+    "full": 0.03459046978634183,
+    "verdict": "failed_ablation"
+  },
+  "round2_w18_mildaug_384": {
+    "config": "configs/task4_mmpose/td-hm_hrnetv2-w18_300w_mildaug_384_cloud.py",
+    "common": 0.0295396384779727,
+    "challenge": 0.056284805995966095,
+    "full": 0.034779854377714664,
+    "verdict": "failed_ablation"
+  },
+  "current_verdict": "not_improved",
+  "next_steps": [
+    "Sweep saved checkpoints from W32 strongaug and W18 mildaug runs because best.pth is selected by valid NME, not challenge NME.",
+    "If no checkpoint beats challenge 0.0552407292, run low-LR baseline fine-tune at 256x256.",
+    "Avoid further 384-input strong augmentation unless checkpoint sweep shows a useful trend."
+  ]
+}

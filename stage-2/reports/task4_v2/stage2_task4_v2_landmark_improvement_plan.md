@@ -93,3 +93,63 @@ Run these in order on A800:
 
 The first successful checkpoint is the one that reduces challenge NME below
 `0.0552` without pushing common above the baseline by more than a small margin.
+
+## Round 2 Result
+
+The `td-hm_hrnetv2-w18_300w_mildaug_384_cloud.py` run also regressed:
+
+| Model | common NME | challenge NME | full NME |
+| --- | ---: | ---: | ---: |
+| Baseline W18/256 | 0.0291 | 0.0552 | 0.0342 |
+| W18/384 mild aug | 0.0295 | 0.0563 | 0.0348 |
+
+This means the 384-input route is not currently helping the prepared Kaggle
+300W split. Continue with checkpoint sweep first, then a low-LR baseline
+fine-tune at the original 256x256 geometry.
+
+## Checkpoint Sweep
+
+Use this before launching another long training job:
+
+```bash
+python code/task4/stage2_task4_4_sweep_checkpoints.py \
+  --config configs/task4_mmpose/td-hm_hrnetv2-w18_300w_mildaug_384_cloud.py \
+  --checkpoint-dir work_dirs/task4_v2/hrnetv2_w18_300w_mildaug_384_cloud \
+  --summary-out reports/task4_v2/summaries/300w_w18_mildaug_384_checkpoint_sweep.json \
+  --plot-out reports/task4_v2/assets/evaluation/300w_w18_mildaug_384_checkpoint_sweep.png
+```
+
+Also sweep the W32 strong-augmentation run:
+
+```bash
+python code/task4/stage2_task4_4_sweep_checkpoints.py \
+  --config configs/task4_mmpose/td-hm_hrnetv2-w32_300w_aug_cloud.py \
+  --checkpoint-dir work_dirs/task4_v2/hrnetv2_w32_300w_aug_cloud \
+  --summary-out reports/task4_v2/summaries/300w_w32_aug_checkpoint_sweep.json \
+  --plot-out reports/task4_v2/assets/evaluation/300w_w32_aug_checkpoint_sweep.png
+```
+
+## Low-LR Baseline Fine-Tune
+
+If the sweep finds no checkpoint below the baseline challenge NME, run:
+
+```bash
+python code/task4/stage2_task4_run_mmpose.py train \
+  --config configs/task4_mmpose/td-hm_hrnetv2-w18_300w_finetune_baseline_256_cloud.py \
+  --work-dir work_dirs/task4_v2/hrnetv2_w18_300w_finetune_baseline_256_cloud \
+  --summary-out reports/task4_v2/summaries/300w_w18_finetune_256_train_summary.json \
+  --loss-plot-out reports/task4_v2/assets/training/300w_w18_finetune_256_loss_curve.png \
+  --device cuda:0
+```
+
+Then evaluate:
+
+```bash
+python code/task4/stage2_task4_run_mmpose.py test \
+  --config configs/task4_mmpose/td-hm_hrnetv2-w18_300w_finetune_baseline_256_cloud.py \
+  --checkpoint work_dirs/task4_v2/hrnetv2_w18_300w_finetune_baseline_256_cloud/best.pth \
+  --work-dir work_dirs/task4_v2/hrnetv2_w18_finetune_256_eval \
+  --summary-out reports/task4_v2/summaries/300w_w18_finetune_256_eval_summary.json \
+  --metrics-plot-out reports/task4_v2/assets/evaluation/300w_w18_finetune_256_nme_metrics.png \
+  --device cuda:0
+```
