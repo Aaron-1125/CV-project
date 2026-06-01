@@ -20,9 +20,15 @@
     "verdict": "failed_ablation"
   },
   "current_verdict": "not_improved",
+  "final_decision": {
+    "keep_model": "original_task4_baseline",
+    "keep_config": "configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu.py",
+    "keep_checkpoint": "work_dirs/task4/hrnetv2_w18_300w_full/best.pth",
+    "reason": "All Task4 v2 tuning attempts failed to reduce challenge NME below the baseline 0.0552407292."
+  },
   "next_steps": [
-    "Sweep saved checkpoints from W32 strongaug and W18 mildaug runs because best.pth is selected by valid NME, not challenge NME.",
-    "If no checkpoint beats challenge 0.0552407292, run low-LR baseline fine-tune at 256x256.",
-    "Avoid further 384-input strong augmentation unless checkpoint sweep shows a useful trend."
+    "Stop spending A800 time on this Task4 tuning branch.",
+    "Report W32 strong augmentation, W18 mild augmentation, and low-LR fine-tune as negative ablations.",
+    "Use the original Task4 baseline as the final submitted landmark checkpoint."
   ]
 }

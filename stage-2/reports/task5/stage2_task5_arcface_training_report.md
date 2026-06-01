@@ -76,6 +76,8 @@ The RecordIO preparation script now inspects `lfw.bin` and writes
 routes before treating LFW as final:
 
 - copy an official/aligned InsightFace `lfw.bin` with `--lfw-bin-path`
+- or generate `lfw.bin` directly from the Kaggle
+  `val/{lfw_112x112,lfw_ann.txt}` layout by passing `--lfw-dir data/task5_lfw/val`
 - or rebuild `lfw.bin` from a 112x112 aligned LFW image directory with
   `--aligned-lfw-root`
 
@@ -114,6 +116,18 @@ python code/task5/stage2_task5_4_prepare_ms1mv3_recordio.py \
   --data-dir data/task5_ms1mv3_full_recordio \
   --lfw-dir data/task5_lfw \
   --lfw-bin-path /path/to/aligned/lfw.bin \
+  --overwrite-lfw-bin \
+  --report-dir reports/task5
+```
+
+For the Kaggle validation package with `val/lfw_112x112` and `val/lfw_ann.txt`,
+do not use `--lfw-bin-path`; generate the bin from those aligned images:
+
+```bash
+python code/task5/stage2_task5_4_prepare_ms1mv3_recordio.py \
+  --dataset gaunernst/ms1mv3-recordio \
+  --data-dir data/task5_ms1mv3_full_recordio \
+  --lfw-dir data/task5_lfw/val \
   --overwrite-lfw-bin \
   --report-dir reports/task5
 ```

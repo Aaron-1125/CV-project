@@ -153,3 +153,33 @@ python code/task4/stage2_task4_run_mmpose.py test \
   --metrics-plot-out reports/task4_v2/assets/evaluation/300w_w18_finetune_256_nme_metrics.png \
   --device cuda:0
 ```
+
+## Final Decision
+
+The Task4 v2 tuning attempts did not improve the baseline challenge split. The
+project should keep the original Task4 HRNetv2-W18 checkpoint as the final
+landmark model and report the v2 runs as controlled negative experiments.
+
+Final model to keep:
+
+- Config: `configs/task4_mmpose/td-hm_hrnetv2-w18_300w_full_gpu.py`
+- Checkpoint: `work_dirs/task4/hrnetv2_w18_300w_full/best.pth`
+- Reported NME: common `0.0291`, challenge `0.0552`, full `0.0342`
+
+Failed improvement attempts:
+
+- HRNetv2-W32, 384 input, strong augmentation: regressed to challenge `0.0561`.
+- HRNetv2-W18, 384 input, mild augmentation: regressed to challenge `0.0563`.
+- HRNetv2-W18, 256 input, low-LR baseline fine-tune: did not beat the baseline.
+
+Interpretation for the coursework report:
+
+- Stronger augmentation and higher input resolution did not automatically
+  improve the 300W challenge subset.
+- The challenge split is small, only 135 images, so NME can be sensitive to
+  bbox normalization and a few difficult samples.
+- With the current Kaggle-prepared 300W data, the original W18/256 model is the
+  best validated checkpoint and should remain the submitted Task4 result.
+- A more meaningful next improvement would require additional hard-pose/occlusion
+  data, more robust face crops from a better detector, or an externally
+  pre-trained face-landmark checkpoint, not just longer training.

@@ -145,10 +145,30 @@ def parse_pairs_txt(pairs_path: Path, image_root: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def parse_yakhyo_ann(path: Path) -> list[dict[str, Any]]:
+    """Parse Kaggle yakhyo validation annotations.
+
+    The file layout is:
+    ``same relative/path1.jpg relative/path2.jpg`` after a one-line header.
+    """
+    lines = [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    rows: list[dict[str, Any]] = []
+    for pair_idx, line in enumerate(lines[1:]):
+        parts = line.split()
+        if len(parts) != 3:
+            raise ValueError(f"Invalid LFW annotation row in {path}: {line}")
+        same, path1, path2 = parts
+        rows.append({"path1": path1, "path2": path2, "same": parse_bool(same), "fold": pair_idx // 600})
+    return rows
+
+
 def load_lfw_pairs(lfw_dir: Path) -> list[dict[str, Any]]:
     pairs_csv = lfw_dir / "pairs.csv"
     if pairs_csv.exists():
         return parse_pairs_csv(pairs_csv)
+    for ann_path in (lfw_dir / "lfw_ann.txt", lfw_dir / "val" / "lfw_ann.txt"):
+        if ann_path.exists():
+            return parse_yakhyo_ann(ann_path)
     pairs_txt = lfw_dir / "pairs.txt"
     image_root = lfw_dir / "lfw-deepfunneled"
     if pairs_txt.exists() and image_root.exists():
@@ -164,6 +184,14 @@ def resolve_lfw_path(value: str, lfw_dir: Path) -> Path:
         return path
     if path.exists():
         return path
+
+    lfw_relative = lfw_dir / path
+    if lfw_relative.exists():
+        return lfw_relative
+
+    lfw_val_relative = lfw_dir / "val" / path
+    if lfw_val_relative.exists():
+        return lfw_val_relative
 
     stage2_candidate = lfw_dir.parent.parent / path
     if stage2_candidate.exists():

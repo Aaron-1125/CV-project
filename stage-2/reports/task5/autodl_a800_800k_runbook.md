@@ -74,8 +74,20 @@ PY
 ```
 
 If this prints `(250, 250)`, the bin came from raw/deepfunneled LFW and the
-official callback accuracy is only a smoke metric. Replace it with an aligned
-`112x112` InsightFace-format bin, then re-run preparation without downloading:
+official callback accuracy is only a smoke metric. If using the Kaggle
+validation package with `val/lfw_112x112` and `val/lfw_ann.txt`, generate a new
+InsightFace-format bin from the aligned images:
+
+```bash
+python code/task5/stage2_task5_4_prepare_ms1mv3_recordio.py \
+  --dataset gaunernst/ms1mv3-recordio \
+  --data-dir data/task5_ms1mv3_full_recordio \
+  --lfw-dir data/task5_lfw/val \
+  --overwrite-lfw-bin \
+  --report-dir reports/task5
+```
+
+If you already have a standalone official/aligned `lfw.bin`, copy it instead:
 
 ```bash
 python code/task5/stage2_task5_4_prepare_ms1mv3_recordio.py \
