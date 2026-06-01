@@ -104,6 +104,15 @@ def parse_bool(value: str) -> bool:
     return str(value).strip().lower() in {"1", "true", "yes"}
 
 
+def parse_pair_label(value: str) -> bool | None:
+    normalized = str(value).strip().lower()
+    if normalized in {"1", "true", "yes", "same"}:
+        return True
+    if normalized in {"0", "false", "no", "diff", "different"}:
+        return False
+    return None
+
+
 def parse_pairs_csv(path: Path) -> list[dict[str, Any]]:
     with path.open("r", encoding="utf-8", newline="") as handle:
         reader = csv.DictReader(handle)
@@ -149,16 +158,20 @@ def parse_yakhyo_ann(path: Path) -> list[dict[str, Any]]:
     """Parse Kaggle yakhyo validation annotations.
 
     The file layout is:
-    ``same relative/path1.jpg relative/path2.jpg`` after a one-line header.
+    ``same relative/path1.jpg relative/path2.jpg``. Some archives include a
+    one-line header and some do not, so the parser detects that automatically.
     """
     lines = [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
     rows: list[dict[str, Any]] = []
-    for pair_idx, line in enumerate(lines[1:]):
+    for line_idx, line in enumerate(lines):
         parts = line.split()
-        if len(parts) != 3:
+        label = parse_pair_label(parts[0]) if len(parts) == 3 else None
+        if label is None:
+            if line_idx == 0:
+                continue
             raise ValueError(f"Invalid LFW annotation row in {path}: {line}")
-        same, path1, path2 = parts
-        rows.append({"path1": path1, "path2": path2, "same": parse_bool(same), "fold": pair_idx // 600})
+        _, path1, path2 = parts
+        rows.append({"path1": path1, "path2": path2, "same": label, "fold": len(rows) // 600})
     return rows
 
 
