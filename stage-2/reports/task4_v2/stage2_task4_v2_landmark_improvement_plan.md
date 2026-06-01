@@ -64,3 +64,32 @@ The v2 target is not just lower full NME. It should specifically reduce
 `challenge` NME below `0.0552` while keeping `common` near or below `0.0291`.
 If challenge improves but common regresses slightly, the report should frame
 that tradeoff explicitly.
+
+## Round 1 Result
+
+The first cloud run, `td-hm_hrnetv2-w32_300w_aug_cloud.py`, did not improve the
+mentor-facing metric:
+
+| Model | common NME | challenge NME | full NME |
+| --- | ---: | ---: | ---: |
+| Baseline W18/256 | 0.0291 | 0.0552 | 0.0342 |
+| W32/384 strong aug | 0.0294 | 0.0561 | 0.0346 |
+
+This is treated as a failed ablation. The likely cause is that the first v2
+config changed too many variables at once: larger backbone, larger input,
+stronger augmentation, AdamW, and a higher learning rate. The next round should
+reduce augmentation strength and isolate the source of improvement.
+
+## Round 2 Order
+
+Run these in order on A800:
+
+1. Evaluate available W32 checkpoints, especially `epoch_120.pth`, because the
+   saved `best.pth` is selected by full valid NME, not challenge NME.
+2. Train `td-hm_hrnetv2-w18_300w_mildaug_384_cloud.py`.
+3. If needed, train `td-hm_hrnetv2-w18_300w_mildaug_256_cloud.py` as a stable
+   same-resolution ablation.
+4. Only if W18 improves, try `td-hm_hrnetv2-w32_300w_mildaug_384_cloud.py`.
+
+The first successful checkpoint is the one that reduces challenge NME below
+`0.0552` without pushing common above the baseline by more than a small margin.
