@@ -110,12 +110,32 @@ def capture_command(command: list[str], cwd: Path | None = None) -> str:
 
 def ensure_repo(repo_url: str, ref: str, external_dir: Path) -> dict[str, Any]:
     external_dir.parent.mkdir(parents=True, exist_ok=True)
+    arcface_root = external_dir / "recognition" / "arcface_torch"
     if not (external_dir / ".git").exists():
+        if arcface_root.exists():
+            print(
+                "WARNING: InsightFace source exists without .git metadata; using the existing local copy "
+                f"at {external_dir}.",
+                flush=True,
+            )
+            return {"repo_url": repo_url, "ref": ref, "path": str(external_dir), "commit": "unknown-local-copy"}
         run_command(["git", "clone", "--depth", "1", "--branch", ref, repo_url, str(external_dir)])
     else:
-        run_command(["git", "fetch", "--depth", "1", "origin", ref], cwd=external_dir)
-        run_command(["git", "checkout", "FETCH_HEAD"], cwd=external_dir)
-    commit = capture_command(["git", "rev-parse", "HEAD"], cwd=external_dir)
+        try:
+            run_command(["git", "fetch", "--depth", "1", "origin", ref], cwd=external_dir)
+            run_command(["git", "checkout", "FETCH_HEAD"], cwd=external_dir)
+        except subprocess.CalledProcessError as exc:
+            if not arcface_root.exists():
+                raise
+            print(
+                "WARNING: git fetch for InsightFace failed; using the existing local clone "
+                f"at {external_dir}. Original error code: {exc.returncode}",
+                flush=True,
+            )
+    try:
+        commit = capture_command(["git", "rev-parse", "HEAD"], cwd=external_dir)
+    except subprocess.CalledProcessError:
+        commit = "unknown-local-copy"
     return {"repo_url": repo_url, "ref": ref, "path": str(external_dir), "commit": commit}
 
 
