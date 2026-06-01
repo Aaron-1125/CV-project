@@ -39,6 +39,8 @@ def main() -> None:
     print("opencv", cv2.__version__)
     print("onnx", onnx.__version__)
     print("onnxruntime", onnxruntime.__version__)
+    print("onnxruntime_providers", onnxruntime.get_available_providers())
+    print("onnxruntime_cuda_provider", "CUDAExecutionProvider" in onnxruntime.get_available_providers())
     print("insightface", getattr(insightface, "__version__", "unknown"))
     print("datasets", datasets.__version__)
     print("easydict", easydict.__version__ if hasattr(easydict, "__version__") else "installed")
@@ -103,8 +105,11 @@ def main() -> None:
         print("stage2_task5_insightface_config", task5_insightface_config)
     task6_source_script = Path("stage-2/code/task6/stage2_task6_prepare_source_model.py")
     task6_onnx_script = Path("stage-2/code/task6/stage2_task6_3_export_onnx.py")
+    task6_final_script = Path("stage-2/code/task6/stage2_task6_5_final_insightface_latency.py")
     if task6_source_script.exists() and task6_onnx_script.exists():
         print("stage2_task6_scripts", "available")
+    if task6_final_script.exists():
+        print("stage2_task6_final_latency_script", task6_final_script)
     print("unified docker environment ok")
 
 

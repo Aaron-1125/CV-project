@@ -316,17 +316,45 @@ final summary reports `accuracy = 0.998`.
 
 ## Stage2 Task 6.x
 
-Task 6.x deliverables are isolated under `reports/task6/` and use the Task 5
-first-version self-contained `IResNet50 + ArcFace` checkpoint from
-`reports/task5/task5_cloud_results_8167.tar.gz`. The optional 6.4 ByteNN task is
-not included.
+Task 6.x deliverables are isolated under `reports/task6/`. The historical
+baseline uses the Task 5 first-version self-contained `IResNet50 + ArcFace`
+checkpoint from `reports/task5/task5_cloud_results_8167.tar.gz`; the final
+latency rerun uses the official InsightFace full-MS1MV3 R50 checkpoint at
+`work_dirs/task5/insightface_ms1mv3_r50_full/model.pt`, which reached LFW
+`accuracy = 0.998`. The optional 6.4 ByteNN task is not included.
 
 - Task 6.1 report: `reports/task6/task6_1_optimization_methods.md`
 - Task 6.x report: `reports/task6/stage2_task6_model_optimization_report.md`
 - Task 6.x code: `code/task6/`
 - Task 6.x summaries: `reports/task6/summaries/`
+- Task 6 final summaries: `reports/task6/final/summaries/`
 - Task 6.x models and ONNX artifacts: `work_dirs/task6/`
 - Weekly report PDF: `reports/weekly/week2_report_2026-05-28.pdf`
+
+Run the final InsightFace R50 latency rerun on the local RTX 4060 Docker GPU
+environment:
+
+```bash
+docker compose build stage2-gpu
+docker compose run --rm -w /workspace stage2-gpu python docker/verify_environment.py
+
+docker compose run --rm -w /workspace/stage-2 stage2-gpu \
+  python code/task6/stage2_task6_5_final_insightface_latency.py \
+    --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
+    --checkpoint work_dirs/task5/insightface_ms1mv3_r50_full/model.pt \
+    --device cuda:0 \
+    --providers cuda,cpu \
+    --summary-out reports/task6/final/summaries/final_latency_summary.json \
+    --report-out reports/task6/final/stage2_task6_final_latency_report.md \
+    --plot-out reports/task6/final/assets/evaluation/final_latency_comparison.png
+```
+
+This final rerun exports FP32 and FP16 ONNX models under
+`work_dirs/task6/final_insightface_r50/`, measures PyTorch CUDA and ONNX Runtime
+CPU/CUDA latency, and keeps dynamic quantization as a CPU-only control explaining
+why Linear-only INT8 does not accelerate the convolution-heavy ArcFace R50. On
+RTX 4060 Laptop 8GB, ONNX CUDA batches default to max `64` to avoid unstable
+cuDNN algorithm search at batch `256`; PyTorch still reports batch `256`.
 
 Prepare the Task 5 first-version cloud checkpoint for Task 6:
 

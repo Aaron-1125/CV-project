@@ -1,0 +1,47 @@
+{
+  "task": "Stage2 Task6 latency root-cause diagnosis",
+  "based_on": [
+    "reports/task6/summaries/quantization_summary.json",
+    "reports/task6/summaries/onnx_summary.json"
+  ],
+  "fp32_pytorch": {
+    "lfw_accuracy": 0.8168333333333333,
+    "latency_ms_per_image": 62.40826756499156,
+    "throughput_images_per_second": 16.023518021207792,
+    "model_size_mb": 166.58358764648438
+  },
+  "dynamic_int8_pytorch": {
+    "lfw_accuracy": 0.8168333333333333,
+    "latency_ms_per_image": 62.935087695364295,
+    "throughput_images_per_second": 15.88938756771858,
+    "model_size_mb": 129.86122608184814,
+    "latency_speedup": 0.9916291507700316,
+    "size_ratio_to_fp32": 0.779555944955594
+  },
+  "onnx_runtime_cpu": {
+    "lfw_accuracy": 0.8168333333333333,
+    "latency_ms_per_image": 44.86005412985331,
+    "throughput_images_per_second": 22.291546887245584,
+    "model_size_mb": 166.321608543396,
+    "latency_speedup": 1.4247005967167363,
+    "providers": [
+      "CPUExecutionProvider"
+    ]
+  },
+  "root_cause": {
+    "primary": "PyTorch dynamic quantization was applied only to Linear layers, while IResNet50/ResNet50 ArcFace inference is dominated by Conv2d blocks.",
+    "secondary": [
+      "The expensive convolutional backbone stayed FP32.",
+      "LFW latency includes image decoding, preprocessing, batching, embedding normalization, and pair scoring.",
+      "Dynamic INT8 Linear layers may add quantize/dequantize overhead on CPU.",
+      "ONNX Runtime speedup comes from graph and kernel optimization rather than weight compression."
+    ]
+  },
+  "recommended_next_steps": [
+    "Rerun Task6 on the final LFW-qualified Task5 checkpoint.",
+    "Prefer ONNX Runtime or TensorRT FP16 for deployment latency.",
+    "Use static INT8 or QAT with Conv2d calibration if true INT8 acceleration is required.",
+    "Consider structured pruning or distillation to MobileFaceNet for larger latency reduction."
+  ],
+  "status": "diagnosed"
+}

@@ -41,6 +41,12 @@ RUN python -m pip install --upgrade pip setuptools wheel \
         -f https://download.openmmlab.com/mmcv/dist/cu118/torch2.0.0/index.html \
     && python -m pip install -r /tmp/requirements-docker.txt
 
+# The shared requirements install CPU ONNX Runtime for the portable Docker path.
+# Replace it only in the NVIDIA image so Task6 can use CUDAExecutionProvider.
+RUN python -m pip uninstall -y onnxruntime \
+    && python -m pip install coloredlogs flatbuffers numpy packaging protobuf sympy \
+    && python -m pip install --no-deps onnxruntime-gpu==1.18.1
+
 RUN python -m pip install --no-build-isolation chumpy==0.70 \
     && python -m pip install mmpose==1.3.2 "xtcocotools>=1.12"
 

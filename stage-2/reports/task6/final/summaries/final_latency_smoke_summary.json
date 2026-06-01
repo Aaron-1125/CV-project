@@ -1,0 +1,172 @@
+{
+  "task": "Stage2 Task6 final InsightFace R50 latency",
+  "status": "ok",
+  "checkpoint": "work_dirs/task5/insightface_ms1mv3_r50_full/model.pt",
+  "checkpoint_exists": true,
+  "checkpoint_size_mb": 166.55305576324463,
+  "source_lfw_accuracy": 0.998,
+  "source_eval_summary": "reports/task5/summaries/insightface_full_lfw_eval_summary.json",
+  "config": "configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py",
+  "device": "cuda:0",
+  "torch_version": "2.0.0+cu118",
+  "torch_cuda_available": true,
+  "onnxruntime_available_providers": [
+    "TensorrtExecutionProvider",
+    "CUDAExecutionProvider",
+    "AzureExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "requested_providers": [
+    "cuda",
+    "cpu"
+  ],
+  "setup": {
+    "repo": {
+      "repo_url": "https://github.com/deepinsight/insightface.git",
+      "ref": "master",
+      "path": "external/insightface",
+      "commit": "658b034e7fc0f4b08a01e11347b6118d8d04c76b"
+    },
+    "verification_patch": {
+      "path": "/workspace/stage-2/external/insightface/recognition/arcface_torch/eval/verification.py",
+      "applied": false,
+      "reason": "already patched"
+    },
+    "arcface_root": "/workspace/stage-2/external/insightface/recognition/arcface_torch"
+  },
+  "lfw_bin": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin",
+  "lfw_pairs": 6000,
+  "lfw_images": 12000,
+  "batch_sizes": [
+    1
+  ],
+  "model_only_latency": [
+    {
+      "backend": "pytorch_fp32_cuda",
+      "batch_size": 1,
+      "warmup": 1,
+      "iters": 1,
+      "elapsed_seconds": 0.006272026999795344,
+      "latency_ms_per_batch": 6.272026999795344,
+      "latency_ms_per_image": 6.272026999795344,
+      "throughput_images_per_second": 159.43808915883653,
+      "device": "cuda:0",
+      "precision": "fp32"
+    },
+    {
+      "backend": "pytorch_fp16_cuda",
+      "batch_size": 1,
+      "warmup": 1,
+      "iters": 1,
+      "elapsed_seconds": 0.007820696000635508,
+      "latency_ms_per_batch": 7.8206960006355075,
+      "latency_ms_per_image": 7.8206960006355075,
+      "throughput_images_per_second": 127.86585745293517,
+      "device": "cuda:0",
+      "precision": "fp16"
+    },
+    {
+      "backend": "onnx_fp32_cuda",
+      "batch_size": 1,
+      "warmup": 1,
+      "iters": 1,
+      "elapsed_seconds": 0.004553177000161668,
+      "latency_ms_per_batch": 4.553177000161668,
+      "latency_ms_per_image": 4.553177000161668,
+      "throughput_images_per_second": 219.62686712255936,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "input_dtype": "<class 'numpy.float32'>"
+    },
+    {
+      "backend": "onnx_fp32_cpu",
+      "batch_size": 1,
+      "warmup": 1,
+      "iters": 1,
+      "elapsed_seconds": 0.04365107699959481,
+      "latency_ms_per_batch": 43.65107699959481,
+      "latency_ms_per_image": 43.65107699959481,
+      "throughput_images_per_second": 22.90894220111184,
+      "providers": [
+        "CPUExecutionProvider"
+      ],
+      "input_dtype": "<class 'numpy.float32'>"
+    },
+    {
+      "backend": "onnx_fp16_cuda",
+      "batch_size": 1,
+      "warmup": 1,
+      "iters": 1,
+      "elapsed_seconds": 0.004835272000491386,
+      "latency_ms_per_batch": 4.835272000491386,
+      "latency_ms_per_image": 4.835272000491386,
+      "throughput_images_per_second": 206.81359805578148,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "input_dtype": "<class 'numpy.float16'>"
+    }
+  ],
+  "lfw_metrics": {},
+  "consistency": {
+    "onnx_fp32_cuda": {
+      "samples": 2,
+      "max_abs_diff": 0.00011873990297317505,
+      "mean_abs_diff": 2.823440809152089e-05,
+      "mean_cosine": 0.9999996423721313,
+      "min_cosine": 0.9999996423721313,
+      "onnx_input_dtype": "<class 'numpy.float32'>"
+    },
+    "onnx_fp32_cpu": {
+      "samples": 2,
+      "max_abs_diff": 0.00010274210944771767,
+      "mean_abs_diff": 2.2189302399056032e-05,
+      "mean_cosine": 0.9999997615814209,
+      "min_cosine": 0.9999997615814209,
+      "onnx_input_dtype": "<class 'numpy.float32'>"
+    },
+    "onnx_fp16_cuda": {
+      "samples": 2,
+      "max_abs_diff": 0.0005090758204460144,
+      "mean_abs_diff": 0.00011928418825846165,
+      "mean_cosine": 0.9999943971633911,
+      "min_cosine": 0.9999940991401672,
+      "onnx_input_dtype": "<class 'numpy.float16'>"
+    }
+  },
+  "dynamic_quantization_control": {
+    "method": "torch.quantization.quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)",
+    "note": "Control only: this quantizes Linear layers on CPU and does not accelerate Conv2d-heavy ArcFace R50.",
+    "model_only_latency": [
+      {
+        "backend": "dynamic_int8_linear_cpu",
+        "batch_size": 1,
+        "warmup": 1,
+        "iters": 1,
+        "elapsed_seconds": 0.05948005500067666,
+        "latency_ms_per_batch": 59.48005500067666,
+        "latency_ms_per_image": 59.48005500067666,
+        "throughput_images_per_second": 16.81235836094341,
+        "device": "cpu",
+        "precision": "fp32"
+      }
+    ]
+  },
+  "artifacts": {
+    "onnx_fp32": "work_dirs/task6/final_insightface_r50/insightface_r50_final_fp32.onnx",
+    "onnx_fp16": "work_dirs/task6/final_insightface_r50/insightface_r50_final_fp16.onnx",
+    "latency_plot": "reports/task6/final/assets/evaluation/final_latency_smoke.png",
+    "report": "reports/task6/final/final_latency_smoke_report.md"
+  },
+  "artifact_sizes_mb": {
+    "checkpoint": 166.55305576324463,
+    "onnx_fp32_cuda": 166.32007694244385,
+    "onnx_fp32_cpu": 166.32007694244385,
+    "onnx_fp16_cuda": 83.17683506011963
+  },
+  "best_backend": null,
+  "conclusion": "ONNX Runtime GPU/FP16 is the preferred deployment path if it beats the PyTorch CUDA baseline. Dynamic quantization is retained only as a CPU Linear-layer control because it does not target Conv2d."
+}

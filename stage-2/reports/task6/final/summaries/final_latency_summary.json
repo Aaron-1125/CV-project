@@ -1,0 +1,7 @@
+{
+  "task": "Stage2 Task6 final InsightFace R50 latency",
+  "status": "failed",
+  "error": "RuntimeError: CUDA error: device not ready\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1.\nCompile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.\n",
+  "checkpoint": "work_dirs/task5/insightface_ms1mv3_r50_full/model.pt",
+  "summary_out": "reports/task6/final/summaries/final_latency_summary.json"
+}
