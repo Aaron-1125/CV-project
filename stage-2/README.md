@@ -251,6 +251,10 @@ The previous dense 800k custom trainer result is kept as a failed baseline
 (`81.67%` LFW). The main route now uses the official InsightFace
 `recognition/arcface_torch` pipeline with full MS1MV3 RecordIO.
 
+Final Task 5.x result: the official full-MS1MV3 ResNet50 + ArcFace checkpoint
+was re-evaluated on an aligned `112x112` LFW validation bin and reached
+`accuracy = 0.998`, with `target_met: true` against the `0.985` target.
+
 Prepare LFW:
 
 ```bash
@@ -295,7 +299,20 @@ python code/task5/stage2_task5_5_run_insightface.py eval-summary \
   --summary-out reports/task5/summaries/insightface_full_lfw_eval_summary.json
 ```
 
-Success requires `accuracy >= 0.985` and `target_met: true`.
+Final aligned-bin re-evaluation:
+
+```bash
+python code/task5/stage2_task5_5_run_insightface.py eval-bin \
+  --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
+  --checkpoint work_dirs/task5/insightface_ms1mv3_r50_full/model.pt \
+  --bin-path data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin \
+  --summary-out reports/task5/summaries/insightface_full_lfw_eval_summary.json \
+  --batch-size 256 \
+  --device cuda:0
+```
+
+Success requires `accuracy >= 0.985` and `target_met: true`; the synchronized
+final summary reports `accuracy = 0.998`.
 
 ## Stage2 Task 6.x
 

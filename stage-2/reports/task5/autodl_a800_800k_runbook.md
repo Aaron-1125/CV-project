@@ -145,5 +145,11 @@ Success target:
 - `target_met: true`
 - checkpoint exists at `work_dirs/task5/insightface_ms1mv3_r50_full/model.pt`
 
+Final synchronized result:
+
+- aligned LFW bin: `12000/12000` images at `112x112`
+- final LFW accuracy: `0.998`
+- `target_met: true`
+
 The previous `81.67%` result remains a failed baseline and is not the final
 Task5 result.

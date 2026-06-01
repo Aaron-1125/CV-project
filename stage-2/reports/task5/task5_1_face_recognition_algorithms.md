@@ -76,3 +76,7 @@ LFW accuracy parsed from official InsightFace validation logs.
 
 The acceptance target for this task is `accuracy >= 0.985` from the checkpoint
 trained in this project run.
+
+The final official full-MS1MV3 ResNet50 + ArcFace checkpoint was evaluated on
+the aligned `112x112` LFW validation bin and reached `accuracy = 0.998`, so the
+Task 5.x LFW target is met.

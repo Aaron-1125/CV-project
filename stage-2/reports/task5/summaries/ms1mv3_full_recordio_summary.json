@@ -1,8 +1,8 @@
 {
   "dataset": "gaunernst/ms1mv3-recordio",
   "revision": "main",
-  "data_root": "data\\task5_ms1mv3_full_recordio",
-  "recordio_dir": "data\\task5_ms1mv3_full_recordio\\ms1m-retinaface-t1",
+  "data_root": "data/task5_ms1mv3_full_recordio",
+  "recordio_dir": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1",
   "expected_num_classes": 93431,
   "expected_num_images": 5179510,
   "expected_image_size": [
@@ -12,45 +12,61 @@
   "property": "93431,112,112",
   "files": {
     "train.rec": {
-      "path": "data\\task5_ms1mv3_full_recordio\\ms1m-retinaface-t1\\train.rec",
+      "path": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/train.rec",
       "exists": true,
       "size_bytes": 29322062124
     },
     "train.idx": {
-      "path": "data\\task5_ms1mv3_full_recordio\\ms1m-retinaface-t1\\train.idx",
+      "path": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/train.idx",
       "exists": true,
       "size_bytes": 102395035
     },
     "property": {
-      "path": "data\\task5_ms1mv3_full_recordio\\ms1m-retinaface-t1\\property",
+      "path": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/property",
       "exists": true,
       "size_bytes": 15
     },
     "lfw.bin": {
-      "path": "data\\task5_ms1mv3_full_recordio\\ms1m-retinaface-t1\\lfw.bin",
+      "path": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin",
       "exists": true,
-      "size_bytes": 106078708
+      "size_bytes": 452364054
     }
   },
   "lfw_bin": {
-    "path": "data\\task5_ms1mv3_full_recordio\\ms1m-retinaface-t1\\lfw.bin",
-    "created": false,
+    "path": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin",
+    "created": true,
+    "source": "task5_lfw_pairs_raw_images",
     "pairs": 6000,
-    "size_bytes": 106078708
+    "positive_pairs": 3000,
+    "negative_pairs": 3000,
+    "size_bytes": 452364054
   },
-  "mxnet_recordio_reader": "unavailable",
-  "mxnet_error": "ModuleNotFoundError: No module named 'mxnet'",
+  "lfw_bin_inspection": {
+    "path": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin",
+    "exists": true,
+    "readable": true,
+    "size_bytes": 452364054,
+    "pairs": 6000,
+    "images": 12000,
+    "positive_pairs": 3000,
+    "negative_pairs": 3000,
+    "inspected_images": 12000,
+    "image_size_counts": {
+      "112x112": 12000
+    },
+    "decode_errors": [],
+    "expected_image_size": "112x112",
+    "aligned_112x112": true
+  },
+  "train_ready": true,
+  "validation_ready": true,
+  "validation_warning": null,
+  "allow_unaligned_lfw_bin": false,
+  "mxnet_recordio_reader": "available",
+  "mxnet_error": null,
   "download": {
-    "download": true,
-    "dataset": "gaunernst/ms1mv3-recordio",
-    "revision": "main",
-    "seconds": 1384.55,
-    "allow_patterns": [
-      "train.rec",
-      "train.idx",
-      "README.md",
-      "*.json"
-    ]
+    "download": false,
+    "message": "Skipped download; validating local files only."
   },
   "ready": true,
   "note": "Full MS1MV3 RecordIO and model checkpoints are local ignored artifacts and must not be committed."

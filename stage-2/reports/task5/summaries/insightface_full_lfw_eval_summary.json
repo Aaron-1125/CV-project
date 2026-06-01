@@ -1,0 +1,64 @@
+{
+  "task": "stage2_task5_insightface_ms1mv3_r50_full",
+  "repo": {
+    "repo_url": "https://github.com/deepinsight/insightface.git",
+    "ref": "master",
+    "path": "external/insightface",
+    "commit": "658b034e7fc0f4b08a01e11347b6118d8d04c76b"
+  },
+  "verification_patch": {
+    "path": "external/insightface/recognition/arcface_torch/eval/verification.py",
+    "applied": false,
+    "reason": "already patched"
+  },
+  "target_name": "lfw",
+  "bin_path": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin",
+  "bin_inspection": {
+    "path": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin",
+    "exists": true,
+    "readable": true,
+    "size_bytes": 452364054,
+    "pairs": 6000,
+    "images": 12000,
+    "positive_pairs": 3000,
+    "negative_pairs": 3000,
+    "inspected_images": 12000,
+    "image_size_counts": {
+      "112x112": 12000
+    },
+    "decode_errors": [],
+    "expected_image_size": "112x112",
+    "aligned_112x112": true
+  },
+  "checkpoint": "work_dirs/task5/insightface_ms1mv3_r50_full/model.pt",
+  "checkpoint_exists": true,
+  "metrics": {
+    "pairs": 6000,
+    "images": 12000,
+    "accuracy": 0.998,
+    "accuracy_std": 0.0028674417556808695,
+    "fold_accuracies": [
+      0.9916666666666667,
+      1.0,
+      1.0,
+      0.9983333333333333,
+      0.995,
+      1.0,
+      0.995,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "val_at_far_1e-3": 0.9966666666666667,
+    "val_std": 0.004714045207910316,
+    "far": 0.001,
+    "xnorm": 44.85584259033203,
+    "seconds": 13.48,
+    "batch_size": 256,
+    "device": "cuda:0"
+  },
+  "accuracy": 0.998,
+  "target_lfw_accuracy": 0.985,
+  "target_met": true,
+  "note": "This is a direct post-training evaluation of model.pt on the selected InsightFace-format validation bin."
+}

@@ -62,6 +62,28 @@ The new main route uses the official InsightFace ArcFace Torch implementation:
 The official source is cloned at runtime and the resolved commit SHA is written
 to the training summary. The project does not vendor the InsightFace source.
 
+## Final Result
+
+The official full-MS1MV3 run completed on AutoDL A800 and the final `model.pt`
+was re-evaluated with an aligned `112x112` InsightFace-format LFW validation
+bin:
+
+- checkpoint: `work_dirs/task5/insightface_ms1mv3_r50_full/model.pt`
+- upstream InsightFace commit: `658b034e7fc0f4b08a01e11347b6118d8d04c76b`
+- training data: `93431` identities, `5179510` images
+- validation protocol: LFW `6000` pairs, `3000` positive and `3000` negative
+- validation bin inspection: `12000/12000` images are `112x112`
+- final LFW accuracy: `0.9980`
+- accuracy std: `0.0029`
+- VAL at FAR=1e-3: `0.9967`
+- target: `0.985`
+- target met: `true`
+
+The training-time InsightFace log still contains lower LFW numbers because that
+callback initially read a `250x250` deepfunneled `lfw.bin`. After replacing the
+validation target with the aligned `112x112` bin, `eval-bin` produced the final
+accepted metric above without retraining.
+
 ## LFW Validation Bin Note
 
 The official InsightFace validation callback expects the validation target
@@ -171,16 +193,13 @@ python code/task5/stage2_task5_5_run_insightface.py eval-bin \
 
 ## Acceptance
 
-The Task5 target is met only when
+The Task5 target is met. The final
 `reports/task5/summaries/insightface_full_lfw_eval_summary.json` reports:
 
 ```json
 {
-  "accuracy": 0.985,
+  "accuracy": 0.998,
+  "target_lfw_accuracy": 0.985,
   "target_met": true
 }
 ```
-
-If the official full MS1MV3 run still falls below 98.5%, the report must keep
-`target_met: false` and record the exact metric instead of substituting a public
-pretrained checkpoint.
