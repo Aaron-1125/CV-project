@@ -6,8 +6,9 @@ The script creates this layout:
 
 ``data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/{train.rec,train.idx,property,lfw.bin}``
 
-The ``lfw.bin`` file is generated from the existing Task5 LFW 6000-pair
-protocol so the official InsightFace validation callback can report LFW.
+For validation, prefer an official or already aligned 112x112 InsightFace
+``lfw.bin``. A bin generated from raw/deepfunneled 250x250 LFW images is useful
+only as a smoke check because it is not the standard ArcFace validation target.
 """
 
 from __future__ import annotations
@@ -19,14 +20,19 @@ import os
 import pickle
 import shutil
 import time
+from collections import Counter
+from io import BytesIO
 from pathlib import Path
 from typing import Any
+
+from PIL import Image
 
 DEFAULT_DATASET = "gaunernst/ms1mv3-recordio"
 EXPECTED_NUM_CLASSES = 93431
 EXPECTED_NUM_IMAGES = 5179510
 EXPECTED_IMAGE_SIZE = (112, 112)
 TARGET_SUBDIR = "ms1m-retinaface-t1"
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
 
 def write_json(path: Path, data: dict[str, Any]) -> None:
@@ -37,6 +43,61 @@ def write_json(path: Path, data: dict[str, Any]) -> None:
 
 def safe_file_size(path: Path) -> int:
     return path.stat().st_size if path.exists() else 0
+
+
+def size_key(size: tuple[int, int]) -> str:
+    return f"{size[0]}x{size[1]}"
+
+
+def inspect_lfw_bin(path: Path, sample_limit: int = 12000) -> dict[str, Any]:
+    if not path.exists() or path.stat().st_size <= 0:
+        return {"path": str(path), "exists": False, "aligned_112x112": False}
+
+    try:
+        with path.open("rb") as handle:
+            try:
+                bins, issame_list = pickle.load(handle)
+            except UnicodeDecodeError:
+                handle.seek(0)
+                bins, issame_list = pickle.load(handle, encoding="bytes")
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "path": str(path),
+            "exists": True,
+            "size_bytes": path.stat().st_size,
+            "readable": False,
+            "error": f"{exc.__class__.__name__}: {exc}",
+            "aligned_112x112": False,
+        }
+
+    counts: Counter[str] = Counter()
+    decode_errors: list[str] = []
+    inspected = min(len(bins), sample_limit)
+    for raw in bins[:inspected]:
+        try:
+            with Image.open(BytesIO(raw)) as image:
+                counts[size_key(image.size)] += 1
+        except Exception as exc:  # noqa: BLE001
+            if len(decode_errors) < 5:
+                decode_errors.append(f"{exc.__class__.__name__}: {exc}")
+
+    expected = size_key(EXPECTED_IMAGE_SIZE)
+    aligned = bool(inspected > 0 and counts.get(expected, 0) == inspected and not decode_errors)
+    return {
+        "path": str(path),
+        "exists": True,
+        "readable": True,
+        "size_bytes": path.stat().st_size,
+        "pairs": len(issame_list),
+        "images": len(bins),
+        "positive_pairs": sum(1 for item in issame_list if bool(item)),
+        "negative_pairs": sum(1 for item in issame_list if not bool(item)),
+        "inspected_images": inspected,
+        "image_size_counts": dict(sorted(counts.items())),
+        "decode_errors": decode_errors,
+        "expected_image_size": expected,
+        "aligned_112x112": aligned,
+    }
 
 
 def parse_bool(value: str) -> bool:
@@ -153,6 +214,118 @@ def create_lfw_bin(lfw_dir: Path, output_path: Path, overwrite: bool = False) ->
     return {
         "path": str(output_path),
         "created": True,
+        "source": "task5_lfw_pairs_raw_images",
+        "pairs": len(issame_list),
+        "positive_pairs": sum(1 for item in issame_list if item),
+        "negative_pairs": sum(1 for item in issame_list if not item),
+        "size_bytes": output_path.stat().st_size,
+    }
+
+
+def copy_lfw_bin(source_path: Path, output_path: Path, overwrite: bool = False) -> dict[str, Any]:
+    if not source_path.exists() or source_path.stat().st_size <= 0:
+        raise FileNotFoundError(f"Missing lfw.bin source: {source_path}")
+    if output_path.exists() and output_path.resolve() == source_path.resolve():
+        return {
+            "path": str(output_path),
+            "created": False,
+            "source": "provided_lfw_bin",
+            "source_path": str(source_path),
+            "size_bytes": output_path.stat().st_size,
+        }
+    if output_path.exists() and not overwrite:
+        return {
+            "path": str(output_path),
+            "created": False,
+            "source": "existing_lfw_bin",
+            "source_path": str(output_path),
+            "size_bytes": output_path.stat().st_size,
+        }
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source_path, output_path)
+    return {
+        "path": str(output_path),
+        "created": True,
+        "source": "provided_lfw_bin",
+        "source_path": str(source_path),
+        "size_bytes": output_path.stat().st_size,
+    }
+
+
+def build_aligned_image_index(root: Path) -> dict[str, Path]:
+    if not root.exists():
+        raise FileNotFoundError(f"Missing aligned LFW root: {root}")
+    index: dict[str, Path] = {}
+    for path in root.rglob("*"):
+        if path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES:
+            index.setdefault(path.stem, path)
+    if not index:
+        raise FileNotFoundError(f"No aligned LFW images found under {root}")
+    return index
+
+
+def pair_image_stem(value: str) -> str:
+    normalized = value.replace("\\", "/")
+    return Path(normalized).stem
+
+
+def encode_aligned_image(path: Path) -> bytes:
+    with Image.open(path) as image:
+        image = image.convert("RGB")
+        if image.size != EXPECTED_IMAGE_SIZE:
+            image = image.resize(EXPECTED_IMAGE_SIZE, Image.BILINEAR)
+        buffer = BytesIO()
+        image.save(buffer, format="JPEG", quality=95)
+        return buffer.getvalue()
+
+
+def create_lfw_bin_from_aligned_root(
+    aligned_root: Path,
+    lfw_dir: Path,
+    output_path: Path,
+    overwrite: bool = False,
+) -> dict[str, Any]:
+    if output_path.exists() and output_path.stat().st_size > 0 and not overwrite:
+        return {
+            "path": str(output_path),
+            "created": False,
+            "source": "existing_lfw_bin",
+            "size_bytes": output_path.stat().st_size,
+        }
+
+    pairs = load_lfw_pairs(lfw_dir)
+    image_index = build_aligned_image_index(aligned_root)
+    bins: list[bytes] = []
+    issame_list: list[bool] = []
+    missing: list[str] = []
+    for item in pairs:
+        stem1 = pair_image_stem(item["path1"])
+        stem2 = pair_image_stem(item["path2"])
+        path1 = image_index.get(stem1)
+        path2 = image_index.get(stem2)
+        if path1 is None:
+            missing.append(stem1)
+        if path2 is None:
+            missing.append(stem2)
+        if path1 is None or path2 is None:
+            continue
+        bins.append(encode_aligned_image(path1))
+        bins.append(encode_aligned_image(path2))
+        issame_list.append(bool(item["same"]))
+    if missing:
+        sample = "\n".join(missing[:10])
+        raise FileNotFoundError(f"Missing aligned LFW images by stem:\n{sample}")
+    if len(issame_list) != 6000:
+        raise ValueError(f"Expected 6000 LFW pairs, found {len(issame_list)}")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with output_path.open("wb") as handle:
+        pickle.dump((bins, issame_list), handle, protocol=pickle.HIGHEST_PROTOCOL)
+    return {
+        "path": str(output_path),
+        "created": True,
+        "source": "aligned_lfw_root",
+        "aligned_root": str(aligned_root),
         "pairs": len(issame_list),
         "positive_pairs": sum(1 for item in issame_list if item),
         "negative_pairs": sum(1 for item in issame_list if not item),
@@ -217,7 +390,19 @@ def prepare(args: argparse.Namespace) -> dict[str, Any]:
 
     download_info = download_recordio(args, rec_dir)
     property_path = ensure_property(rec_dir)
-    lfw_bin_info = create_lfw_bin(Path(args.lfw_dir), rec_dir / "lfw.bin", overwrite=args.overwrite_lfw_bin)
+    target_lfw_bin = rec_dir / "lfw.bin"
+    if args.lfw_bin_path:
+        lfw_bin_info = copy_lfw_bin(Path(args.lfw_bin_path), target_lfw_bin, overwrite=args.overwrite_lfw_bin)
+    elif args.aligned_lfw_root:
+        lfw_bin_info = create_lfw_bin_from_aligned_root(
+            Path(args.aligned_lfw_root),
+            Path(args.lfw_dir),
+            target_lfw_bin,
+            overwrite=args.overwrite_lfw_bin,
+        )
+    else:
+        lfw_bin_info = create_lfw_bin(Path(args.lfw_dir), target_lfw_bin, overwrite=args.overwrite_lfw_bin)
+    lfw_bin_inspection = inspect_lfw_bin(target_lfw_bin)
     mxnet_status, mxnet_error = maybe_import_mxnet()
 
     files = {
@@ -228,7 +413,19 @@ def prepare(args: argparse.Namespace) -> dict[str, Any]:
         }
         for name in ("train.rec", "train.idx", "property", "lfw.bin")
     }
-    ready = all(item["exists"] and item["size_bytes"] > 0 for item in files.values())
+    train_ready = all(files[name]["exists"] and files[name]["size_bytes"] > 0 for name in ("train.rec", "train.idx", "property"))
+    validation_ready = bool(
+        files["lfw.bin"]["exists"]
+        and files["lfw.bin"]["size_bytes"] > 0
+        and lfw_bin_inspection.get("aligned_112x112")
+    )
+    ready = bool(train_ready and (validation_ready or args.allow_unaligned_lfw_bin))
+    validation_warning = None
+    if not validation_ready:
+        validation_warning = (
+            "lfw.bin is not confirmed as 112x112 aligned. Official InsightFace LFW numbers from this bin "
+            "should be treated as a smoke check, not the 98.5% acceptance metric."
+        )
     summary = {
         "dataset": args.dataset,
         "revision": args.revision,
@@ -240,6 +437,11 @@ def prepare(args: argparse.Namespace) -> dict[str, Any]:
         "property": property_path.read_text(encoding="utf-8").strip(),
         "files": files,
         "lfw_bin": lfw_bin_info,
+        "lfw_bin_inspection": lfw_bin_inspection,
+        "train_ready": train_ready,
+        "validation_ready": validation_ready,
+        "validation_warning": validation_warning,
+        "allow_unaligned_lfw_bin": bool(args.allow_unaligned_lfw_bin),
         "mxnet_recordio_reader": mxnet_status,
         "mxnet_error": mxnet_error,
         "download": download_info,
@@ -248,8 +450,11 @@ def prepare(args: argparse.Namespace) -> dict[str, Any]:
     }
     write_json(summaries_dir / "ms1mv3_full_recordio_summary.json", summary)
     if not ready:
-        missing = [name for name, item in files.items() if not item["exists"] or item["size_bytes"] <= 0]
-        raise SystemExit(f"MS1MV3 RecordIO is not ready; missing or empty: {missing}")
+        missing = [name for name in ("train.rec", "train.idx", "property") if not files[name]["exists"] or files[name]["size_bytes"] <= 0]
+        if missing:
+            raise SystemExit(f"MS1MV3 RecordIO is not ready; missing or empty: {missing}")
+        if validation_warning:
+            print(f"WARNING: {validation_warning}")
     return summary
 
 
@@ -260,8 +465,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-dir", default="data/task5_ms1mv3_full_recordio")
     parser.add_argument("--report-dir", default="reports/task5")
     parser.add_argument("--lfw-dir", default="data/task5_lfw")
+    parser.add_argument("--lfw-bin-path", default=None, help="Copy an existing official/aligned InsightFace lfw.bin.")
+    parser.add_argument("--aligned-lfw-root", default=None, help="Build lfw.bin from 112x112 aligned LFW images.")
     parser.add_argument("--download", action="store_true", help="Download train.rec/train.idx from Hugging Face.")
     parser.add_argument("--overwrite-lfw-bin", action="store_true")
+    parser.add_argument("--allow-unaligned-lfw-bin", action="store_true", help="Allow a non-112x112 lfw.bin to count as ready.")
     return parser.parse_args()
 
 

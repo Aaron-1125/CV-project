@@ -58,6 +58,35 @@ If Hugging Face Xet connections are unstable, retry the same command; it is
 resume-safe. As a fallback, set `HF_HUB_DISABLE_XET=1` before running the
 prepare command and let the Hub client use the regular HTTP path.
 
+Check the validation bin before accepting LFW:
+
+```bash
+python - <<'PY'
+import pickle
+from io import BytesIO
+from PIL import Image
+
+p = "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin"
+bins, issame = pickle.load(open(p, "rb"), encoding="bytes")
+print("pairs:", len(issame))
+print("first image size:", Image.open(BytesIO(bins[0])).size)
+PY
+```
+
+If this prints `(250, 250)`, the bin came from raw/deepfunneled LFW and the
+official callback accuracy is only a smoke metric. Replace it with an aligned
+`112x112` InsightFace-format bin, then re-run preparation without downloading:
+
+```bash
+python code/task5/stage2_task5_4_prepare_ms1mv3_recordio.py \
+  --dataset gaunernst/ms1mv3-recordio \
+  --data-dir data/task5_ms1mv3_full_recordio \
+  --lfw-dir data/task5_lfw \
+  --lfw-bin-path /root/autodl-tmp/lfw.bin \
+  --overwrite-lfw-bin \
+  --report-dir reports/task5
+```
+
 ## Train
 
 ```bash
@@ -83,6 +112,19 @@ python code/task5/stage2_task5_5_run_insightface.py eval-summary \
   --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
   --checkpoint work_dirs/task5/insightface_ms1mv3_r50_full/model.pt \
   --summary-out reports/task5/summaries/insightface_full_lfw_eval_summary.json
+```
+
+If the training already finished and you replaced `lfw.bin`, use direct
+post-training evaluation instead of retraining:
+
+```bash
+python code/task5/stage2_task5_5_run_insightface.py eval-bin \
+  --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
+  --checkpoint work_dirs/task5/insightface_ms1mv3_r50_full/model.pt \
+  --bin-path data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin \
+  --summary-out reports/task5/summaries/insightface_full_lfw_eval_summary.json \
+  --batch-size 256 \
+  --device cuda:0
 ```
 
 Success target:

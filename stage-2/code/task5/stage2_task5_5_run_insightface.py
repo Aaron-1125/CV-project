@@ -6,11 +6,14 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import pickle
 import re
 import shutil
 import subprocess
 import sys
 import time
+from collections import Counter
+from io import BytesIO
 from pathlib import Path
 from typing import Any
 
@@ -37,6 +40,63 @@ def write_json(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(jsonable(data), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {path}")
+
+
+def size_key(size: tuple[int, int]) -> str:
+    return f"{size[0]}x{size[1]}"
+
+
+def inspect_lfw_bin(path: Path, expected_size: tuple[int, int] = (112, 112), sample_limit: int = 12000) -> dict[str, Any]:
+    if not path.exists() or path.stat().st_size <= 0:
+        return {"path": str(path), "exists": False, "aligned_112x112": False}
+
+    from PIL import Image
+
+    try:
+        with path.open("rb") as handle:
+            try:
+                bins, issame_list = pickle.load(handle)
+            except UnicodeDecodeError:
+                handle.seek(0)
+                bins, issame_list = pickle.load(handle, encoding="bytes")
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "path": str(path),
+            "exists": True,
+            "readable": False,
+            "size_bytes": path.stat().st_size,
+            "error": f"{exc.__class__.__name__}: {exc}",
+            "aligned_112x112": False,
+        }
+
+    counts: Counter[str] = Counter()
+    inspected = min(len(bins), sample_limit)
+    decode_errors: list[str] = []
+    for raw in bins[:inspected]:
+        try:
+            with Image.open(BytesIO(raw)) as image:
+                counts[size_key(image.size)] += 1
+        except Exception as exc:  # noqa: BLE001
+            if len(decode_errors) < 5:
+                decode_errors.append(f"{exc.__class__.__name__}: {exc}")
+
+    expected = size_key(expected_size)
+    aligned = bool(inspected > 0 and counts.get(expected, 0) == inspected and not decode_errors)
+    return {
+        "path": str(path),
+        "exists": True,
+        "readable": True,
+        "size_bytes": path.stat().st_size,
+        "pairs": len(issame_list),
+        "images": len(bins),
+        "positive_pairs": sum(1 for item in issame_list if bool(item)),
+        "negative_pairs": sum(1 for item in issame_list if not bool(item)),
+        "inspected_images": inspected,
+        "image_size_counts": dict(sorted(counts.items())),
+        "decode_errors": decode_errors,
+        "expected_image_size": expected,
+        "aligned_112x112": aligned,
+    }
 
 
 def run_command(command: list[str], cwd: Path | None = None, env: dict[str, str] | None = None) -> None:
@@ -159,7 +219,23 @@ def validate_recordio_layout(cfg: Any) -> dict[str, Any]:
     if not ready:
         missing = [name for name, item in files.items() if not item["exists"] or item["size_bytes"] <= 0]
         raise FileNotFoundError(f"RecordIO layout is not ready under {rec_dir}; missing or empty: {missing}")
-    return {"recordio_dir": str(rec_dir), "files": files, "ready": ready}
+    lfw_inspection = inspect_lfw_bin(rec_dir / "lfw.bin")
+    validation_ready = bool(lfw_inspection.get("aligned_112x112"))
+    validation_warning = None
+    if not validation_ready:
+        validation_warning = (
+            "lfw.bin is not confirmed as 112x112 aligned. Official training can run, but this LFW metric "
+            "is not the acceptance metric until the bin is replaced with an aligned validation target."
+        )
+        print(f"WARNING: {validation_warning}")
+    return {
+        "recordio_dir": str(rec_dir),
+        "files": files,
+        "lfw_bin_inspection": lfw_inspection,
+        "validation_ready": validation_ready,
+        "validation_warning": validation_warning,
+        "ready": ready,
+    }
 
 
 def parse_lfw_metrics_from_text(text: str) -> dict[str, Any]:
@@ -253,6 +329,136 @@ def eval_summary(args: argparse.Namespace, cfg: Any) -> dict[str, Any]:
     return summary
 
 
+def load_bin_payload(path: Path) -> tuple[list[bytes], list[bool]]:
+    with path.open("rb") as handle:
+        try:
+            bins, issame_list = pickle.load(handle)
+        except UnicodeDecodeError:
+            handle.seek(0)
+            bins, issame_list = pickle.load(handle, encoding="bytes")
+    return bins, [bool(item) for item in issame_list]
+
+
+def image_bytes_to_tensor(raw: bytes, image_size: tuple[int, int], flip: bool = False):
+    import numpy as np
+    import torch
+    from PIL import Image
+
+    with Image.open(BytesIO(raw)) as image:
+        image = image.convert("RGB")
+        if image.size != image_size:
+            image = image.resize(image_size, Image.BILINEAR)
+        array = np.asarray(image, dtype=np.float32)
+    if flip:
+        array = array[:, ::-1, :].copy()
+    array = np.transpose(array, (2, 0, 1))
+    tensor = torch.from_numpy(array)
+    return ((tensor / 255.0) - 0.5) / 0.5
+
+
+def strip_module_prefix(state_dict: dict[str, Any]) -> dict[str, Any]:
+    return {key[7:] if key.startswith("module.") else key: value for key, value in state_dict.items()}
+
+
+def evaluate_lfw_bin(
+    cfg: Any,
+    checkpoint: Path,
+    bin_path: Path,
+    batch_size: int,
+    device_name: str,
+) -> dict[str, Any]:
+    import numpy as np
+    import sklearn.preprocessing
+    import torch
+
+    root = arcface_dir(cfg).resolve()
+    sys.path.insert(0, str(root))
+    from backbones import get_model  # type: ignore
+    from eval import verification  # type: ignore
+
+    device = torch.device(device_name if torch.cuda.is_available() or device_name == "cpu" else "cpu")
+    backbone = get_model(
+        cfg.official.network,
+        dropout=0.0,
+        fp16=bool(cfg.official.fp16 and device.type == "cuda"),
+        num_features=int(cfg.official.embedding_size),
+    )
+    state = torch.load(checkpoint, map_location=device)
+    if isinstance(state, dict) and "state_dict_backbone" in state:
+        state = state["state_dict_backbone"]
+    if not isinstance(state, dict):
+        raise TypeError(f"Unsupported checkpoint payload in {checkpoint}")
+    backbone.load_state_dict(strip_module_prefix(state), strict=True)
+    backbone.to(device)
+    backbone.eval()
+
+    bins, issame_list = load_bin_payload(bin_path)
+    image_size = tuple(cfg.data.expected_image_size)
+    embeddings_by_flip: list[np.ndarray] = []
+    started = time.time()
+    for flip in (False, True):
+        chunks: list[np.ndarray] = []
+        for start in range(0, len(bins), batch_size):
+            batch = bins[start : start + batch_size]
+            tensor = torch.stack([image_bytes_to_tensor(raw, image_size, flip=flip) for raw in batch]).to(device)
+            with torch.no_grad():
+                output = backbone(tensor).detach().cpu().numpy()
+            chunks.append(output)
+        embeddings_by_flip.append(np.concatenate(chunks, axis=0))
+
+    combined = embeddings_by_flip[0] + embeddings_by_flip[1]
+    xnorm = float(np.mean(np.linalg.norm(combined, axis=1)))
+    combined = sklearn.preprocessing.normalize(combined)
+    _, _, accuracy, val, val_std, far = verification.evaluate(combined, issame_list, nrof_folds=10)
+    elapsed = round(time.time() - started, 2)
+    return {
+        "pairs": len(issame_list),
+        "images": len(bins),
+        "accuracy": float(np.mean(accuracy)),
+        "accuracy_std": float(np.std(accuracy)),
+        "fold_accuracies": [float(item) for item in accuracy],
+        "val_at_far_1e-3": float(val),
+        "val_std": float(val_std),
+        "far": float(far),
+        "xnorm": xnorm,
+        "seconds": elapsed,
+        "batch_size": batch_size,
+        "device": str(device),
+    }
+
+
+def eval_bin(args: argparse.Namespace, cfg: Any) -> dict[str, Any]:
+    repo = ensure_repo(cfg.insightface.repo_url, args.insightface_ref or cfg.insightface.ref, Path(cfg.insightface.external_dir))
+    verification_patch = patch_verification_interp(arcface_dir(cfg))
+    bin_path = Path(args.bin_path) if args.bin_path else Path(cfg.data.rec) / f"{args.target_name}.bin"
+    checkpoint = Path(args.checkpoint) if args.checkpoint else Path(cfg.official.output) / "model.pt"
+    inspection = inspect_lfw_bin(bin_path)
+    metrics = evaluate_lfw_bin(
+        cfg=cfg,
+        checkpoint=checkpoint,
+        bin_path=bin_path,
+        batch_size=int(args.batch_size),
+        device_name=args.device,
+    )
+    summary = {
+        "task": cfg.task_name,
+        "repo": repo,
+        "verification_patch": verification_patch,
+        "target_name": args.target_name,
+        "bin_path": str(bin_path),
+        "bin_inspection": inspection,
+        "checkpoint": str(checkpoint),
+        "checkpoint_exists": checkpoint.exists(),
+        "metrics": metrics,
+        "accuracy": metrics["accuracy"],
+        "target_lfw_accuracy": float(cfg.train.target_lfw_accuracy),
+        "target_met": bool(metrics["accuracy"] >= float(cfg.train.target_lfw_accuracy)),
+        "note": "This is a direct post-training evaluation of model.pt on the selected InsightFace-format validation bin.",
+    }
+    write_json(Path(args.summary_out or cfg.train.eval_summary_out), summary)
+    return summary
+
+
 def cleanup_external(args: argparse.Namespace, cfg: Any) -> None:
     target = Path(cfg.insightface.external_dir)
     if target.exists():
@@ -269,12 +475,16 @@ def cleanup_external(args: argparse.Namespace, cfg: Any) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
-    for name in ("setup", "train", "eval-summary", "cleanup-external"):
+    for name in ("setup", "train", "eval-summary", "eval-bin", "cleanup-external"):
         sub = subparsers.add_parser(name)
         sub.add_argument("--config", default="configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py")
         sub.add_argument("--insightface-ref", default=None)
         sub.add_argument("--summary-out", default=None)
         sub.add_argument("--checkpoint", default=None)
+        sub.add_argument("--bin-path", default=None)
+        sub.add_argument("--target-name", default="lfw")
+        sub.add_argument("--batch-size", default=256, type=int)
+        sub.add_argument("--device", default="cuda:0")
     return parser.parse_args()
 
 
@@ -287,6 +497,8 @@ def main() -> None:
         train(args, cfg)
     elif args.command == "eval-summary":
         eval_summary(args, cfg)
+    elif args.command == "eval-bin":
+        eval_bin(args, cfg)
     elif args.command == "cleanup-external":
         cleanup_external(args, cfg)
 

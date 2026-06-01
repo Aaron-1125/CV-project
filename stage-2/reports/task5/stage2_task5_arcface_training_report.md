@@ -62,6 +62,26 @@ The new main route uses the official InsightFace ArcFace Torch implementation:
 The official source is cloned at runtime and the resolved commit SHA is written
 to the training summary. The project does not vendor the InsightFace source.
 
+## LFW Validation Bin Note
+
+The official InsightFace validation callback expects the validation target
+`lfw.bin` to contain already aligned `112x112` face crops. A bin created from
+the ordinary LFW deepfunneled images contains `250x250` images; the callback can
+resize those images and print an accuracy, but that number is only a smoke
+check. It is not the standard ArcFace/InsightFace LFW acceptance metric and can
+look much lower than the real result.
+
+The RecordIO preparation script now inspects `lfw.bin` and writes
+`lfw_bin_inspection.image_size_counts` plus `validation_ready`. Use one of these
+routes before treating LFW as final:
+
+- copy an official/aligned InsightFace `lfw.bin` with `--lfw-bin-path`
+- or rebuild `lfw.bin` from a 112x112 aligned LFW image directory with
+  `--aligned-lfw-root`
+
+After replacing the bin, run `eval-bin` on the saved `model.pt`; retraining is
+not required just to correct the validation target.
+
 ## Commands
 
 Prepare LFW if needed:
@@ -82,6 +102,19 @@ python code/task5/stage2_task5_4_prepare_ms1mv3_recordio.py \
   --dataset gaunernst/ms1mv3-recordio \
   --data-dir data/task5_ms1mv3_full_recordio \
   --lfw-dir data/task5_lfw \
+  --report-dir reports/task5
+```
+
+If the generated summary reports `250x250`, replace the validation bin before
+final acceptance:
+
+```bash
+python code/task5/stage2_task5_4_prepare_ms1mv3_recordio.py \
+  --dataset gaunernst/ms1mv3-recordio \
+  --data-dir data/task5_ms1mv3_full_recordio \
+  --lfw-dir data/task5_lfw \
+  --lfw-bin-path /path/to/aligned/lfw.bin \
+  --overwrite-lfw-bin \
   --report-dir reports/task5
 ```
 
@@ -108,6 +141,18 @@ python code/task5/stage2_task5_5_run_insightface.py eval-summary \
   --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
   --checkpoint work_dirs/task5/insightface_ms1mv3_r50_full/model.pt \
   --summary-out reports/task5/summaries/insightface_full_lfw_eval_summary.json
+```
+
+Or directly re-evaluate the final model on the corrected aligned bin:
+
+```bash
+python code/task5/stage2_task5_5_run_insightface.py eval-bin \
+  --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
+  --checkpoint work_dirs/task5/insightface_ms1mv3_r50_full/model.pt \
+  --bin-path data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin \
+  --summary-out reports/task5/summaries/insightface_full_lfw_eval_summary.json \
+  --batch-size 256 \
+  --device cuda:0
 ```
 
 ## Acceptance

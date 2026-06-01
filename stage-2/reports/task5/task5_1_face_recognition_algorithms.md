@@ -42,11 +42,14 @@ MS1MV3/MS1M-RetinaFace full RecordIO data from Hugging Face:
 - source dataset: `gaunernst/ms1mv3-recordio`
 - official-compatible layout: `ms1m-retinaface-t1/{train.rec,train.idx,property}`
 - full size: `93431` identities and `5179510` images
-- validation target: generated `lfw.bin`
+- validation target: aligned `112x112` InsightFace-format `lfw.bin`
 
 The earlier `gaunernst/ms1mv3-wds-gz` JPEG subset route is retained only as a
 failed baseline. The official route avoids the custom CSV/JPEG loader and uses
-InsightFace's own RecordIO training pipeline.
+InsightFace's own RecordIO training pipeline. The LFW validation bin must use
+aligned `112x112` crops; a bin made directly from `250x250` LFW deepfunneled
+images is recorded only as a smoke check because it changes the benchmark
+preprocessing.
 
 ## Official InsightFace Pipeline
 
