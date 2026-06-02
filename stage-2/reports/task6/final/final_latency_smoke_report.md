@@ -3,7 +3,7 @@
 ## Source
 
 - Checkpoint: `work_dirs/task5/insightface_ms1mv3_r50_full/model.pt`
-- Source LFW accuracy: `0.998`
+- Source/cloud LFW accuracy: `0.998`
 - Device: `cuda:0`
 - ONNX Runtime providers available: `['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'AzureExecutionProvider', 'CPUExecutionProvider']`
 
@@ -27,3 +27,7 @@
 ONNX Runtime GPU/FP16 is the preferred deployment path if it beats the PyTorch CUDA baseline. Dynamic quantization is retained only as a CPU Linear-layer control because it does not target Conv2d.
 
 Dynamic quantization remains a CPU Linear-layer control and is not the main acceleration route for this convolution-heavy ArcFace R50 model.
+
+This smoke report is kept only as an environment/export check. Use
+`stage2_task6_final_latency_report.md` for the final rerun metrics; local-bin
+accuracy there is only for same-input backend comparison.

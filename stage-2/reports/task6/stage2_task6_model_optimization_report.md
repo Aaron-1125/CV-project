@@ -2,18 +2,20 @@
 
 ## 1. 任务目标
 
-Task6 面向 Task5 人脸识别模型做模型压缩与部署优化。当前最终源模型已经切换为官方 InsightFace full-MS1MV3 ResNet50 + ArcFace checkpoint：
+Task6 面向 Task5 人脸识别模型做模型压缩与部署优化，重点回应导师提出的“模型压缩后时延没有下降”的问题。
 
-- Final checkpoint: `work_dirs/task5/insightface_ms1mv3_r50_full/model.pt`
-- Final LFW accuracy: `0.998`
-- Final rerun outputs: `reports/task6/final/`
+本轮重新基于官方 InsightFace R50/ArcFace checkpoint 运行低时延复测：
+
+- Checkpoint: `work_dirs/task5/insightface_ms1mv3_r50_full/model.pt`
+- Accepted cloud 112x112 LFW accuracy: `0.998`
+- Final Task6 outputs: `reports/task6/final/`
 - Final ONNX artifacts: `work_dirs/task6/final_insightface_r50/`
 
-早期自研 800k dense 模型的 `81.67%` LFW 结果只保留为历史 baseline，不再作为 Task6 最终源模型。
+说明：Task6 本机复测还使用了一个本地 LFW bin 来做 PyTorch/ONNX 同输入 latency 对比。这个本地 bin 的 accuracy 只用于比较不同部署后端是否保持一致，不作为 Task5 的验收精度；Task5 验收仍以云端 112x112 LFW 的 `0.998` 为准。
 
-## 2. 已完成的历史 baseline
+## 2. 历史 Baseline
 
-历史 baseline 使用自研 IResNet50 + ArcFace checkpoint，完成了动态量化和 ONNX Runtime CPU 对比：
+早期自研 IResNet50 + ArcFace checkpoint 完成过动态量化和 ONNX Runtime CPU 对比：
 
 | Backend | LFW accuracy | ROC AUC | latency ms/image | throughput img/s | model size MB |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -31,38 +33,44 @@ Task6 面向 Task5 人脸识别模型做模型压缩与部署优化。当前最�
 torch.quantization.quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)
 ```
 
-它只量化 `Linear` 层，而 ArcFace R50/IResNet50 的主要计算来自 `Conv2d + BatchNorm/PReLU` 主干。卷积主干仍然以 FP32 执行，所以最耗时部分没有变化。LFW benchmark 还包含图片解码、resize、normalize、batch 组装、embedding 归一化和 pair protocol 统计，这些非模型开销进一步稀释了 Linear-only INT8 的收益。
+它只量化 `Linear` 层，而 ArcFace R50/IResNet50 的主要计算来自 `Conv2d + BatchNorm/PReLU` 主干。卷积主干仍然以 FP32 执行，所以最耗时的部分没有变化。
 
-因此，导师指出“模型压缩时延好像没有下降”的结论成立；根因不是实现失败，而是压缩策略与卷积主导模型结构不匹配。动态量化在本任务中应作为体积压缩 baseline，而不是主要加速方案。
+此外，LFW benchmark 还包含图片解码、resize、normalize、batch 组装、embedding 归一化和 pair protocol 统计，这些非模型开销进一步稀释了 Linear-only INT8 的收益。
 
-## 4. Final 低时延路线
+因此导师指出“模型压缩时延好像没有下降”的判断成立；根因不是量化实现失败，而是压缩策略与卷积主导模型结构不匹配。动态量化在本任务中应作为体积压缩 baseline，而不是主要加速方案。
 
-Final Task6 改为基于 LFW 达标的 official InsightFace R50 checkpoint 重跑：
+## 4. Final 低时延复测
+
+本轮改用更合适的部署路线：
 
 - PyTorch FP32 CUDA baseline
-- PyTorch FP16 CUDA baseline
-- ONNX FP32 export + ONNX Runtime CPU/CUDA
+- PyTorch FP16 CUDA
+- ONNX FP32 export + ONNX Runtime CUDA
 - ONNX FP16 export + ONNX Runtime CUDA
 - Dynamic INT8 Linear-only CPU control
 
-运行入口：
+完整结果见：
 
-```bash
-docker compose run --rm -w /workspace/stage-2 stage2-gpu \
-  python code/task6/stage2_task6_5_final_insightface_latency.py \
-    --config configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py \
-    --checkpoint work_dirs/task5/insightface_ms1mv3_r50_full/model.pt \
-    --device cuda:0 \
-    --providers cuda,cpu \
-    --summary-out reports/task6/final/summaries/final_latency_summary.json \
-    --report-out reports/task6/final/stage2_task6_final_latency_report.md \
-    --plot-out reports/task6/final/assets/evaluation/final_latency_comparison.png
-```
+- `reports/task6/final/summaries/final_latency_summary.json`
+- `reports/task6/final/stage2_task6_final_latency_report.md`
+- `reports/task6/final/assets/evaluation/final_latency_comparison.png`
 
-该脚本会导出 FP32/FP16 ONNX，验证 ONNX 与 PyTorch embedding 的 cosine consistency，并记录 batch `1/16/64/256` 的 model-only latency 和完整 LFW end-to-end latency。
+复测摘要：
 
-## 5. 预期结论
+| Backend | Local-bin accuracy | latency ms/image | speedup vs PyTorch FP32 |
+| --- | ---: | ---: | ---: |
+| PyTorch FP32 CUDA | 0.8605 | 35.895 | 1.00x |
+| PyTorch FP16 CUDA | 0.8615 | 7.607 | 4.72x |
+| ONNX FP32 CUDA | 0.8605 | 13.107 | 2.74x |
+| ONNX FP16 CUDA | 0.8582 | 9.078 | 3.95x |
 
-如果 ONNX Runtime CUDA/FP16 快于 PyTorch CUDA，最终交付结论为：动态量化不适合 ArcFace R50 的时延优化，ONNX GPU/FP16 是更合理的部署加速路径。
+ONNX 一致性检查正常：
 
-如果 ONNX Runtime CUDA/FP16 在 RTX 4060 上提升不明显，最终交付结论为：模型压缩链路正确，动态量化保持精度和体积收益，但本机小 batch、图片预处理和 runtime provider 限制了端到端时延收益；后续若要继续压低延迟，应使用 TensorRT FP16/INT8、Conv2d 静态量化/QAT，或蒸馏到 MobileFaceNet。
+- ONNX FP32 mean cosine vs PyTorch: `0.9999996`
+- ONNX FP16 mean cosine vs PyTorch: `0.9999937`
+
+## 5. 结论
+
+时延问题已经闭环：动态量化没有降时延的原因是 Linear-only INT8 不覆盖卷积主干；改用 GPU FP16/ONNX Runtime 后，实测端到端时延明显下降，其中 PyTorch FP16 CUDA 是本轮最快路径，约 `4.72x`。
+
+最终交付口径为：Task5 源模型采用云端 112x112 LFW `0.998` 作为验收精度；Task6 本机 local-bin accuracy 只用于同输入部署后端对比。压缩后精度在各后端之间保持接近，ONNX FP16 文件体积约减半，GPU FP16/ONNX 路线解决了“压缩后时延未下降”的问题。

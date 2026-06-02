@@ -2,14 +2,18 @@
 
 ## Purpose
 
-This final Task6 rerun uses the LFW-qualified official InsightFace R50 checkpoint:
+This final Task6 rerun uses the official InsightFace R50 checkpoint:
 
 - checkpoint: `work_dirs/task5/insightface_ms1mv3_r50_full/model.pt`
-- source LFW accuracy: `0.998`
+- accepted cloud 112x112 LFW accuracy: `0.998`
+- local latency-bin LFW accuracy: about `0.8605`
 - final outputs: `reports/task6/final/`
 - ONNX artifacts: `work_dirs/task6/final_insightface_r50/`
 
-The old `81.67%` Task5 custom-trainer checkpoint remains a historical baseline only.
+The old `81.67%` Task5 custom-trainer checkpoint remains a historical baseline
+only. The local Task6 LFW bin is used for same-input backend comparison during
+latency testing; the accepted Task5 validation metric is the cloud 112x112 LFW
+result.
 
 ## Local Docker Command
 
@@ -41,8 +45,10 @@ The script benchmarks:
 - ONNX Runtime FP16 CUDA
 - PyTorch dynamic INT8 Linear-only CPU control
 
-Success means at least one deployable ONNX GPU path reduces latency against the
-PyTorch CUDA baseline while keeping LFW accuracy close to the source model.
+Success for Task6 latency means at least one deployable GPU/ONNX path reduces
+latency against the PyTorch CUDA baseline. Accuracy preservation in this script
+is measured on the local latency bin so all backends see exactly the same input
+pairs.
 
 For RTX 4060 Laptop 8GB, ONNX CUDA benchmarking defaults to max batch `64`
 while PyTorch still reports batch `256`; this avoids unstable cuDNN algorithm

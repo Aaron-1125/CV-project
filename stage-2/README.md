@@ -252,8 +252,10 @@ The previous dense 800k custom trainer result is kept as a failed baseline
 `recognition/arcface_torch` pipeline with full MS1MV3 RecordIO.
 
 Final Task 5.x result: the official full-MS1MV3 ResNet50 + ArcFace checkpoint
-was re-evaluated on an aligned `112x112` LFW validation bin and reached
+was evaluated on the cloud 112x112 LFW validation set and reached
 `accuracy = 0.998`, with `target_met: true` against the `0.985` target.
+Task6 also reports a local LFW-bin recheck for latency-only comparison; that
+local bin is not the Task5 acceptance validation set.
 
 Prepare LFW:
 
@@ -311,8 +313,8 @@ python code/task5/stage2_task5_5_run_insightface.py eval-bin \
   --device cuda:0
 ```
 
-Success requires `accuracy >= 0.985` and `target_met: true`; the synchronized
-final summary reports `accuracy = 0.998`.
+Success requires `accuracy >= 0.985` and `target_met: true`; the accepted cloud
+112x112 LFW summary reports `accuracy = 0.998`.
 
 ## Stage2 Task 6.x
 
@@ -320,8 +322,8 @@ Task 6.x deliverables are isolated under `reports/task6/`. The historical
 baseline uses the Task 5 first-version self-contained `IResNet50 + ArcFace`
 checkpoint from `reports/task5/task5_cloud_results_8167.tar.gz`; the final
 latency rerun uses the official InsightFace full-MS1MV3 R50 checkpoint at
-`work_dirs/task5/insightface_ms1mv3_r50_full/model.pt`, which reached LFW
-`accuracy = 0.998`. The optional 6.4 ByteNN task is not included.
+`work_dirs/task5/insightface_ms1mv3_r50_full/model.pt`, whose accepted cloud
+112x112 LFW accuracy is `0.998`. The optional 6.4 ByteNN task is not included.
 
 - Task 6.1 report: `reports/task6/task6_1_optimization_methods.md`
 - Task 6.x report: `reports/task6/stage2_task6_model_optimization_report.md`

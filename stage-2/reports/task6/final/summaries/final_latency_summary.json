@@ -1,7 +1,708 @@
 {
   "task": "Stage2 Task6 final InsightFace R50 latency",
-  "status": "failed",
-  "error": "RuntimeError: CUDA error: device not ready\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1.\nCompile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.\n",
+  "status": "ok",
   "checkpoint": "work_dirs/task5/insightface_ms1mv3_r50_full/model.pt",
-  "summary_out": "reports/task6/final/summaries/final_latency_summary.json"
+  "checkpoint_exists": true,
+  "checkpoint_size_mb": 166.55305576324463,
+  "source_lfw_accuracy": 0.998,
+  "target_lfw_accuracy": 0.985,
+  "target_met": true,
+  "source_eval_summary": "reports/task5/summaries/insightface_full_lfw_eval_summary.json",
+  "config": "configs/task5_arcface/insightface_ms1mv3_r50_full_gpu.py",
+  "device": "cuda:0",
+  "torch_version": "2.0.0+cu118",
+  "torch_cuda_available": true,
+  "onnxruntime_available_providers": [
+    "TensorrtExecutionProvider",
+    "CUDAExecutionProvider",
+    "AzureExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "requested_providers": [
+    "cuda"
+  ],
+  "setup": {
+    "repo": {
+      "repo_url": "https://github.com/deepinsight/insightface.git",
+      "ref": "master",
+      "path": "external/insightface",
+      "commit": "658b034e7fc0f4b08a01e11347b6118d8d04c76b"
+    },
+    "verification_patch": {
+      "path": "/workspace/stage-2/external/insightface/recognition/arcface_torch/eval/verification.py",
+      "applied": false,
+      "reason": "already patched"
+    },
+    "arcface_root": "/workspace/stage-2/external/insightface/recognition/arcface_torch"
+  },
+  "lfw_bin": "data/task5_ms1mv3_full_recordio/ms1m-retinaface-t1/lfw.bin",
+  "lfw_pairs": 6000,
+  "lfw_images": 12000,
+  "batch_sizes": [
+    1,
+    16,
+    64,
+    256
+  ],
+  "model_only_latency": [
+    {
+      "backend": "pytorch_fp32_cuda",
+      "batch_size": 1,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 0.4756411419998585,
+      "latency_ms_per_batch": 9.51282283999717,
+      "latency_ms_per_image": 9.51282283999717,
+      "throughput_images_per_second": 105.12126808411135,
+      "device": "cuda:0",
+      "precision": "fp32"
+    },
+    {
+      "backend": "pytorch_fp16_cuda",
+      "batch_size": 1,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 0.5331178330002331,
+      "latency_ms_per_batch": 10.662356660004662,
+      "latency_ms_per_image": 10.662356660004662,
+      "throughput_images_per_second": 93.78789623039704,
+      "device": "cuda:0",
+      "precision": "fp16"
+    },
+    {
+      "backend": "onnx_fp32_cuda",
+      "batch_size": 1,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 0.30298531300013565,
+      "latency_ms_per_batch": 6.059706260002713,
+      "latency_ms_per_image": 6.059706260002713,
+      "throughput_images_per_second": 165.02450070897532,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "input_dtype": "<class 'numpy.float32'>"
+    },
+    {
+      "backend": "onnx_fp16_cuda",
+      "batch_size": 1,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 0.3683758469996974,
+      "latency_ms_per_batch": 7.367516939993948,
+      "latency_ms_per_image": 7.367516939993948,
+      "throughput_images_per_second": 135.73094003647063,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "input_dtype": "<class 'numpy.float16'>"
+    },
+    {
+      "backend": "pytorch_fp32_cuda",
+      "batch_size": 16,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 1.9638266210004076,
+      "latency_ms_per_batch": 39.27653242000815,
+      "latency_ms_per_image": 2.4547832762505095,
+      "throughput_images_per_second": 407.3679373958512,
+      "device": "cuda:0",
+      "precision": "fp32"
+    },
+    {
+      "backend": "pytorch_fp16_cuda",
+      "batch_size": 16,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 1.1623900189997585,
+      "latency_ms_per_batch": 23.24780037999517,
+      "latency_ms_per_image": 1.452987523749698,
+      "throughput_images_per_second": 688.2371552780567,
+      "device": "cuda:0",
+      "precision": "fp16"
+    },
+    {
+      "backend": "onnx_fp32_cuda",
+      "batch_size": 16,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 2.073304497999743,
+      "latency_ms_per_batch": 41.46608995999486,
+      "latency_ms_per_image": 2.591630622499679,
+      "throughput_images_per_second": 385.85745642852464,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "input_dtype": "<class 'numpy.float32'>"
+    },
+    {
+      "backend": "onnx_fp16_cuda",
+      "batch_size": 16,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 1.1809162459999243,
+      "latency_ms_per_batch": 23.618324919998486,
+      "latency_ms_per_image": 1.4761453074999054,
+      "throughput_images_per_second": 677.4400832487585,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "input_dtype": "<class 'numpy.float16'>"
+    },
+    {
+      "backend": "pytorch_fp32_cuda",
+      "batch_size": 64,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 7.476044962999822,
+      "latency_ms_per_batch": 149.52089925999644,
+      "latency_ms_per_image": 2.3362640509374444,
+      "throughput_images_per_second": 428.03380876350093,
+      "device": "cuda:0",
+      "precision": "fp32"
+    },
+    {
+      "backend": "pytorch_fp16_cuda",
+      "batch_size": 64,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 4.260315089999949,
+      "latency_ms_per_batch": 85.20630179999898,
+      "latency_ms_per_image": 1.331348465624984,
+      "throughput_images_per_second": 751.1181526247248,
+      "device": "cuda:0",
+      "precision": "fp16"
+    },
+    {
+      "backend": "onnx_fp32_cuda",
+      "batch_size": 64,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 7.986935568000263,
+      "latency_ms_per_batch": 159.73871136000525,
+      "latency_ms_per_image": 2.495917365000082,
+      "throughput_images_per_second": 400.6542900910372,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "input_dtype": "<class 'numpy.float32'>"
+    },
+    {
+      "backend": "onnx_fp16_cuda",
+      "batch_size": 64,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 4.491558250000253,
+      "latency_ms_per_batch": 89.83116500000506,
+      "latency_ms_per_image": 1.403611953125079,
+      "throughput_images_per_second": 712.4476232719056,
+      "providers": [
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ],
+      "input_dtype": "<class 'numpy.float16'>"
+    },
+    {
+      "backend": "pytorch_fp32_cuda",
+      "batch_size": 256,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 126.39262400800044,
+      "latency_ms_per_batch": 2527.852480160009,
+      "latency_ms_per_image": 9.874423750625034,
+      "throughput_images_per_second": 101.27173243265985,
+      "device": "cuda:0",
+      "precision": "fp32"
+    },
+    {
+      "backend": "pytorch_fp16_cuda",
+      "batch_size": 256,
+      "warmup": 10,
+      "iters": 50,
+      "elapsed_seconds": 96.91815819100066,
+      "latency_ms_per_batch": 1938.3631638200131,
+      "latency_ms_per_image": 7.571731108671926,
+      "throughput_images_per_second": 132.07019447041603,
+      "device": "cuda:0",
+      "precision": "fp16"
+    },
+    {
+      "backend": "onnx_fp32_cuda",
+      "batch_size": 256,
+      "skipped": true,
+      "reason": "Skipped by default on 8GB laptop GPUs to avoid cuDNN algorithm-search failures; set --onnx-cuda-max-batch >= 256 to force it."
+    },
+    {
+      "backend": "onnx_fp16_cuda",
+      "batch_size": 256,
+      "skipped": true,
+      "reason": "Skipped by default on 8GB laptop GPUs to avoid cuDNN algorithm-search failures; set --onnx-cuda-max-batch >= 256 to force it."
+    }
+  ],
+  "lfw_metrics": {
+    "pytorch_fp32_cuda": {
+      "pairs": 6000,
+      "images": 12000,
+      "accuracy": 0.8605,
+      "accuracy_std": 0.012065791865158826,
+      "fold_accuracies": [
+        0.8566666666666667,
+        0.8566666666666667,
+        0.86,
+        0.855,
+        0.8566666666666667,
+        0.855,
+        0.8783333333333333,
+        0.8383333333333334,
+        0.865,
+        0.8833333333333333
+      ],
+      "folds": [
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8616666666666667,
+          "test_accuracy": 0.8566666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8616666666666667,
+          "test_accuracy": 0.8566666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8612962962962963,
+          "test_accuracy": 0.86
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8618518518518519,
+          "test_accuracy": 0.855
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8616666666666667,
+          "test_accuracy": 0.8566666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8618518518518519,
+          "test_accuracy": 0.855
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8592592592592593,
+          "test_accuracy": 0.8783333333333333
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8637037037037038,
+          "test_accuracy": 0.8383333333333334
+        },
+        {
+          "best_threshold": 1.25,
+          "train_accuracy": 0.86,
+          "test_accuracy": 0.865
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8587037037037037,
+          "test_accuracy": 0.8833333333333333
+        }
+      ],
+      "val_at_far_1e-3": 0.3746666666666667,
+      "val_std": 0.03183987716335881,
+      "far": 0.0006666666666666668,
+      "target_far": 0.001,
+      "roc_auc": 0.9212272222222222,
+      "protocol": "InsightFace-compatible 6000-pair 10-fold squared Euclidean threshold search",
+      "xnorm": 16.52168083190918,
+      "embedding_speed": {
+        "backend": "pytorch_fp32_cuda",
+        "images": 12000,
+        "effective_forward_images": 24000,
+        "elapsed_seconds": 430.7447443000001,
+        "latency_ms_per_image": 35.89539535833334,
+        "latency_ms_per_forward_image": 17.94769767916667,
+        "throughput_images_per_second": 27.858726447147035,
+        "batch_size": 256,
+        "device": "cuda:0",
+        "precision": "fp32"
+      },
+      "speedup_vs_pytorch_fp32": 1.0
+    },
+    "pytorch_fp16_cuda": {
+      "pairs": 6000,
+      "images": 12000,
+      "accuracy": 0.8615,
+      "accuracy_std": 0.012415268377642449,
+      "fold_accuracies": [
+        0.8566666666666667,
+        0.8566666666666667,
+        0.8616666666666667,
+        0.855,
+        0.8583333333333333,
+        0.855,
+        0.8783333333333333,
+        0.8383333333333334,
+        0.8716666666666667,
+        0.8833333333333333
+      ],
+      "folds": [
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.862037037037037,
+          "test_accuracy": 0.8566666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.862037037037037,
+          "test_accuracy": 0.8566666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8614814814814815,
+          "test_accuracy": 0.8616666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8622222222222222,
+          "test_accuracy": 0.855
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8618518518518519,
+          "test_accuracy": 0.8583333333333333
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8622222222222222,
+          "test_accuracy": 0.855
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8596296296296296,
+          "test_accuracy": 0.8783333333333333
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8640740740740741,
+          "test_accuracy": 0.8383333333333334
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8603703703703703,
+          "test_accuracy": 0.8716666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8590740740740741,
+          "test_accuracy": 0.8833333333333333
+        }
+      ],
+      "val_at_far_1e-3": 0.3746666666666667,
+      "val_std": 0.03218695387886217,
+      "far": 0.0006666666666666668,
+      "target_far": 0.001,
+      "roc_auc": 0.9212087777777778,
+      "protocol": "InsightFace-compatible 6000-pair 10-fold squared Euclidean threshold search",
+      "xnorm": 16.517906188964844,
+      "embedding_speed": {
+        "backend": "pytorch_fp16_cuda",
+        "images": 12000,
+        "effective_forward_images": 24000,
+        "elapsed_seconds": 91.28686902900063,
+        "latency_ms_per_image": 7.607239085750052,
+        "latency_ms_per_forward_image": 3.803619542875026,
+        "throughput_images_per_second": 131.45373620150954,
+        "batch_size": 256,
+        "device": "cuda:0",
+        "precision": "fp16"
+      },
+      "speedup_vs_pytorch_fp32": 4.718583832283241
+    },
+    "onnx_fp32_cuda": {
+      "pairs": 6000,
+      "images": 12000,
+      "accuracy": 0.8605,
+      "accuracy_std": 0.012065791865158826,
+      "fold_accuracies": [
+        0.8566666666666667,
+        0.8566666666666667,
+        0.86,
+        0.855,
+        0.8566666666666667,
+        0.855,
+        0.8783333333333333,
+        0.8383333333333334,
+        0.865,
+        0.8833333333333333
+      ],
+      "folds": [
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8616666666666667,
+          "test_accuracy": 0.8566666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8616666666666667,
+          "test_accuracy": 0.8566666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8612962962962963,
+          "test_accuracy": 0.86
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8618518518518519,
+          "test_accuracy": 0.855
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8616666666666667,
+          "test_accuracy": 0.8566666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8618518518518519,
+          "test_accuracy": 0.855
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8592592592592593,
+          "test_accuracy": 0.8783333333333333
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8637037037037038,
+          "test_accuracy": 0.8383333333333334
+        },
+        {
+          "best_threshold": 1.25,
+          "train_accuracy": 0.8601851851851852,
+          "test_accuracy": 0.865
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8587037037037037,
+          "test_accuracy": 0.8833333333333333
+        }
+      ],
+      "val_at_far_1e-3": 0.374,
+      "val_std": 0.0322076595444831,
+      "far": 0.0006666666666666668,
+      "target_far": 0.001,
+      "roc_auc": 0.9212371111111111,
+      "protocol": "InsightFace-compatible 6000-pair 10-fold squared Euclidean threshold search",
+      "xnorm": 16.520301818847656,
+      "embedding_speed": {
+        "backend": "onnx_fp32_cuda",
+        "images": 12000,
+        "effective_forward_images": 24000,
+        "elapsed_seconds": 157.2875643310008,
+        "latency_ms_per_image": 13.1072970275834,
+        "latency_ms_per_forward_image": 6.5536485137917,
+        "throughput_images_per_second": 76.2933805418134,
+        "batch_size": 64,
+        "providers": [
+          "CUDAExecutionProvider",
+          "CPUExecutionProvider"
+        ],
+        "input_dtype": "<class 'numpy.float32'>"
+      },
+      "speedup_vs_pytorch_fp32": 2.738581057772168
+    },
+    "onnx_fp16_cuda": {
+      "pairs": 6000,
+      "images": 12000,
+      "accuracy": 0.8581666666666667,
+      "accuracy_std": 0.010605292179955348,
+      "fold_accuracies": [
+        0.8566666666666667,
+        0.855,
+        0.8583333333333333,
+        0.8533333333333334,
+        0.85,
+        0.855,
+        0.8766666666666667,
+        0.8383333333333334,
+        0.865,
+        0.8733333333333333
+      ],
+      "folds": [
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8609259259259259,
+          "test_accuracy": 0.8566666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8611111111111112,
+          "test_accuracy": 0.855
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8607407407407407,
+          "test_accuracy": 0.8583333333333333
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8612962962962963,
+          "test_accuracy": 0.8533333333333334
+        },
+        {
+          "best_threshold": 1.23,
+          "train_accuracy": 0.8611111111111112,
+          "test_accuracy": 0.85
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8611111111111112,
+          "test_accuracy": 0.855
+        },
+        {
+          "best_threshold": 1.25,
+          "train_accuracy": 0.8585185185185186,
+          "test_accuracy": 0.8766666666666667
+        },
+        {
+          "best_threshold": 1.26,
+          "train_accuracy": 0.8629629629629629,
+          "test_accuracy": 0.8383333333333334
+        },
+        {
+          "best_threshold": 1.25,
+          "train_accuracy": 0.8598148148148148,
+          "test_accuracy": 0.865
+        },
+        {
+          "best_threshold": 1.23,
+          "train_accuracy": 0.8585185185185186,
+          "test_accuracy": 0.8733333333333333
+        }
+      ],
+      "val_at_far_1e-3": 0.37566666666666665,
+      "val_std": 0.03259345537578569,
+      "far": 0.0006666666666666668,
+      "target_far": 0.001,
+      "roc_auc": 0.9212147777777777,
+      "protocol": "InsightFace-compatible 6000-pair 10-fold squared Euclidean threshold search",
+      "xnorm": 16.497285842895508,
+      "embedding_speed": {
+        "backend": "onnx_fp16_cuda",
+        "images": 12000,
+        "effective_forward_images": 24000,
+        "elapsed_seconds": 108.9384738610006,
+        "latency_ms_per_image": 9.078206155083384,
+        "latency_ms_per_forward_image": 4.539103077541692,
+        "throughput_images_per_second": 110.15392060027689,
+        "batch_size": 64,
+        "providers": [
+          "CUDAExecutionProvider",
+          "CPUExecutionProvider"
+        ],
+        "input_dtype": "<class 'numpy.float16'>"
+      },
+      "speedup_vs_pytorch_fp32": 3.954018530217398
+    }
+  },
+  "consistency": {
+    "onnx_fp32_cuda": {
+      "samples": 32,
+      "max_abs_diff": 0.00017412006855010986,
+      "mean_abs_diff": 3.089259553235024e-05,
+      "mean_cosine": 0.9999996423721313,
+      "min_cosine": 0.9999992847442627,
+      "onnx_input_dtype": "<class 'numpy.float32'>"
+    },
+    "onnx_fp16_cuda": {
+      "samples": 32,
+      "max_abs_diff": 0.0007033310830593109,
+      "mean_abs_diff": 0.00012457682169042528,
+      "mean_cosine": 0.9999937415122986,
+      "min_cosine": 0.9999909400939941,
+      "onnx_input_dtype": "<class 'numpy.float16'>"
+    }
+  },
+  "dynamic_quantization_control": {
+    "method": "torch.quantization.quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)",
+    "note": "Control only: this quantizes Linear layers on CPU and does not accelerate Conv2d-heavy ArcFace R50.",
+    "model_only_latency": [
+      {
+        "backend": "dynamic_int8_linear_cpu",
+        "batch_size": 1,
+        "warmup": 5,
+        "iters": 25,
+        "elapsed_seconds": 2.0842853449994436,
+        "latency_ms_per_batch": 83.37141379997774,
+        "latency_ms_per_image": 83.37141379997774,
+        "throughput_images_per_second": 11.994518917469371,
+        "device": "cpu",
+        "precision": "fp32"
+      },
+      {
+        "backend": "dynamic_int8_linear_cpu",
+        "batch_size": 16,
+        "warmup": 5,
+        "iters": 25,
+        "elapsed_seconds": 27.820092624999234,
+        "latency_ms_per_batch": 1112.8037049999693,
+        "latency_ms_per_image": 69.55023156249808,
+        "throughput_images_per_second": 14.378097348265426,
+        "device": "cpu",
+        "precision": "fp32"
+      },
+      {
+        "backend": "dynamic_int8_linear_cpu",
+        "batch_size": 64,
+        "warmup": 5,
+        "iters": 25,
+        "elapsed_seconds": 113.3622046569999,
+        "latency_ms_per_batch": 4534.488186279996,
+        "latency_ms_per_image": 70.85137791062493,
+        "throughput_images_per_second": 14.11405154690773,
+        "device": "cpu",
+        "precision": "fp32"
+      },
+      {
+        "backend": "dynamic_int8_linear_cpu",
+        "batch_size": 256,
+        "warmup": 5,
+        "iters": 25,
+        "elapsed_seconds": 478.87935413599917,
+        "latency_ms_per_batch": 19155.174165439967,
+        "latency_ms_per_image": 74.82489908374987,
+        "throughput_images_per_second": 13.36453523152396,
+        "device": "cpu",
+        "precision": "fp32"
+      }
+    ]
+  },
+  "artifacts": {
+    "onnx_fp32": "work_dirs/task6/final_insightface_r50/insightface_r50_final_fp32.onnx",
+    "onnx_fp16": "work_dirs/task6/final_insightface_r50/insightface_r50_final_fp16.onnx",
+    "latency_plot": "reports/task6/final/assets/evaluation/final_latency_comparison.png",
+    "report": "reports/task6/final/stage2_task6_final_latency_report.md"
+  },
+  "artifact_sizes_mb": {
+    "checkpoint": 166.55305576324463,
+    "onnx_fp32_cuda": 166.32007694244385,
+    "onnx_fp32_cpu": 166.32007694244385,
+    "onnx_fp16_cuda": 83.17683506011963
+  },
+  "best_backend": "pytorch_fp16_cuda",
+  "best_speedup_vs_pytorch_fp32": 4.718583832283241,
+  "conclusion": "ONNX Runtime GPU/FP16 is the preferred deployment path if it beats the PyTorch CUDA baseline. Dynamic quantization is retained only as a CPU Linear-layer control because it does not target Conv2d.",
+  "claimed_source_lfw_accuracy": 0.998,
+  "diagnostic_note": "Task5 acceptance uses the cloud 112x112 LFW validation set recorded in source_eval_summary. The local LFW bin in this Task6 run is retained only for same-input latency/accuracy comparison across PyTorch and ONNX backends.",
+  "local_lfw_recheck_accuracy": 0.8605,
+  "lfw_evaluation_note": "Task5 acceptance uses the cloud 112x112 LFW validation set recorded in source_eval_summary. The local LFW bin in this Task6 run is retained only for same-input latency/accuracy comparison across PyTorch and ONNX backends.",
+  "source_lfw_accuracy_metric": "cloud_112x112_lfw",
+  "local_lfw_is_acceptance_metric": false
 }

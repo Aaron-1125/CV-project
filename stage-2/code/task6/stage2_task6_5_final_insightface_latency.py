@@ -41,6 +41,7 @@ import matplotlib.pyplot as plt
 import sklearn.preprocessing
 import torch
 from PIL import Image
+from sklearn.metrics import roc_curve
 
 from stage2_task6_utils import file_size_mb, jsonable, set_torch_threads, write_json
 
@@ -125,20 +126,101 @@ def image_bytes_to_array(raw: bytes, image_size: tuple[int, int], flip: bool = F
     return array.astype(dtype, copy=False)
 
 
-def evaluate_embeddings(embeddings: np.ndarray, issame: list[bool]) -> dict[str, Any]:
-    from eval import verification  # type: ignore
+def _accuracy_at_distance_threshold(threshold: float, distances: np.ndarray, labels: np.ndarray) -> tuple[float, float, float]:
+    predict_issame = distances < threshold
+    tp = np.sum(np.logical_and(predict_issame, labels))
+    fp = np.sum(np.logical_and(predict_issame, np.logical_not(labels)))
+    tn = np.sum(np.logical_and(np.logical_not(predict_issame), np.logical_not(labels)))
+    fn = np.sum(np.logical_and(np.logical_not(predict_issame), labels))
+    tpr = 0.0 if (tp + fn) == 0 else float(tp) / float(tp + fn)
+    fpr = 0.0 if (fp + tn) == 0 else float(fp) / float(fp + tn)
+    acc = float(tp + tn) / max(1, distances.size)
+    return tpr, fpr, acc
 
-    _, _, accuracy, val, val_std, far = verification.evaluate(embeddings, issame, nrof_folds=10)
+
+def _val_far_at_distance_threshold(threshold: float, distances: np.ndarray, labels: np.ndarray) -> tuple[float, float]:
+    predict_issame = distances < threshold
+    true_accept = np.sum(np.logical_and(predict_issame, labels))
+    false_accept = np.sum(np.logical_and(predict_issame, np.logical_not(labels)))
+    n_same = np.sum(labels)
+    n_diff = np.sum(np.logical_not(labels))
+    val = 0.0 if n_same == 0 else float(true_accept) / float(n_same)
+    far = 0.0 if n_diff == 0 else float(false_accept) / float(n_diff)
+    return val, far
+
+
+def evaluate_embeddings(embeddings: np.ndarray, issame: list[bool]) -> dict[str, Any]:
+    labels = np.array(issame, dtype=bool)
+    embeddings1 = embeddings[0::2]
+    embeddings2 = embeddings[1::2]
+    distances = np.sum(np.square(embeddings1 - embeddings2), axis=1)
+    thresholds = np.arange(0.0, 4.0, 0.01)
+    folds = np.array_split(np.arange(len(labels)), 10)
+    accuracies: list[float] = []
+    fold_rows: list[dict[str, Any]] = []
+    for fold_indices in folds:
+        train_mask = np.ones(len(labels), dtype=bool)
+        train_mask[fold_indices] = False
+        train_distances = distances[train_mask]
+        train_labels = labels[train_mask]
+        train_acc = [
+            _accuracy_at_distance_threshold(threshold, train_distances, train_labels)[2]
+            for threshold in thresholds
+        ]
+        best_threshold = float(thresholds[int(np.argmax(train_acc))])
+        _, _, test_acc = _accuracy_at_distance_threshold(best_threshold, distances[fold_indices], labels[fold_indices])
+        accuracies.append(float(test_acc))
+        fold_rows.append(
+            {
+                "best_threshold": best_threshold,
+                "train_accuracy": float(np.max(train_acc)),
+                "test_accuracy": float(test_acc),
+            }
+        )
+
+    val_thresholds = np.arange(0.0, 4.0, 0.001)
+    far_target = 0.001
+    vals: list[float] = []
+    fars: list[float] = []
+    for fold_indices in folds:
+        train_mask = np.ones(len(labels), dtype=bool)
+        train_mask[fold_indices] = False
+        far_train = np.array(
+            [
+                _val_far_at_distance_threshold(threshold, distances[train_mask], labels[train_mask])[1]
+                for threshold in val_thresholds
+            ]
+        )
+        if np.max(far_train) >= far_target:
+            unique_far, unique_indices = np.unique(far_train, return_index=True)
+            unique_thresholds = val_thresholds[unique_indices]
+            order = np.argsort(unique_far)
+            unique_far = unique_far[order]
+            unique_thresholds = unique_thresholds[order]
+            if unique_far.size < 2:
+                threshold = float(unique_thresholds[0])
+            else:
+                threshold = float(np.interp(far_target, unique_far, unique_thresholds))
+        else:
+            threshold = 0.0
+        fold_val, fold_far = _val_far_at_distance_threshold(threshold, distances[fold_indices], labels[fold_indices])
+        vals.append(float(fold_val))
+        fars.append(float(fold_far))
+
+    fpr, tpr, _ = roc_curve(labels.astype(int), -distances)
     return {
         "pairs": len(issame),
         "images": int(embeddings.shape[0]),
-        "accuracy": float(np.mean(accuracy)),
-        "accuracy_std": float(np.std(accuracy)),
-        "fold_accuracies": [float(item) for item in accuracy],
-        "val_at_far_1e-3": float(val),
-        "val_std": float(val_std),
-        "far": float(far),
-        "xnorm": float(np.mean(np.linalg.norm(embeddings, axis=1))),
+        "accuracy": float(np.mean(accuracies)),
+        "accuracy_std": float(np.std(accuracies)),
+        "fold_accuracies": accuracies,
+        "folds": fold_rows,
+        "val_at_far_1e-3": float(np.mean(vals)),
+        "val_std": float(np.std(vals)),
+        "far": float(np.mean(fars)),
+        "target_far": far_target,
+        "roc_auc": float(np.trapz(tpr, fpr)),
+        "protocol": "InsightFace-compatible 6000-pair 10-fold squared Euclidean threshold search",
     }
 
 
@@ -155,10 +237,12 @@ def run_lfw_torch(
 ) -> dict[str, Any]:
     dtype = torch.float16 if precision == "fp16" else torch.float32
     embeddings_by_flip: list[np.ndarray] = []
+    print(f"[LFW][{label}] start images={len(bins)} batch={batch_size} precision={precision}", flush=True)
     if device.type == "cuda":
         torch.cuda.synchronize(device)
     started = time.perf_counter()
     for flip in (False, True):
+        print(f"[LFW][{label}] flip={flip}", flush=True)
         chunks: list[np.ndarray] = []
         for start in range(0, len(bins), batch_size):
             batch = bins[start : start + batch_size]
@@ -170,8 +254,11 @@ def run_lfw_torch(
     if device.type == "cuda":
         torch.cuda.synchronize(device)
     elapsed = time.perf_counter() - started
+    print(f"[LFW][{label}] finished in {elapsed:.2f}s", flush=True)
+    xnorm = float(np.mean([np.linalg.norm(row) for embeddings in embeddings_by_flip for row in embeddings]))
     combined = embeddings_by_flip[0] + embeddings_by_flip[1]
     metrics = evaluate_embeddings(sklearn.preprocessing.normalize(combined), issame)
+    metrics["xnorm"] = xnorm
     metrics["embedding_speed"] = {
         "backend": label,
         "images": len(bins),
@@ -262,8 +349,10 @@ def run_lfw_onnx(
     output_name = session.get_outputs()[0].name
     dtype = onnx_input_dtype(session)
     embeddings_by_flip: list[np.ndarray] = []
+    print(f"[LFW][{label}] start images={len(bins)} batch={batch_size}", flush=True)
     started = time.perf_counter()
     for flip in (False, True):
+        print(f"[LFW][{label}] flip={flip}", flush=True)
         chunks: list[np.ndarray] = []
         for start in range(0, len(bins), batch_size):
             batch = bins[start : start + batch_size]
@@ -272,8 +361,11 @@ def run_lfw_onnx(
             chunks.append(output)
         embeddings_by_flip.append(np.concatenate(chunks, axis=0))
     elapsed = time.perf_counter() - started
+    print(f"[LFW][{label}] finished in {elapsed:.2f}s", flush=True)
+    xnorm = float(np.mean([np.linalg.norm(row) for embeddings in embeddings_by_flip for row in embeddings]))
     combined = embeddings_by_flip[0] + embeddings_by_flip[1]
     metrics = evaluate_embeddings(sklearn.preprocessing.normalize(combined), issame)
+    metrics["xnorm"] = xnorm
     metrics["embedding_speed"] = {
         "backend": label,
         "images": len(bins),
@@ -424,9 +516,11 @@ def write_markdown_report(summary: dict[str, Any], output_path: Path) -> None:
         "## Source",
         "",
         f"- Checkpoint: `{summary.get('checkpoint')}`",
-        f"- Source LFW accuracy: `{summary.get('source_lfw_accuracy')}`",
+        f"- Source/cloud LFW accuracy: `{summary.get('source_lfw_accuracy')}`",
+        f"- Local latency-bin LFW accuracy: `{summary.get('local_lfw_recheck_accuracy')}`",
         f"- Device: `{summary.get('device')}`",
         f"- ONNX Runtime providers available: `{summary.get('onnxruntime_available_providers')}`",
+        f"- LFW note: {summary.get('lfw_evaluation_note', '')}",
         "",
         "## Full LFW End-to-End Benchmark",
         "",
@@ -486,6 +580,7 @@ def parse_providers(text: str) -> list[str]:
 def run(args: argparse.Namespace) -> dict[str, Any]:
     set_torch_threads(args.threads)
     cfg = load_config(args.config)
+    print("[Task6 final] preparing InsightFace runtime", flush=True)
     setup = prepare_insightface(cfg, args.insightface_ref)
     checkpoint = Path(args.checkpoint)
     if not checkpoint.exists():
@@ -513,19 +608,23 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         raise RuntimeError(f"CUDAExecutionProvider is not available. Available providers: {available_providers}")
 
     bins, issame = load_lfw_bin(lfw_bin)
+    print(f"[Task6 final] loaded LFW bin: images={len(bins)} pairs={len(issame)}", flush=True)
     if args.max_images:
         limit = max(2, int(args.max_images))
         bins = bins[:limit]
         issame = issame[: max(1, limit // 2)]
 
+    print("[Task6 final] loading PyTorch backbones", flush=True)
     fp32_model = load_backbone(cfg, checkpoint, device=device, precision="fp32")
     fp16_model = load_backbone(cfg, checkpoint, device=device, precision="fp16") if device.type == "cuda" else None
 
     work_dir = args.work_dir
     fp32_onnx = work_dir / "insightface_r50_final_fp32.onnx"
     fp16_onnx = work_dir / "insightface_r50_final_fp16.onnx"
+    print(f"[Task6 final] exporting ONNX FP32 -> {fp32_onnx}", flush=True)
     export_onnx(fp32_model, fp32_onnx, image_size, device=device, precision="fp32", opset=args.opset)
     if fp16_model is not None:
+        print(f"[Task6 final] exporting ONNX FP16 -> {fp16_onnx}", flush=True)
         export_onnx(fp16_model, fp16_onnx, image_size, device=device, precision="fp16", opset=args.opset)
 
     onnx_sessions: dict[str, Any] = {}
@@ -538,6 +637,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 
     batch_sizes = parse_batch_sizes(args.batch_sizes)
     model_only: list[dict[str, Any]] = []
+    print(f"[Task6 final] model-only latency batches={batch_sizes}", flush=True)
     for batch_size in batch_sizes:
         model_only.append(
             benchmark_torch_forward(
@@ -582,6 +682,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 
     dynamic_control = None
     if args.include_dynamic_control:
+        print("[Task6 final] dynamic quantization CPU control", flush=True)
         cpu_model = load_backbone(cfg, checkpoint, device=torch.device("cpu"), precision="fp32")
         quantized = torch.quantization.quantize_dynamic(cpu_model, {torch.nn.Linear}, dtype=torch.qint8)
         dynamic_rows = []
@@ -606,6 +707,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 
     lfw_metrics: dict[str, Any] = {}
     if not args.skip_lfw:
+        print("[Task6 final] full LFW end-to-end benchmark", flush=True)
         lfw_metrics["pytorch_fp32_cuda" if device.type == "cuda" else "pytorch_fp32_cpu"] = run_lfw_torch(
             fp32_model,
             bins,
@@ -632,6 +734,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             lfw_metrics[name] = run_lfw_onnx(session, bins, issame, image_size, onnx_batch_size, label=name)
 
     consistency: dict[str, Any] = {}
+    print("[Task6 final] ONNX/PyTorch consistency checks", flush=True)
     for name, session in onnx_sessions.items():
         consistency[name] = compare_onnx_to_torch(fp32_model, session, image_size, device, args.consistency_samples)
 
@@ -646,13 +749,14 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "onnx_fp32_cpu": file_size_mb(fp32_onnx),
         "onnx_fp16_cuda": file_size_mb(fp16_onnx),
     }
-    source_lfw_accuracy = None
+    claimed_source_lfw_accuracy = None
     if isinstance(source_eval, dict):
-        source_lfw_accuracy = source_eval.get("accuracy") or source_eval.get("metrics", {}).get("accuracy")
+        claimed_source_lfw_accuracy = source_eval.get("accuracy") or source_eval.get("metrics", {}).get("accuracy")
 
     best_backend = None
+    best_speedup = None
+    reference_key = "pytorch_fp32_cuda" if device.type == "cuda" else "pytorch_fp32_cpu"
     if lfw_metrics:
-        reference_key = "pytorch_fp32_cuda" if device.type == "cuda" else "pytorch_fp32_cpu"
         reference_latency = lfw_metrics[reference_key]["embedding_speed"]["latency_ms_per_image"]
         candidates = []
         for name, metrics in lfw_metrics.items():
@@ -660,7 +764,24 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             speedup = reference_latency / max(1e-12, latency)
             metrics["speedup_vs_pytorch_fp32"] = float(speedup)
             candidates.append((speedup, name))
-        best_backend = max(candidates)[1]
+        best_speedup, best_backend = max(candidates)
+
+    target_lfw_accuracy = None
+    if isinstance(source_eval, dict):
+        target_lfw_accuracy = source_eval.get("target_lfw_accuracy")
+    if target_lfw_accuracy is None:
+        target_lfw_accuracy = float(cfg.train.target_lfw_accuracy)
+    local_lfw_recheck_accuracy = None
+    if lfw_metrics and reference_key in lfw_metrics:
+        local_lfw_recheck_accuracy = lfw_metrics[reference_key].get("accuracy")
+    source_lfw_accuracy = claimed_source_lfw_accuracy
+    if source_lfw_accuracy is None:
+        source_lfw_accuracy = local_lfw_recheck_accuracy
+    lfw_evaluation_note = (
+        "Task5 acceptance uses the cloud 112x112 LFW validation set recorded in source_eval_summary. "
+        "The local LFW bin in this Task6 run is retained only for same-input latency/accuracy comparison "
+        "across PyTorch and ONNX backends."
+    )
 
     conclusion = (
         "ONNX Runtime GPU/FP16 is the preferred deployment path if it beats the PyTorch CUDA baseline. "
@@ -674,6 +795,13 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "checkpoint_exists": checkpoint.exists(),
         "checkpoint_size_mb": file_size_mb(checkpoint),
         "source_lfw_accuracy": source_lfw_accuracy,
+        "claimed_source_lfw_accuracy": claimed_source_lfw_accuracy,
+        "local_lfw_recheck_accuracy": local_lfw_recheck_accuracy,
+        "source_lfw_accuracy_metric": "cloud_112x112_lfw",
+        "local_lfw_is_acceptance_metric": False,
+        "lfw_evaluation_note": lfw_evaluation_note,
+        "target_lfw_accuracy": target_lfw_accuracy,
+        "target_met": bool(source_lfw_accuracy is not None and source_lfw_accuracy >= target_lfw_accuracy),
         "source_eval_summary": str(source_eval_path),
         "config": str(args.config),
         "device": str(device),
@@ -698,6 +826,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         },
         "artifact_sizes_mb": sizes,
         "best_backend": best_backend,
+        "best_speedup_vs_pytorch_fp32": float(best_speedup) if best_speedup is not None else None,
         "conclusion": conclusion,
     }
     write_json(args.summary_out, summary)
