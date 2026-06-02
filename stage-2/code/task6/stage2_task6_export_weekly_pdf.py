@@ -19,7 +19,17 @@ from reportlab.lib.units import cm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import CondPageBreak, Image, KeepTogether, Paragraph, Preformatted, SimpleDocTemplate, Spacer
+from reportlab.platypus import (
+    CondPageBreak,
+    Image,
+    KeepTogether,
+    Paragraph,
+    Preformatted,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
 
 IMAGE_RE = re.compile(r"!\[(.*?)\]\((.*?)\)")
@@ -156,6 +166,22 @@ def build_styles() -> dict[str, ParagraphStyle]:
             spaceBefore=2,
             spaceAfter=3,
         ),
+        "table_cell": ParagraphStyle(
+            "Stage2WeeklyTableCell",
+            parent=base["BodyText"],
+            fontName=BODY_FONT,
+            fontSize=7.3,
+            leading=9.0,
+            textColor=colors.HexColor("#111827"),
+        ),
+        "table_header": ParagraphStyle(
+            "Stage2WeeklyTableHeader",
+            parent=base["BodyText"],
+            fontName=BODY_FONT,
+            fontSize=7.3,
+            leading=9.0,
+            textColor=colors.HexColor("#111827"),
+        ),
     }
 
 
@@ -217,10 +243,53 @@ def image_flowables(source_dir: Path, alt: str, path_text: str, styles: dict[str
     ]
 
 
+def parse_table_row(line: str) -> list[str]:
+    return [cell.strip() for cell in line.strip().strip("|").split("|")]
+
+
+def is_table_separator(cells: list[str]) -> bool:
+    if not cells:
+        return False
+    return all(cell and set(cell.replace(":", "").replace("-", "")) <= {" "} for cell in cells)
+
+
+def table_flowable(lines: list[str], styles: dict[str, ParagraphStyle]):
+    parsed = [parse_table_row(line) for line in lines]
+    rows = [row for row in parsed if not is_table_separator(row)]
+    if not rows:
+        return []
+
+    column_count = max(len(row) for row in rows)
+    normalized = [row + [""] * (column_count - len(row)) for row in rows]
+    max_width = A4[0] - 3.4 * cm
+    col_width = max_width / max(column_count, 1)
+    table_data = []
+    for row_index, row in enumerate(normalized):
+        style = styles["table_header"] if row_index == 0 else styles["table_cell"]
+        table_data.append([Paragraph(markdown_inline(cell), style) for cell in row])
+
+    table = Table(table_data, colWidths=[col_width] * column_count, hAlign="LEFT", repeatRows=1)
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#eef2f7")),
+                ("GRID", (0, 0), (-1, -1), 0.25, colors.HexColor("#d1d5db")),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 3),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 3),
+                ("TOPPADDING", (0, 0), (-1, -1), 3),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+            ]
+        )
+    )
+    return [table, Spacer(1, 5)]
+
+
 def parse_markdown(source: Path, styles: dict[str, ParagraphStyle]):
     lines = source.read_text(encoding="utf-8").splitlines()
     flowables = []
     paragraph_parts: list[str] = []
+    table_lines: list[str] = []
     in_code = False
     code_lines: list[str] = []
     source_dir = source.parent
@@ -230,6 +299,11 @@ def parse_markdown(source: Path, styles: dict[str, ParagraphStyle]):
             text = " ".join(part.strip() for part in paragraph_parts if part.strip())
             flowables.append(Paragraph(markdown_inline(text), styles["body"]))
             paragraph_parts.clear()
+
+    def flush_table() -> None:
+        if table_lines:
+            flowables.extend(table_flowable(table_lines, styles))
+            table_lines.clear()
 
     for raw_line in lines:
         line = raw_line.rstrip()
@@ -248,8 +322,14 @@ def parse_markdown(source: Path, styles: dict[str, ParagraphStyle]):
         image_match = IMAGE_RE.fullmatch(line.strip())
         if image_match:
             flush_paragraph()
+            flush_table()
             flowables.extend(image_flowables(source_dir, image_match.group(1), image_match.group(2), styles))
             continue
+        if line.startswith("|"):
+            flush_paragraph()
+            table_lines.append(line)
+            continue
+        flush_table()
         if not line.strip():
             flush_paragraph()
             flowables.append(Spacer(1, 4))
@@ -272,10 +352,6 @@ def parse_markdown(source: Path, styles: dict[str, ParagraphStyle]):
             flush_paragraph()
             flowables.append(Paragraph(markdown_inline(line[2:].strip()), styles["bullet"], bulletText="-"))
             continue
-        if line.startswith("|"):
-            flush_paragraph()
-            flowables.append(Preformatted(wrap_code(line, width=104), styles["table"]))
-            continue
         if line == "---PAGEBREAK---":
             flush_paragraph()
             flowables.append(CondPageBreak(7.2 * cm))
@@ -283,6 +359,7 @@ def parse_markdown(source: Path, styles: dict[str, ParagraphStyle]):
         paragraph_parts.append(line)
 
     flush_paragraph()
+    flush_table()
     return flowables
 
 
