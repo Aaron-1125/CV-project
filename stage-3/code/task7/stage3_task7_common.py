@@ -196,8 +196,10 @@ def find_celeba_paths(celeba_root: Path) -> tuple[Path, Path]:
     image_candidates = [
         root / "images",
         root / "img_align_celeba",
+        root / "img_align_celeba_png",
         root / "celeba" / "images",
         root / "Img" / "img_align_celeba",
+        root / "Img" / "img_align_celeba_png",
     ]
     attr_path = next((p for p in attr_candidates if p.exists()), None)
     image_dir = next((p for p in image_candidates if p.exists() and p.is_dir()), None)
@@ -206,6 +208,79 @@ def find_celeba_paths(celeba_root: Path) -> tuple[Path, Path]:
     if image_dir is None:
         raise FileNotFoundError(f"Could not find CelebA image directory under {root}")
     return image_dir, attr_path
+
+
+def matching_image_path(image_dir: Path, filename: str) -> Path | None:
+    exact = image_dir / filename
+    if exact.exists():
+        return exact
+    stem = Path(filename).stem
+    for suffix in [".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"]:
+        candidate = image_dir / f"{stem}{suffix}"
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def prepare_celeba_image_dir(
+    source_image_dir: Path,
+    target_image_dir: Path,
+    rows: list[CelebARow],
+    force: bool = False,
+) -> dict[str, Any]:
+    """Create the image directory expected by official StarGAN.
+
+    Official CelebA attributes list image names as ``000001.jpg``. Some public
+    mirrors store aligned images as ``000001.png``. In that case, create a
+    normalized directory with ``.jpg``-named symlinks pointing to the PNG files;
+    PIL reads the image header, so the extension mismatch is safe for StarGAN.
+    """
+    if not rows:
+        raise ValueError("Cannot prepare CelebA image dir from empty attr rows.")
+
+    first_exact = source_image_dir / rows[0].filename
+    if first_exact.exists():
+        copy_or_symlink(source_image_dir, target_image_dir, force=force)
+        return {
+            "mode": "source_dir_symlink",
+            "source_image_dir": str(source_image_dir),
+            "target_image_dir": str(target_image_dir),
+            "linked_images": None,
+            "missing_images": 0,
+        }
+
+    if target_image_dir.exists() or target_image_dir.is_symlink():
+        if not force:
+            raise FileExistsError(f"{target_image_dir} already exists. Pass --force to replace it.")
+        if target_image_dir.is_dir() and not target_image_dir.is_symlink():
+            shutil.rmtree(target_image_dir)
+        else:
+            target_image_dir.unlink()
+    target_image_dir.mkdir(parents=True, exist_ok=True)
+
+    linked = 0
+    missing: list[str] = []
+    for row in rows:
+        source = matching_image_path(source_image_dir, row.filename)
+        if source is None:
+            missing.append(row.filename)
+            continue
+        target = target_image_dir / row.filename
+        os.symlink(source, target)
+        linked += 1
+
+    if missing:
+        sample = ", ".join(missing[:5])
+        raise FileNotFoundError(
+            f"Missing {len(missing)} CelebA images while normalizing names; first missing: {sample}"
+        )
+    return {
+        "mode": "normalized_filename_symlinks",
+        "source_image_dir": str(source_image_dir),
+        "target_image_dir": str(target_image_dir),
+        "linked_images": linked,
+        "missing_images": 0,
+    }
 
 
 def parse_attr_file(attr_path: Path) -> tuple[list[str], list[CelebARow]]:

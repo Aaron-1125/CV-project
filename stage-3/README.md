@@ -33,6 +33,11 @@ python code/task7/stage3_task7_evaluate.py --config configs/task7_stargan/a800_f
 python code/task7/stage3_task7_write_report.py --config configs/task7_stargan/a800_full.py
 ```
 
+The prepare script accepts standard CelebA JPEG directories and AutoDL mirrors
+that provide `Img/img_align_celeba_png`. For PNG mirrors it creates a normalized
+`data/celeba/images` directory with `.jpg`-named symlinks, matching
+`list_attr_celeba.txt` and the official StarGAN loader.
+
 If Dropbox cannot download the official pretrained checkpoint, upload the
 official `celeba-128x128-5attrs.zip` manually and run:
 

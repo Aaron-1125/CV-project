@@ -17,6 +17,7 @@ from stage3_task7_common import (
     load_config,
     official_stargan_split,
     parse_attr_file,
+    prepare_celeba_image_dir,
     prepared_attr_path,
     prepared_image_dir,
     save_source_grid,
@@ -52,10 +53,10 @@ def main() -> None:
 
     image_dir = prepared_image_dir(cfg)
     attr_path = prepared_attr_path(cfg)
-    copy_or_symlink(source_image_dir, image_dir, force=args.force)
     copy_or_symlink(source_attr_path, attr_path, force=args.force)
 
     all_attrs, rows = parse_attr_file(attr_path)
+    image_prepare = prepare_celeba_image_dir(source_image_dir, image_dir, rows, force=args.force)
     train_rows, test_rows = official_stargan_split(rows)
     count = int(cfg_get(cfg, "data", "fixed_sample_count", 16))
     samples = select_fixed_samples(test_rows, attrs, image_dir, count)
@@ -70,6 +71,7 @@ def main() -> None:
         "celeba_root": str(Path(celeba_root).expanduser().resolve()),
         "source_image_dir": str(source_image_dir),
         "source_attr_path": str(source_attr_path),
+        "image_prepare": image_prepare,
         "image_dir": str(image_dir),
         "attr_path": str(attr_path),
         "num_attrs": len(all_attrs),
@@ -88,6 +90,7 @@ def main() -> None:
             "ready": True,
             "image_dir": str(image_dir),
             "attr_path": str(attr_path),
+            "image_prepare": image_prepare,
             "fixed_manifest": str(fixed_manifest_path(cfg)),
             "fixed_sample_count": len(samples),
         },

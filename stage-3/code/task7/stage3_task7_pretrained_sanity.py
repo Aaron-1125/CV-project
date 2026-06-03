@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import shutil
+import subprocess
 import zipfile
 from pathlib import Path
 
@@ -45,7 +46,27 @@ def ensure_pretrained_checkpoint(cfg: dict, pretrained_zip: Path | None) -> Path
             shutil.move(str(candidates[0]), checkpoint)
             return checkpoint
         raise FileNotFoundError(f"No 200000-G.ckpt found in {pretrained_zip}")
+    stale_zip = models_dir / "celeba-128x128-5attrs.zip"
+    if stale_zip.exists() and not zipfile.is_zipfile(stale_zip):
+        stale_zip.unlink()
+    direct_urls = [
+        "https://dl.dropboxusercontent.com/s/7e966qq0nlxwte4/celeba-128x128-5attrs.zip",
+        "https://www.dropbox.com/s/7e966qq0nlxwte4/celeba-128x128-5attrs.zip?dl=1",
+    ]
+    for url in direct_urls:
+        try:
+            subprocess.run(["wget", "-O", str(stale_zip), url], cwd=str(repo), check=True)
+            if zipfile.is_zipfile(stale_zip):
+                with zipfile.ZipFile(stale_zip) as archive:
+                    archive.extractall(models_dir)
+                if checkpoint.exists():
+                    return checkpoint
+            stale_zip.unlink(missing_ok=True)
+        except Exception:
+            stale_zip.unlink(missing_ok=True)
     run_command(["bash", "download.sh", "pretrained-celeba-128x128"], cwd=repo)
+    if stale_zip.exists() and not zipfile.is_zipfile(stale_zip):
+        stale_zip.unlink()
     if not checkpoint.exists():
         raise FileNotFoundError(f"Official pretrained checkpoint was not created: {checkpoint}")
     return checkpoint
@@ -70,4 +91,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
