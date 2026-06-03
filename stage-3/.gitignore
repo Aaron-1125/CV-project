@@ -1,0 +1,17 @@
+data/
+work_dirs/
+checkpoints/
+tmp/
+external/
+reports/task7_smoke/
+__pycache__/
+*.py[cod]
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.tar
+*.tar.gz
+*.zip
+*.log
+.DS_Store

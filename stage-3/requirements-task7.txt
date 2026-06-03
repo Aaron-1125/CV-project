@@ -1,0 +1,13 @@
+numpy<2
+pandas
+matplotlib
+scikit-learn
+scipy
+pillow
+tqdm
+opencv-python
+torchmetrics
+torch-fidelity
+insightface
+onnxruntime
+
