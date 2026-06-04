@@ -20,6 +20,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config", default="configs/task7_stargan/a800_full.py")
     parser.add_argument("--all-checkpoints", action="store_true")
     parser.add_argument("--latest", action="store_true")
+    parser.add_argument("--iters", type=int, nargs="+", default=None, help="Generate monitor grids for specific checkpoint iterations.")
     parser.add_argument("--device", default=None)
     return parser.parse_args()
 
@@ -34,7 +35,15 @@ def main() -> None:
     checkpoints = sorted_generator_checkpoints(cfg)
     if not checkpoints:
         raise FileNotFoundError("No *-G.ckpt files found in the Task7 model dir.")
-    if args.latest:
+    if args.iters and (args.latest or args.all_checkpoints):
+        raise ValueError("--iters cannot be combined with --latest or --all-checkpoints.")
+    if args.iters:
+        by_iter = {checkpoint_iter(path): path for path in checkpoints}
+        missing = [iters for iters in args.iters if iters not in by_iter]
+        if missing:
+            raise FileNotFoundError(f"Missing requested generator checkpoints: {missing}")
+        checkpoints = [by_iter[iters] for iters in args.iters]
+    elif args.latest:
         checkpoints = checkpoints[-1:]
     elif not args.all_checkpoints:
         checkpoints = [path for path in checkpoints if checkpoint_iter(path) % 10000 == 0]
@@ -55,4 +64,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

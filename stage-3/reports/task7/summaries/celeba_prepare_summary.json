@@ -1,0 +1,7 @@
+{
+  "ready": true,
+  "image_dir": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images",
+  "attr_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/list_attr_celeba.txt",
+  "fixed_manifest": "/root/autodl-tmp/CV-project/stage-3/reports/task7/summaries/fixed_samples_manifest.json",
+  "fixed_sample_count": 16
+}

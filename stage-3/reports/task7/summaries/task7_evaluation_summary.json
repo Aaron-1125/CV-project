@@ -1,0 +1,113 @@
+{
+  "test_iters": 200000,
+  "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/200000-G.ckpt",
+  "eval_generation_manifest": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/evaluation/iter_200000/eval_generation_manifest.json",
+  "attribute_classifier": {
+    "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/attribute_classifier/resnet18_5attrs.pt",
+    "epochs": 3,
+    "train_images": 200600,
+    "test_images": 1999,
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.1992217610989298,
+        "exact_match_accuracy": 0.6613306653326664,
+        "per_attr_accuracy": {
+          "Black_Hair": 0.9174587293646823,
+          "Blond_Hair": 0.9579789894947474,
+          "Brown_Hair": 0.8624312156078039,
+          "Male": 0.9829914957478739,
+          "Young": 0.8859429714857429
+        }
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.17694393589104318,
+        "exact_match_accuracy": 0.6688344172086043,
+        "per_attr_accuracy": {
+          "Black_Hair": 0.9144572286143071,
+          "Blond_Hair": 0.9589794897448725,
+          "Brown_Hair": 0.8834417208604303,
+          "Male": 0.9844922461230615,
+          "Young": 0.8839419709854928
+        }
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.1661172768063083,
+        "exact_match_accuracy": 0.6753376688344173,
+        "per_attr_accuracy": {
+          "Black_Hair": 0.919959979989995,
+          "Blond_Hair": 0.9564782391195598,
+          "Brown_Hair": 0.8819409704852427,
+          "Male": 0.9859929964982491,
+          "Young": 0.888944472236118
+        }
+      }
+    ],
+    "final": {
+      "epoch": 3,
+      "train_loss": 0.1661172768063083,
+      "exact_match_accuracy": 0.6753376688344173,
+      "per_attr_accuracy": {
+        "Black_Hair": 0.919959979989995,
+        "Blond_Hair": 0.9564782391195598,
+        "Brown_Hair": 0.8819409704852427,
+        "Male": 0.9859929964982491,
+        "Young": 0.888944472236118
+      }
+    }
+  },
+  "attribute_success": {
+    "Black_Hair": {
+      "total": 512,
+      "primary_success": 0,
+      "strict_success": 0,
+      "primary_success_rate": 0.0,
+      "strict_success_rate": 0.0
+    },
+    "Blond_Hair": {
+      "total": 512,
+      "primary_success": 9,
+      "strict_success": 9,
+      "primary_success_rate": 0.017578125,
+      "strict_success_rate": 0.017578125
+    },
+    "Brown_Hair": {
+      "total": 512,
+      "primary_success": 0,
+      "strict_success": 0,
+      "primary_success_rate": 0.0,
+      "strict_success_rate": 0.0
+    },
+    "Male": {
+      "total": 512,
+      "primary_success": 73,
+      "strict_success": 8,
+      "primary_success_rate": 0.142578125,
+      "strict_success_rate": 0.015625
+    },
+    "Young": {
+      "total": 512,
+      "primary_success": 250,
+      "strict_success": 43,
+      "primary_success_rate": 0.48828125,
+      "strict_success_rate": 0.083984375
+    }
+  },
+  "identity_retention": {
+    "available": true,
+    "pairs": 2560,
+    "valid_pairs": 1139,
+    "no_source_face": 10,
+    "no_generated_face": 1421,
+    "mean": 0.681004902779829,
+    "median": 0.6942678922530718,
+    "p10": 0.5693594683099639,
+    "warning_threshold": 0.35
+  },
+  "fid_is": {
+    "available": false,
+    "reason": "URLError(TimeoutError(110, 'Connection timed out'))"
+  }
+}

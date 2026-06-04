@@ -16,7 +16,7 @@ import time
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional, Union
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -39,7 +39,7 @@ def task_root() -> Path:
     return cv_project_root().parent
 
 
-def load_config(config_path: str | Path) -> dict[str, Any]:
+def load_config(config_path: Union[str, Path]) -> dict[str, Any]:
     path = resolve_stage3_path(config_path)
     namespace = runpy.run_path(str(path))
     return {
@@ -49,7 +49,7 @@ def load_config(config_path: str | Path) -> dict[str, Any]:
     }
 
 
-def resolve_stage3_path(path: str | Path) -> Path:
+def resolve_stage3_path(path: Union[str, Path]) -> Path:
     path = Path(path)
     if path.is_absolute():
         return path
@@ -126,14 +126,14 @@ def ensure_stargan_repo(cfg: dict[str, Any], check_ref: bool = True) -> dict[str
     }
 
 
-def write_json(path: str | Path, payload: Any) -> None:
+def write_json(path: Union[str, Path], payload: Any) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(to_jsonable(payload), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {path}")
 
 
-def read_json(path: str | Path) -> Any:
+def read_json(path: Union[str, Path]) -> Any:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
@@ -153,7 +153,7 @@ def to_jsonable(value: Any) -> Any:
     return value
 
 
-def sha256_file(path: str | Path) -> str:
+def sha256_file(path: Union[str, Path]) -> str:
     hasher = hashlib.sha256()
     with Path(path).open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
@@ -161,7 +161,7 @@ def sha256_file(path: str | Path) -> str:
     return hasher.hexdigest()
 
 
-def run_command(cmd: list[str], cwd: Path, summary_out: Path | None = None) -> dict[str, Any]:
+def run_command(cmd: list[str], cwd: Path, summary_out: Optional[Path] = None) -> dict[str, Any]:
     started = time.time()
     print("Running:", " ".join(cmd))
     result = subprocess.run(cmd, cwd=str(cwd), text=True)
@@ -183,7 +183,7 @@ class CelebARow:
     filename: str
     attrs: dict[str, bool]
     original_index: int
-    shuffled_rank: int | None = None
+    shuffled_rank: Optional[int] = None
 
 
 def find_celeba_paths(celeba_root: Path) -> tuple[Path, Path]:
@@ -210,7 +210,7 @@ def find_celeba_paths(celeba_root: Path) -> tuple[Path, Path]:
     return image_dir, attr_path
 
 
-def matching_image_path(image_dir: Path, filename: str) -> Path | None:
+def matching_image_path(image_dir: Path, filename: str) -> Optional[Path]:
     exact = image_dir / filename
     if exact.exists():
         return exact
@@ -231,9 +231,9 @@ def prepare_celeba_image_dir(
     """Create the image directory expected by official StarGAN.
 
     Official CelebA attributes list image names as ``000001.jpg``. Some public
-    mirrors store aligned images as ``000001.png``. In that case, create a
+    mirrors store aligned images as ``000001.png``. In that scenario, create a
     normalized directory with ``.jpg``-named symlinks pointing to the PNG files;
-    PIL reads the image header, so the extension mismatch is safe for StarGAN.
+    PIL reads the image header, so the extension difference is safe for StarGAN.
     """
     if not rows:
         raise ValueError("Cannot prepare CelebA image dir from empty attr rows.")
@@ -407,7 +407,7 @@ def select_fixed_samples(rows: list[CelebARow], attrs: list[str], image_dir: Pat
     for hair, male, young in targets:
         if len(selected) >= count:
             break
-        match = next(
+        candidate = next(
             (
                 row for row in usable
                 if row.filename not in used
@@ -417,9 +417,9 @@ def select_fixed_samples(rows: list[CelebARow], attrs: list[str], image_dir: Pat
             ),
             None,
         )
-        if match:
-            selected.append(match)
-            used.add(match.filename)
+        if candidate:
+            selected.append(candidate)
+            used.add(candidate.filename)
     for row in usable:
         if len(selected) >= count:
             break
@@ -560,12 +560,25 @@ def tensor_to_pil(tensor) -> Image.Image:
     return Image.fromarray(array)
 
 
+def safe_save_generated_image(tensor, path: Path, quality: int = 95) -> Image.Image:
+    """Save a StarGAN generator output tensor using one consistent path.
+
+    The official generator ends with tanh, so wrapper-generated images should
+    enter this helper in [-1, 1] CHW format. The helper mirrors official
+    StarGAN denorm logic and returns the PIL image for grids.
+    """
+    image = tensor_to_pil(tensor)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image.save(path, quality=quality)
+    return image
+
+
 def generate_fixed_samples(
     cfg: dict[str, Any],
     checkpoint: Path,
     run_name: str,
     output_dir: Path,
-    device: str | None = None,
+    device: Optional[str] = None,
 ) -> dict[str, Any]:
     import torch
 
@@ -614,11 +627,9 @@ def generate_fixed_samples(
             for target_idx, target in enumerate(targets):
                 label_tensor = torch.tensor([target["label"]], dtype=torch.float32, device=device)
                 fake = generator(x_real[sample_idx : sample_idx + 1], label_tensor)[0]
-                fake_image = tensor_to_pil(fake)
                 direction = target["direction"]
                 image_path = output_dir / "images" / f"{sample['sample_id']}_{direction}.jpg"
-                image_path.parent.mkdir(parents=True, exist_ok=True)
-                fake_image.save(image_path, quality=95)
+                fake_image = safe_save_generated_image(fake, image_path)
                 grid.paste(fake_image, (row_label_w + (target_idx + 1) * cell, y))
                 generated_records.append(
                     {
@@ -651,8 +662,8 @@ def generate_eval_images(
     checkpoint: Path,
     output_dir: Path,
     limit: int,
-    device: str | None = None,
-    batch_size: int | None = None,
+    device: Optional[str] = None,
+    batch_size: Optional[int] = None,
 ) -> dict[str, Any]:
     import torch
 
@@ -715,7 +726,7 @@ def generate_eval_images(
                 fake_batch = generator(x_real, label_tensor)
                 for idx, row in enumerate(batch_rows):
                     fake_path = direction_dir / row.filename
-                    tensor_to_pil(fake_batch[idx]).save(fake_path, quality=95)
+                    safe_save_generated_image(fake_batch[idx], fake_path)
                     records.append(
                         {
                             "filename": row.filename,

@@ -1,0 +1,368 @@
+{
+  "task": "stage3_task7_stargan_celeba_128_full",
+  "stargan_repo": {
+    "repo_url": "https://github.com/yunjey/StarGAN.git",
+    "path": "/root/autodl-tmp/task/StarGAN",
+    "commit": "94dd002e93a2863d9b987a937b85925b80f7a19f",
+    "expected_commit": "94dd002e93a2863d9b987a937b85925b80f7a19f"
+  },
+  "celeba_root": "/root/autodl-tmp/celeba",
+  "source_image_dir": "/root/autodl-tmp/celeba/images",
+  "source_attr_path": "/root/autodl-tmp/celeba/Anno/list_attr_celeba.txt",
+  "image_dir": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images",
+  "attr_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/list_attr_celeba.txt",
+  "num_attrs": 40,
+  "selected_attrs": [
+    "Black_Hair",
+    "Blond_Hair",
+    "Brown_Hair",
+    "Male",
+    "Young"
+  ],
+  "total_images": 202599,
+  "official_train_images": 200600,
+  "official_test_images": 1999,
+  "samples": [
+    {
+      "sample_id": "fixed_00",
+      "filename": "169735.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/169735.jpg",
+      "original_index": 169734,
+      "official_test_rank": 33,
+      "attrs": {
+        "Black_Hair": true,
+        "Blond_Hair": false,
+        "Brown_Hair": false,
+        "Male": false,
+        "Young": false
+      },
+      "label": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_01",
+      "filename": "050245.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/050245.jpg",
+      "original_index": 50244,
+      "official_test_rank": 10,
+      "attrs": {
+        "Black_Hair": true,
+        "Blond_Hair": false,
+        "Brown_Hair": false,
+        "Male": false,
+        "Young": true
+      },
+      "label": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_02",
+      "filename": "169108.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/169108.jpg",
+      "original_index": 169107,
+      "official_test_rank": 43,
+      "attrs": {
+        "Black_Hair": true,
+        "Blond_Hair": false,
+        "Brown_Hair": false,
+        "Male": true,
+        "Young": false
+      },
+      "label": [
+        1,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_03",
+      "filename": "028136.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/028136.jpg",
+      "original_index": 28135,
+      "official_test_rank": 0,
+      "attrs": {
+        "Black_Hair": true,
+        "Blond_Hair": false,
+        "Brown_Hair": false,
+        "Male": true,
+        "Young": true
+      },
+      "label": [
+        1,
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_04",
+      "filename": "074163.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/074163.jpg",
+      "original_index": 74162,
+      "official_test_rank": 23,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": true,
+        "Brown_Hair": false,
+        "Male": false,
+        "Young": false
+      },
+      "label": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_05",
+      "filename": "025600.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/025600.jpg",
+      "original_index": 25599,
+      "official_test_rank": 1,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": true,
+        "Brown_Hair": false,
+        "Male": false,
+        "Young": true
+      },
+      "label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_06",
+      "filename": "143470.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/143470.jpg",
+      "original_index": 143469,
+      "official_test_rank": 90,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": true,
+        "Brown_Hair": false,
+        "Male": true,
+        "Young": false
+      },
+      "label": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_07",
+      "filename": "189178.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/189178.jpg",
+      "original_index": 189177,
+      "official_test_rank": 250,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": true,
+        "Brown_Hair": false,
+        "Male": true,
+        "Young": true
+      },
+      "label": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_08",
+      "filename": "165253.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/165253.jpg",
+      "original_index": 165252,
+      "official_test_rank": 56,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": false,
+        "Brown_Hair": true,
+        "Male": false,
+        "Young": false
+      },
+      "label": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_09",
+      "filename": "016160.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/016160.jpg",
+      "original_index": 16159,
+      "official_test_rank": 32,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": false,
+        "Brown_Hair": true,
+        "Male": false,
+        "Young": true
+      },
+      "label": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_10",
+      "filename": "045317.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/045317.jpg",
+      "original_index": 45316,
+      "official_test_rank": 12,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": false,
+        "Brown_Hair": true,
+        "Male": true,
+        "Young": false
+      },
+      "label": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_11",
+      "filename": "093991.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/093991.jpg",
+      "original_index": 93990,
+      "official_test_rank": 11,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": false,
+        "Brown_Hair": true,
+        "Male": true,
+        "Young": true
+      },
+      "label": [
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_12",
+      "filename": "120849.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/120849.jpg",
+      "original_index": 120848,
+      "official_test_rank": 2,
+      "attrs": {
+        "Black_Hair": true,
+        "Blond_Hair": false,
+        "Brown_Hair": false,
+        "Male": true,
+        "Young": true
+      },
+      "label": [
+        1,
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_13",
+      "filename": "063578.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/063578.jpg",
+      "original_index": 63577,
+      "official_test_rank": 3,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": true,
+        "Brown_Hair": false,
+        "Male": false,
+        "Young": true
+      },
+      "label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_14",
+      "filename": "083306.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/083306.jpg",
+      "original_index": 83305,
+      "official_test_rank": 4,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": true,
+        "Brown_Hair": false,
+        "Male": false,
+        "Young": true
+      },
+      "label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_15",
+      "filename": "022603.jpg",
+      "source_path": "/root/autodl-tmp/CV-project/stage-3/data/celeba/images/022603.jpg",
+      "original_index": 22602,
+      "official_test_rank": 5,
+      "attrs": {
+        "Black_Hair": false,
+        "Blond_Hair": false,
+        "Brown_Hair": false,
+        "Male": false,
+        "Young": true
+      },
+      "label": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    }
+  ],
+  "source_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/fixed_samples/fixed_source_grid.jpg",
+  "target_labels": {
+    "json": "/root/autodl-tmp/CV-project/stage-3/reports/task7/summaries/fixed_samples_target_labels.json",
+    "csv": "/root/autodl-tmp/CV-project/stage-3/reports/task7/summaries/fixed_samples_target_labels.csv"
+  }
+}

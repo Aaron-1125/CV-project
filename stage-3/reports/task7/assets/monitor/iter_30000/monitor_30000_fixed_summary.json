@@ -1,0 +1,1061 @@
+{
+  "run_name": "monitor_30000",
+  "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/30000-G.ckpt",
+  "checkpoint_sha256": "914a3142f486b96249e212f404cc05773854052b9b9ef0606aedfe4e3e2ab84f",
+  "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/monitor_30000_fixed_grid.jpg",
+  "target_labels": {
+    "json": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/monitor_30000_target_labels.json",
+    "csv": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/monitor_30000_target_labels.csv"
+  },
+  "generated": [
+    {
+      "sample_id": "fixed_00",
+      "filename": "169735.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_00_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_00",
+      "filename": "169735.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_00_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_00",
+      "filename": "169735.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_00_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_00",
+      "filename": "169735.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_00_Male.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_00",
+      "filename": "169735.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_00_Young.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_01",
+      "filename": "050245.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_01_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_01",
+      "filename": "050245.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_01_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_01",
+      "filename": "050245.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_01_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_01",
+      "filename": "050245.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_01_Male.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_01",
+      "filename": "050245.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_01_Young.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_02",
+      "filename": "169108.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_02_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_02",
+      "filename": "169108.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_02_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_02",
+      "filename": "169108.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_02_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_02",
+      "filename": "169108.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_02_Male.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_02",
+      "filename": "169108.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_02_Young.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_03",
+      "filename": "028136.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_03_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_03",
+      "filename": "028136.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_03_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_03",
+      "filename": "028136.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_03_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_03",
+      "filename": "028136.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_03_Male.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_03",
+      "filename": "028136.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_03_Young.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_04",
+      "filename": "074163.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_04_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_04",
+      "filename": "074163.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_04_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_04",
+      "filename": "074163.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_04_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_04",
+      "filename": "074163.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_04_Male.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_04",
+      "filename": "074163.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_04_Young.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_05",
+      "filename": "025600.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_05_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_05",
+      "filename": "025600.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_05_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_05",
+      "filename": "025600.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_05_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_05",
+      "filename": "025600.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_05_Male.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_05",
+      "filename": "025600.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_05_Young.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_06",
+      "filename": "143470.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_06_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_06",
+      "filename": "143470.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_06_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_06",
+      "filename": "143470.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_06_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_06",
+      "filename": "143470.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_06_Male.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_06",
+      "filename": "143470.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_06_Young.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_07",
+      "filename": "189178.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_07_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_07",
+      "filename": "189178.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_07_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_07",
+      "filename": "189178.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_07_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_07",
+      "filename": "189178.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_07_Male.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_07",
+      "filename": "189178.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_07_Young.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_08",
+      "filename": "165253.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_08_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_08",
+      "filename": "165253.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_08_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_08",
+      "filename": "165253.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_08_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_08",
+      "filename": "165253.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_08_Male.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_08",
+      "filename": "165253.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_08_Young.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_09",
+      "filename": "016160.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_09_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_09",
+      "filename": "016160.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_09_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_09",
+      "filename": "016160.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_09_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_09",
+      "filename": "016160.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_09_Male.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_09",
+      "filename": "016160.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_09_Young.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_10",
+      "filename": "045317.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_10_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_10",
+      "filename": "045317.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_10_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_10",
+      "filename": "045317.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_10_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_10",
+      "filename": "045317.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_10_Male.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_10",
+      "filename": "045317.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_10_Young.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_11",
+      "filename": "093991.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_11_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_11",
+      "filename": "093991.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_11_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_11",
+      "filename": "093991.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_11_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_11",
+      "filename": "093991.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_11_Male.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_11",
+      "filename": "093991.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_11_Young.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_12",
+      "filename": "120849.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_12_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_12",
+      "filename": "120849.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_12_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_12",
+      "filename": "120849.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_12_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_12",
+      "filename": "120849.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_12_Male.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_12",
+      "filename": "120849.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_12_Young.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_13",
+      "filename": "063578.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_13_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_13",
+      "filename": "063578.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_13_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_13",
+      "filename": "063578.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_13_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_13",
+      "filename": "063578.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_13_Male.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_13",
+      "filename": "063578.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_13_Young.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_14",
+      "filename": "083306.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_14_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_14",
+      "filename": "083306.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_14_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_14",
+      "filename": "083306.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_14_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_14",
+      "filename": "083306.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_14_Male.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_14",
+      "filename": "083306.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_14_Young.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "sample_id": "fixed_15",
+      "filename": "022603.jpg",
+      "direction": "Black_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_15_Black_Hair.jpg",
+      "target_label": [
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_15",
+      "filename": "022603.jpg",
+      "direction": "Blond_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_15_Blond_Hair.jpg",
+      "target_label": [
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_15",
+      "filename": "022603.jpg",
+      "direction": "Brown_Hair",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_15_Brown_Hair.jpg",
+      "target_label": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_15",
+      "filename": "022603.jpg",
+      "direction": "Male",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_15_Male.jpg",
+      "target_label": [
+        0,
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "sample_id": "fixed_15",
+      "filename": "022603.jpg",
+      "direction": "Young",
+      "image_path": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/images/fixed_15_Young.jpg",
+      "target_label": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "samples": 16,
+  "directions": [
+    "Black_Hair",
+    "Blond_Hair",
+    "Brown_Hair",
+    "Male",
+    "Young"
+  ],
+  "device": "cuda:0"
+}

@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import zipfile
 from pathlib import Path
+from typing import Optional
 
 from stage3_task7_common import (
     asset_dir,
@@ -29,7 +30,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def ensure_pretrained_checkpoint(cfg: dict, pretrained_zip: Path | None) -> Path:
+def ensure_pretrained_checkpoint(cfg: dict, pretrained_zip: Optional[Path]) -> Path:
     repo = stargan_repo(cfg)
     checkpoint = repo / "stargan_celeba_128" / "models" / "200000-G.ckpt"
     if checkpoint.exists():

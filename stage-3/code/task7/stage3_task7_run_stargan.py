@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from typing import Optional
 
 from stage3_task7_common import (
     asset_dir,
@@ -28,7 +29,7 @@ def str_bool(value: bool) -> str:
     return "true" if value else "false"
 
 
-def build_train_command(cfg: dict, resume_iters: int | None) -> list[str]:
+def build_train_command(cfg: dict, resume_iters: Optional[int]) -> list[str]:
     attrs = selected_attrs(cfg)
     wd = work_dir(cfg)
     cmd = [
@@ -120,4 +121,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

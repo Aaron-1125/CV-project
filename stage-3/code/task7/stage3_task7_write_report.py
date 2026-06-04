@@ -160,7 +160,7 @@ Intermediate fixed-sample monitoring:
 Attribute classifier:
 
 - checkpoint: `{classifier.get('checkpoint', 'N/A')}`
-- final exact-match accuracy: `{pct(classifier.get('final', {}).get('exact_match_accuracy'))}`
+- final exact accuracy: `{pct(classifier.get('final', {}).get('exact_match_accuracy'))}`
 - per-attribute accuracy: `{classifier.get('final', {}).get('per_attr_accuracy', {})}`
 
 Attribute edit success:

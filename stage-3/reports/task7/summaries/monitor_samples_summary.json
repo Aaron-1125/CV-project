@@ -1,0 +1,105 @@
+{
+  "checkpoints": [
+    {
+      "iters": 10000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/10000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_10000/monitor_10000_fixed_grid.jpg"
+    },
+    {
+      "iters": 20000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/20000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_20000/monitor_20000_fixed_grid.jpg"
+    },
+    {
+      "iters": 30000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/30000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_30000/monitor_30000_fixed_grid.jpg"
+    },
+    {
+      "iters": 40000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/40000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_40000/monitor_40000_fixed_grid.jpg"
+    },
+    {
+      "iters": 50000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/50000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_50000/monitor_50000_fixed_grid.jpg"
+    },
+    {
+      "iters": 60000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/60000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_60000/monitor_60000_fixed_grid.jpg"
+    },
+    {
+      "iters": 70000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/70000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_70000/monitor_70000_fixed_grid.jpg"
+    },
+    {
+      "iters": 80000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/80000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_80000/monitor_80000_fixed_grid.jpg"
+    },
+    {
+      "iters": 90000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/90000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_90000/monitor_90000_fixed_grid.jpg"
+    },
+    {
+      "iters": 100000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/100000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_100000/monitor_100000_fixed_grid.jpg"
+    },
+    {
+      "iters": 110000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/110000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_110000/monitor_110000_fixed_grid.jpg"
+    },
+    {
+      "iters": 120000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/120000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_120000/monitor_120000_fixed_grid.jpg"
+    },
+    {
+      "iters": 130000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/130000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_130000/monitor_130000_fixed_grid.jpg"
+    },
+    {
+      "iters": 140000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/140000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_140000/monitor_140000_fixed_grid.jpg"
+    },
+    {
+      "iters": 150000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/150000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_150000/monitor_150000_fixed_grid.jpg"
+    },
+    {
+      "iters": 160000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/160000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_160000/monitor_160000_fixed_grid.jpg"
+    },
+    {
+      "iters": 170000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/170000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_170000/monitor_170000_fixed_grid.jpg"
+    },
+    {
+      "iters": 180000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/180000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_180000/monitor_180000_fixed_grid.jpg"
+    },
+    {
+      "iters": 190000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/190000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_190000/monitor_190000_fixed_grid.jpg"
+    },
+    {
+      "iters": 200000,
+      "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/200000-G.ckpt",
+      "grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/monitor/iter_200000/monitor_200000_fixed_grid.jpg"
+    }
+  ],
+  "count": 20
+}

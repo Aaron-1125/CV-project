@@ -1,0 +1,7 @@
+{
+  "ready": true,
+  "test_iters": 200000,
+  "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/200000-G.ckpt",
+  "fixed_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/self_trained/iter_200000/self_trained_200000_fixed_grid.jpg",
+  "fixed_summary": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/self_trained/iter_200000/self_trained_200000_fixed_summary.json"
+}

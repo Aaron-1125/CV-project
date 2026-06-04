@@ -1,0 +1,12 @@
+{
+  "ready": true,
+  "stargan_repo": {
+    "repo_url": "https://github.com/yunjey/StarGAN.git",
+    "path": "/root/autodl-tmp/task/StarGAN",
+    "commit": "94dd002e93a2863d9b987a937b85925b80f7a19f",
+    "expected_commit": "94dd002e93a2863d9b987a937b85925b80f7a19f"
+  },
+  "checkpoint": "/root/autodl-tmp/task/StarGAN/stargan_celeba_128/models/200000-G.ckpt",
+  "fixed_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/pretrained/pretrained_200000_fixed_grid.jpg",
+  "fixed_summary": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/pretrained/pretrained_200000_fixed_summary.json"
+}

@@ -1,0 +1,56 @@
+{
+  "checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/attribute_classifier/resnet18_5attrs.pt",
+  "epochs": 3,
+  "train_images": 200600,
+  "test_images": 1999,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.1992217610989298,
+      "exact_match_accuracy": 0.6613306653326664,
+      "per_attr_accuracy": {
+        "Black_Hair": 0.9174587293646823,
+        "Blond_Hair": 0.9579789894947474,
+        "Brown_Hair": 0.8624312156078039,
+        "Male": 0.9829914957478739,
+        "Young": 0.8859429714857429
+      }
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.17694393589104318,
+      "exact_match_accuracy": 0.6688344172086043,
+      "per_attr_accuracy": {
+        "Black_Hair": 0.9144572286143071,
+        "Blond_Hair": 0.9589794897448725,
+        "Brown_Hair": 0.8834417208604303,
+        "Male": 0.9844922461230615,
+        "Young": 0.8839419709854928
+      }
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.1661172768063083,
+      "exact_match_accuracy": 0.6753376688344173,
+      "per_attr_accuracy": {
+        "Black_Hair": 0.919959979989995,
+        "Blond_Hair": 0.9564782391195598,
+        "Brown_Hair": 0.8819409704852427,
+        "Male": 0.9859929964982491,
+        "Young": 0.888944472236118
+      }
+    }
+  ],
+  "final": {
+    "epoch": 3,
+    "train_loss": 0.1661172768063083,
+    "exact_match_accuracy": 0.6753376688344173,
+    "per_attr_accuracy": {
+      "Black_Hair": 0.919959979989995,
+      "Blond_Hair": 0.9564782391195598,
+      "Brown_Hair": 0.8819409704852427,
+      "Male": 0.9859929964982491,
+      "Young": 0.888944472236118
+    }
+  }
+}

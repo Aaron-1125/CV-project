@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import numpy as np
 from PIL import Image
@@ -206,7 +206,7 @@ def predict_generated_attrs(cfg: dict[str, Any], model: nn.Module, manifest: dic
         for images, batch_paths in loader:
             logits = model(images.to(device))
             pred = (torch.sigmoid(logits) >= threshold).int().cpu().numpy()
-            for path, row in zip(batch_paths, pred, strict=False):
+            for path, row in zip(batch_paths, pred):
                 predictions[path] = [int(x) for x in row.tolist()]
 
     per_direction: dict[str, dict[str, Any]] = {}
@@ -249,7 +249,7 @@ def evaluate_identity(cfg: dict[str, Any], manifest: dict[str, Any]) -> dict[str
     ctx_id = 0 if torch.cuda.is_available() else -1
     app.prepare(ctx_id=ctx_id, det_size=(640, 640))
 
-    source_cache: dict[str, np.ndarray | None] = {}
+    source_cache: dict[str, Optional[np.ndarray]] = {}
     similarities = []
     no_source = 0
     no_generated = 0
@@ -287,7 +287,7 @@ def evaluate_identity(cfg: dict[str, Any], manifest: dict[str, Any]) -> dict[str
     return summary
 
 
-def face_embedding(app, path: str) -> np.ndarray | None:
+def face_embedding(app, path: str) -> Optional[np.ndarray]:
     import cv2
 
     image = cv2.imread(path)
