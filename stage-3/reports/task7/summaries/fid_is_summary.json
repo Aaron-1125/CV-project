@@ -1,4 +1,4 @@
 {
   "available": false,
-  "reason": "URLError(TimeoutError(110, 'Connection timed out'))"
+  "reason": "skipped"
 }

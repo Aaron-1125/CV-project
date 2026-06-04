@@ -1,0 +1,32 @@
+{
+  "test_iters": 200000,
+  "manifest": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/evaluation/iter_200000/eval_generation_manifest.json",
+  "output_dir": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/evaluation/iter_200000/source_vs_generated",
+  "directions": [
+    {
+      "direction": "Black_Hair",
+      "records": 512,
+      "sheet": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/evaluation/iter_200000/source_vs_generated/Black_Hair_source_vs_generated.jpg"
+    },
+    {
+      "direction": "Blond_Hair",
+      "records": 512,
+      "sheet": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/evaluation/iter_200000/source_vs_generated/Blond_Hair_source_vs_generated.jpg"
+    },
+    {
+      "direction": "Brown_Hair",
+      "records": 512,
+      "sheet": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/evaluation/iter_200000/source_vs_generated/Brown_Hair_source_vs_generated.jpg"
+    },
+    {
+      "direction": "Male",
+      "records": 512,
+      "sheet": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/evaluation/iter_200000/source_vs_generated/Male_source_vs_generated.jpg"
+    },
+    {
+      "direction": "Young",
+      "records": 512,
+      "sheet": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/evaluation/iter_200000/source_vs_generated/Young_source_vs_generated.jpg"
+    }
+  ]
+}

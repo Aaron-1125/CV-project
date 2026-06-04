@@ -61,53 +61,53 @@
   "attribute_success": {
     "Black_Hair": {
       "total": 512,
-      "primary_success": 0,
-      "strict_success": 0,
-      "primary_success_rate": 0.0,
-      "strict_success_rate": 0.0
+      "primary_success": 455,
+      "strict_success": 453,
+      "primary_success_rate": 0.888671875,
+      "strict_success_rate": 0.884765625
     },
     "Blond_Hair": {
       "total": 512,
-      "primary_success": 9,
-      "strict_success": 9,
-      "primary_success_rate": 0.017578125,
-      "strict_success_rate": 0.017578125
+      "primary_success": 429,
+      "strict_success": 419,
+      "primary_success_rate": 0.837890625,
+      "strict_success_rate": 0.818359375
     },
     "Brown_Hair": {
       "total": 512,
-      "primary_success": 0,
-      "strict_success": 0,
-      "primary_success_rate": 0.0,
-      "strict_success_rate": 0.0
+      "primary_success": 439,
+      "strict_success": 438,
+      "primary_success_rate": 0.857421875,
+      "strict_success_rate": 0.85546875
     },
     "Male": {
       "total": 512,
-      "primary_success": 73,
-      "strict_success": 8,
-      "primary_success_rate": 0.142578125,
-      "strict_success_rate": 0.015625
+      "primary_success": 496,
+      "strict_success": 485,
+      "primary_success_rate": 0.96875,
+      "strict_success_rate": 0.947265625
     },
     "Young": {
       "total": 512,
-      "primary_success": 250,
-      "strict_success": 43,
-      "primary_success_rate": 0.48828125,
-      "strict_success_rate": 0.083984375
+      "primary_success": 477,
+      "strict_success": 473,
+      "primary_success_rate": 0.931640625,
+      "strict_success_rate": 0.923828125
     }
   },
   "identity_retention": {
     "available": true,
     "pairs": 2560,
-    "valid_pairs": 1139,
+    "valid_pairs": 2434,
     "no_source_face": 10,
-    "no_generated_face": 1421,
-    "mean": 0.681004902779829,
-    "median": 0.6942678922530718,
-    "p10": 0.5693594683099639,
+    "no_generated_face": 124,
+    "mean": 0.6215391303135481,
+    "median": 0.629522693063206,
+    "p10": 0.46993604810915407,
     "warning_threshold": 0.35
   },
   "fid_is": {
     "available": false,
-    "reason": "URLError(TimeoutError(110, 'Connection timed out'))"
+    "reason": "skipped"
   }
 }

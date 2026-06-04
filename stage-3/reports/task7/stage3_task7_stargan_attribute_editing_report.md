@@ -2,7 +2,7 @@
 
 ## 1. Scope
 
-This report covers only Stage3 Task 7.x: face attribute editing with StarGAN on CelebA. The official StarGAN source is kept outside this Git deliverable at `task/StarGAN`; `stage-3` contains wrappers, configs, reports, summaries, and generated evidence.
+This report covers only Stage3 Task 7.x: face attribute editing with StarGAN on CelebA. The official StarGAN source is kept outside this Git deliverable at `/Users/aaron/Documents/字节实习/task/StarGAN`; `stage-3` contains wrappers, configs, reports, summaries, and generated evidence.
 
 ## 2. Setup And Fixed Samples
 
@@ -10,20 +10,20 @@ This report covers only Stage3 Task 7.x: face attribute editing with StarGAN on 
 - fixed sample count: `16`
 - selected attrs: `['Black_Hair', 'Blond_Hair', 'Brown_Hair', 'Male', 'Young']`
 - train command return code: `0`
-- final checkpoint: `work_dirs/task7/stargan_celeba_128_full/models/200000-G.ckpt` on AutoDL, not committed to Git
+- final checkpoint: `/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/200000-G.ckpt`
 
 Fixed input faces:
 
 ![fixed source grid](assets/fixed_samples/fixed_source_grid.jpg)
 
-Target labels are saved before generation in `summaries/fixed_samples_target_labels.json` and `summaries/fixed_samples_target_labels.csv`. Hair-color target labels are validated as mutually exclusive for every generated direction.
+Target labels are saved before generation in `/root/autodl-tmp/CV-project/stage-3/reports/task7/summaries/fixed_samples_target_labels.json` and `/root/autodl-tmp/CV-project/stage-3/reports/task7/summaries/fixed_samples_target_labels.csv`. Hair-color target labels are validated as mutually exclusive for every generated direction.
 
 ## 3. Pretrained Sanity Check
 
 The official CelebA 128 pretrained checkpoint is used as a reference before accepting the self-trained run.
 
-- pretrained checkpoint: `task/StarGAN/stargan_celeba_128/models/200000-G.ckpt` on AutoDL, not committed to Git
-- pretrained fixed grid: `assets/pretrained/pretrained_200000_fixed_grid.jpg`
+- pretrained checkpoint: `/root/autodl-tmp/task/StarGAN/stargan_celeba_128/models/200000-G.ckpt`
+- pretrained fixed grid: `/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/pretrained/pretrained_200000_fixed_grid.jpg`
 
 ![official pretrained fixed grid](assets/pretrained/pretrained_200000_fixed_grid.jpg)
 
@@ -60,51 +60,52 @@ Intermediate fixed-sample monitoring:
 
 Attribute classifier:
 
-- checkpoint: `work_dirs/task7/attribute_classifier/resnet18_5attrs.pt` on AutoDL, not committed to Git
-- final exact-match accuracy: `67.53%`
+- checkpoint: `/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/attribute_classifier/resnet18_5attrs.pt`
+- final exact accuracy: `67.53%`
 - per-attribute accuracy: `{'Black_Hair': 0.919959979989995, 'Blond_Hair': 0.9564782391195598, 'Brown_Hair': 0.8819409704852427, 'Male': 0.9859929964982491, 'Young': 0.888944472236118}`
 
 Attribute edit success:
 
 | Direction | Samples | Primary success | Strict 5-attr success |
 | --- | ---: | ---: | ---: |
-| Black_Hair | 512 | 0.00% | 0.00% |
-| Blond_Hair | 512 | 1.76% | 1.76% |
-| Brown_Hair | 512 | 0.00% | 0.00% |
-| Male | 512 | 14.26% | 1.56% |
-| Young | 512 | 48.83% | 8.40% |
+| Black_Hair | 512 | 88.87% | 88.48% |
+| Blond_Hair | 512 | 83.79% | 81.84% |
+| Brown_Hair | 512 | 85.74% | 85.55% |
+| Male | 512 | 96.88% | 94.73% |
+| Young | 512 | 93.16% | 92.38% |
 
 Identity retention with InsightFace `buffalo_l`:
 
-- valid pairs: `1139` / `2560`
-- mean cosine: `0.6810`
-- median cosine: `0.6943`
-- p10 cosine: `0.5694`
-- no generated face: `1421`
+- valid pairs: `2434` / `2560`
+- mean cosine: `0.6215`
+- median cosine: `0.6295`
+- p10 cosine: `0.4699`
+- no generated face: `124`
 
 FID/IS auxiliary metrics:
 
 - available: `False`
 - FID: `N/A`
 - Inception Score: `N/A +/- N/A`
-- unavailable reason: AutoDL timed out while downloading the Inception feature weights required by `torchmetrics`.
 - note: FID/IS are auxiliary; acceptance focuses on attribute success and identity retention.
 
 ## 6. Failure Case Analysis
 
-The self-trained model completed 200000 iterations and produced all checkpoint-monitoring grids, but the final edit quality is weak: hair-color success is near zero, the `Young` direction is the strongest but still below 50% primary success, and InsightFace failed to detect a face in many generated images. The visual grids show strong color cast and checker/grid artifacts, so this run is best treated as a completed training-and-evaluation reproduction with a failed-quality conclusion rather than a production-quality effect model.
-
-- Attribute miss: `028136.jpg` direction `Black_Hair`, target `[1, 0, 0, 1, 1]`, predicted `[0, 0, 0, 1, 0]`.
-- Attribute miss: `025600.jpg` direction `Black_Hair`, target `[1, 0, 0, 0, 1]`, predicted `[0, 0, 0, 1, 0]`.
-- Attribute miss: `120849.jpg` direction `Black_Hair`, target `[1, 0, 0, 1, 1]`, predicted `[0, 0, 0, 1, 0]`.
-- Attribute miss: `063578.jpg` direction `Black_Hair`, target `[1, 0, 0, 0, 1]`, predicted `[0, 0, 0, 1, 0]`.
-- Attribute miss: `083306.jpg` direction `Black_Hair`, target `[1, 0, 0, 0, 1]`, predicted `[0, 0, 0, 0, 0]`.
-- Attribute miss: `022603.jpg` direction `Black_Hair`, target `[1, 0, 0, 0, 1]`, predicted `[0, 0, 0, 1, 0]`.
-- Attribute miss: `199242.jpg` direction `Black_Hair`, target `[1, 0, 0, 0, 1]`, predicted `[0, 0, 0, 1, 0]`.
-- Attribute miss: `189733.jpg` direction `Black_Hair`, target `[1, 0, 0, 0, 1]`, predicted `[0, 0, 0, 1, 0]`.
-- Identity drift: `172396.jpg` direction `Male`, cosine `0.245`.
-- Identity drift: `128504.jpg` direction `Young`, cosine `0.296`.
-- Identity drift: `127251.jpg` direction `Brown_Hair`, cosine `0.340`.
-- Identity drift: `041226.jpg` direction `Male`, cosine `0.267`.
+- Attribute miss: `180182.jpg` direction `Black_Hair`, target `[1, 0, 0, 0, 1]`, predicted `[0, 0, 0, 0, 1]`.
+- Attribute miss: `193652.jpg` direction `Black_Hair`, target `[1, 0, 0, 1, 0]`, predicted `[0, 0, 0, 1, 0]`.
+- Attribute miss: `027825.jpg` direction `Black_Hair`, target `[1, 0, 0, 1, 1]`, predicted `[0, 0, 0, 1, 1]`.
+- Attribute miss: `016160.jpg` direction `Black_Hair`, target `[1, 0, 0, 0, 1]`, predicted `[0, 0, 0, 0, 1]`.
+- Attribute miss: `174667.jpg` direction `Black_Hair`, target `[1, 0, 0, 0, 1]`, predicted `[0, 0, 0, 0, 1]`.
+- Attribute miss: `129818.jpg` direction `Black_Hair`, target `[1, 0, 0, 1, 0]`, predicted `[0, 0, 0, 1, 0]`.
+- Attribute miss: `201256.jpg` direction `Black_Hair`, target `[1, 0, 0, 0, 1]`, predicted `[0, 0, 0, 0, 1]`.
+- Attribute miss: `040792.jpg` direction `Black_Hair`, target `[1, 0, 0, 1, 0]`, predicted `[0, 0, 0, 1, 1]`.
+- Identity drift: `018394.jpg` direction `Blond_Hair`, cosine `0.209`.
+- Identity drift: `005109.jpg` direction `Male`, cosine `0.328`.
+- Identity drift: `174667.jpg` direction `Male`, cosine `0.326`.
+- Identity drift: `040792.jpg` direction `Male`, cosine `0.331`.
+- Identity drift: `005109.jpg` direction `Young`, cosine `0.324`.
+- Identity drift: `174667.jpg` direction `Young`, cosine `0.314`.
+- Identity drift: `129839.jpg` direction `Male`, cosine `0.327`.
+- Identity drift: `182446.jpg` direction `Male`, cosine `0.348`.
 
 Common failure modes to inspect manually are: target attribute not activated, identity drift after large gender/age edits, hair-color ambiguity, and local artifacts around hairline, glasses, or background.

@@ -1,0 +1,11 @@
+{
+  "test_iters": 200000,
+  "pretrained_checkpoint": "/root/autodl-tmp/task/StarGAN/stargan_celeba_128/models/200000-G.ckpt",
+  "self_trained_checkpoint": "/root/autodl-tmp/CV-project/stage-3/work_dirs/task7/stargan_celeba_128_full/models/200000-G.ckpt",
+  "pretrained_fixed_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/pretrained/pretrained_200000_fixed_grid.jpg",
+  "self_trained_fixed_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/self_trained/iter_200000/self_trained_200000_fixed_grid.jpg",
+  "side_by_side": "/root/autodl-tmp/CV-project/stage-3/reports/task7/assets/side_by_side/iter_200000/pretrained_vs_self_trained_fixed_side_by_side.jpg",
+  "diagnosis_rule": "If pretrained output is clean but self-trained output is abnormal, prioritize training/configuration. If pretrained output is also abnormal, prioritize preprocessing, postprocessing, and checkpoint-loading checks before tuning losses.",
+  "pretrained_normal": "manual_review_required",
+  "self_trained_normal": "manual_review_required"
+}
