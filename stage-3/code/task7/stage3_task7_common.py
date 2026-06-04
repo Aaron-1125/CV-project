@@ -523,12 +523,20 @@ def load_generator(cfg: dict[str, Any], checkpoint: Path, device: str):
         int(cfg_get(cfg, "model", "g_repeat_num", 6)),
     )
     try:
-        state = torch.load(str(checkpoint), map_location=device, weights_only=True)
+        state = torch.load(str(checkpoint), map_location=lambda storage, loc: storage, weights_only=True)
     except TypeError:
-        state = torch.load(str(checkpoint), map_location=device)
-    generator.load_state_dict(state)
+        state = torch.load(str(checkpoint), map_location=lambda storage, loc: storage)
+    result = generator.load_state_dict(state, strict=True)
+    print(
+        "Loaded StarGAN generator checkpoint "
+        f"{checkpoint} with strict=True; keys={len(state)}, "
+        f"missing={len(result.missing_keys)}, unexpected={len(result.unexpected_keys)}"
+    )
     generator.to(device)
-    generator.eval()
+    # Official yunjey/StarGAN Solver.test() does not call G.eval(). The
+    # generator uses InstanceNorm2d(track_running_stats=True), so keep training
+    # mode during no-grad inference to mirror official test-time behavior.
+    generator.train()
     return generator
 
 
@@ -567,10 +575,38 @@ def safe_save_generated_image(tensor, path: Path, quality: int = 95) -> Image.Im
     enter this helper in [-1, 1] CHW format. The helper mirrors official
     StarGAN denorm logic and returns the PIL image for grids.
     """
-    image = tensor_to_pil(tensor)
+    from torchvision.utils import save_image
+
     path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(path, quality=quality)
+    save_image(denorm_tensor(tensor.detach().cpu()), str(path), nrow=1, padding=0)
+    image = tensor_to_pil(tensor)
     return image
+
+
+def create_official_target_tensors(c_org, attrs: list[str], device: str) -> list[Any]:
+    """Mirror yunjey/StarGAN Solver.create_labels for CelebA exactly."""
+    validate_selected_attrs(attrs, int(c_org.size(1)))
+    hair_color_indices = []
+    for idx, attr_name in enumerate(attrs):
+        if attr_name in ["Black_Hair", "Blond_Hair", "Brown_Hair", "Gray_Hair"]:
+            hair_color_indices.append(idx)
+
+    c_trg_list = []
+    for idx in range(len(attrs)):
+        c_trg = c_org.clone()
+        if idx in hair_color_indices:
+            c_trg[:, idx] = 1
+            for hair_idx in hair_color_indices:
+                if hair_idx != idx:
+                    c_trg[:, hair_idx] = 0
+        else:
+            c_trg[:, idx] = (c_trg[:, idx] == 0)
+        c_trg_list.append(c_trg.to(device))
+    return c_trg_list
+
+
+def tensor_label_to_ints(label_tensor) -> list[int]:
+    return [int(round(float(value))) for value in label_tensor.detach().cpu().view(-1).tolist()]
 
 
 def generate_fixed_samples(
@@ -623,11 +659,13 @@ def generate_fixed_samples(
             y = header_h + sample_idx * cell
             draw.text((4, y + 6), sample["sample_id"], fill=(20, 20, 20), font=font)
             grid.paste(source_images[sample_idx], (row_label_w, y))
-            targets = build_target_labels(sample["label"], attrs)
-            for target_idx, target in enumerate(targets):
-                label_tensor = torch.tensor([target["label"]], dtype=torch.float32, device=device)
+            c_org = torch.tensor([sample["label"]], dtype=torch.float32)
+            target_tensors = create_official_target_tensors(c_org, attrs, device)
+            for target_idx, label_tensor in enumerate(target_tensors):
+                direction = attrs[target_idx]
+                target_label = tensor_label_to_ints(label_tensor[0])
+                validate_target_label(target_label, attrs, direction=direction)
                 fake = generator(x_real[sample_idx : sample_idx + 1], label_tensor)[0]
-                direction = target["direction"]
                 image_path = output_dir / "images" / f"{sample['sample_id']}_{direction}.jpg"
                 fake_image = safe_save_generated_image(fake, image_path)
                 grid.paste(fake_image, (row_label_w + (target_idx + 1) * cell, y))
@@ -637,7 +675,7 @@ def generate_fixed_samples(
                         "filename": sample["filename"],
                         "direction": direction,
                         "image_path": str(image_path),
-                        "target_label": target["label"],
+                        "target_label": target_label,
                     }
                 )
     grid_path = output_dir / f"{run_name}_fixed_grid.jpg"
@@ -715,14 +753,16 @@ def generate_eval_images(
                     image.resize((int(cfg_get(cfg, "model", "image_size", 128)),) * 2, Image.Resampling.BICUBIC).save(real_path, quality=95)
             x_real = torch.stack(tensors).to(device)
             for direction in attrs:
+                direction_idx = attrs.index(direction)
                 direction_dir = fake_root / direction
                 direction_dir.mkdir(parents=True, exist_ok=True)
-                labels = []
-                for row in batch_rows:
-                    label = selected_label(row, attrs)
-                    target = next(item for item in build_target_labels(label, attrs) if item["direction"] == direction)
-                    labels.append(target["label"])
-                label_tensor = torch.tensor(labels, dtype=torch.float32, device=device)
+                source_labels = [selected_label(row, attrs) for row in batch_rows]
+                c_org = torch.tensor(source_labels, dtype=torch.float32)
+                target_tensors = create_official_target_tensors(c_org, attrs, device)
+                label_tensor = target_tensors[direction_idx]
+                labels = [tensor_label_to_ints(label_tensor[idx]) for idx in range(label_tensor.size(0))]
+                for label in labels:
+                    validate_target_label(label, attrs, direction=direction)
                 fake_batch = generator(x_real, label_tensor)
                 for idx, row in enumerate(batch_rows):
                     fake_path = direction_dir / row.filename
