@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import math
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
@@ -16,11 +15,14 @@ from stage3_task9_common import (
     NO_VIDEO_HINT,
     OUTER_LIPS,
     cfg_get,
+    compute_glasses_transform,
+    compute_hat_transform,
+    debug_geometry_dir,
     demo_video_path,
+    estimate_face_transform_from_landmarks,
     effects_summary_path,
     ensure_default_stickers,
     ensure_task9_dirs,
-    euclidean,
     glasses_path,
     hat_path,
     keyframes_dir,
@@ -54,6 +56,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--fps", type=float, default=None)
     parser.add_argument("--max-keyframes", type=int, default=None)
     parser.add_argument("--draw-landmarks", action="store_true", help="Also save landmark visualizations for static images.")
+    parser.add_argument("--debug-sticker-geometry", action="store_true", help="Save sticker anchor/angle/scale debug visualizations.")
     parser.add_argument("--force", action="store_true", help="Overwrite existing output files.")
     return parser.parse_args()
 
@@ -110,9 +113,16 @@ def clamp_strength(value: Any, default: float) -> float:
 class FaceEffectsProcessor:
     """Reusable MediaPipe + OpenCV processor for Task9 images, video, and benchmark."""
 
-    def __init__(self, cfg: Dict[str, Any], enabled_effects: Set[str], static_image_mode: bool = False) -> None:
+    def __init__(
+        self,
+        cfg: Dict[str, Any],
+        enabled_effects: Set[str],
+        static_image_mode: bool = False,
+        debug_sticker_geometry: bool = False,
+    ) -> None:
         self.cfg = cfg
         self.enabled_effects = set(enabled_effects)
+        self.debug_sticker_geometry = debug_sticker_geometry
         self.cv2, self.mp, self.np = import_runtime_modules()
         ensure_default_stickers(cfg, force=False)
         self.glasses = load_sticker_bgra(self.cv2, self.np, glasses_path(cfg))
@@ -120,6 +130,10 @@ class FaceEffectsProcessor:
         self.smooth_strength = clamp_strength(cfg_get(cfg, "effects", "smooth_strength", 0.55), 0.55)
         self.whiten_strength = clamp_strength(cfg_get(cfg, "effects", "whiten_strength", 0.35), 0.35)
         self.lipstick_alpha = clamp_strength(cfg_get(cfg, "effects", "lipstick_alpha", 0.45), 0.45)
+        self.glasses_scale_factor = float(cfg_get(cfg, "effects", "glasses_scale_factor", 2.2))
+        self.glasses_y_offset_factor = float(cfg_get(cfg, "effects", "glasses_y_offset_factor", 0.03))
+        self.hat_scale_factor = float(cfg_get(cfg, "effects", "hat_scale_factor", 1.35))
+        self.hat_y_offset_factor = float(cfg_get(cfg, "effects", "hat_y_offset_factor", 0.55))
         rgb = list(cfg_get(cfg, "effects", "lipstick_color", (190, 35, 80)))
         if len(rgb) != 3:
             rgb = [190, 35, 80]
@@ -154,9 +168,14 @@ class FaceEffectsProcessor:
         points, detection_seconds = self.detect_landmarks(frame_bgr)
         output = frame_bgr.copy()
         landmark_frame = None
+        debug_geometry_frame = None
+        geometry = None
+        sticker_boxes: List[Dict[str, Any]] = []
         render_seconds = 0.0
         face_detected = points is not None
         if face_detected:
+            h, w = frame_bgr.shape[:2]
+            geometry = estimate_face_transform_from_landmarks(points, w, h)
             started = time.perf_counter()
             if "smooth" in self.enabled_effects:
                 output = self.apply_smooth(output, points)
@@ -164,16 +183,26 @@ class FaceEffectsProcessor:
                 output = self.apply_whiten(output, points)
             if "lipstick" in self.enabled_effects:
                 output = self.apply_lipstick(output, points)
-            if "hat" in self.enabled_effects:
-                output = self.apply_hat(output, points)
-            if "glasses" in self.enabled_effects:
-                output = self.apply_glasses(output, points)
+            if geometry:
+                if "hat" in self.enabled_effects:
+                    output, box = self.apply_hat(output, geometry)
+                    if box:
+                        sticker_boxes.append(box)
+                if "glasses" in self.enabled_effects:
+                    output, box = self.apply_glasses(output, geometry)
+                    if box:
+                        sticker_boxes.append(box)
             render_seconds = time.perf_counter() - started
             if save_landmark_frame:
-                landmark_frame = self.draw_landmarks(frame_bgr, points)
+                landmark_frame = self.draw_landmarks(frame_bgr, points, geometry)
+            if self.debug_sticker_geometry:
+                debug_geometry_frame = self.draw_sticker_geometry(frame_bgr, points, geometry, sticker_boxes)
         return {
             "frame": output,
             "landmark_frame": landmark_frame,
+            "debug_geometry_frame": debug_geometry_frame,
+            "geometry": geometry,
+            "sticker_boxes": sticker_boxes,
             "face_detected": face_detected,
             "detection_seconds": detection_seconds,
             "render_seconds": render_seconds,
@@ -250,7 +279,7 @@ class FaceEffectsProcessor:
         output = frame.astype(np.float32) * (1.0 - alpha) + color_layer.astype(np.float32) * alpha
         return np.clip(output, 0, 255).astype(np.uint8)
 
-    def rotate_scale_sticker(self, sticker: Any, desired_width: float, angle_degrees: float):
+    def transform_sticker_rgba(self, sticker: Any, desired_width: float, angle_degrees: float):
         cv2 = self.cv2
         desired_width = max(10.0, float(desired_width))
         h, w = sticker.shape[:2]
@@ -278,7 +307,16 @@ class FaceEffectsProcessor:
             borderValue=(0, 0, 0, 0),
         )
 
-    def overlay_bgra(self, frame: Any, overlay: Any, center_xy: Tuple[float, float]):
+    def rotate_scale_sticker(self, sticker: Any, desired_width: float, angle_degrees: float):
+        return self.transform_sticker_rgba(sticker, desired_width, angle_degrees)
+
+    def overlay_rgba_at_center(
+        self,
+        frame: Any,
+        overlay: Any,
+        center_xy: Tuple[float, float],
+        label: str = "sticker",
+    ) -> Tuple[Any, Optional[Dict[str, Any]]]:
         np = self.np
         h, w = frame.shape[:2]
         oh, ow = overlay.shape[:2]
@@ -291,7 +329,7 @@ class FaceEffectsProcessor:
         clip_x2 = min(w, x2)
         clip_y2 = min(h, y2)
         if clip_x1 >= clip_x2 or clip_y1 >= clip_y2:
-            return frame
+            return frame, None
         ox1 = clip_x1 - x1
         oy1 = clip_y1 - y1
         ox2 = ox1 + (clip_x2 - clip_x1)
@@ -302,59 +340,47 @@ class FaceEffectsProcessor:
         blended = sticker_roi[:, :, :3].astype(np.float32) * alpha + roi * (1.0 - alpha)
         output = frame.copy()
         output[clip_y1:clip_y2, clip_x1:clip_x2] = np.clip(blended, 0, 255).astype(np.uint8)
+        box = {
+            "label": label,
+            "center": (float(center_xy[0]), float(center_xy[1])),
+            "box": (float(x1), float(y1), float(x2), float(y2)),
+            "clipped_box": (float(clip_x1), float(clip_y1), float(clip_x2), float(clip_y2)),
+            "width": float(ow),
+            "height": float(oh),
+        }
+        return output, box
+
+    def overlay_bgra(self, frame: Any, overlay: Any, center_xy: Tuple[float, float]):
+        output, _ = self.overlay_rgba_at_center(frame, overlay, center_xy)
         return output
 
-    def eye_pose(self, points: Any) -> Optional[Dict[str, float]]:
-        if len(points) <= 263:
-            return None
-        left_outer = self.point(points, 33)
-        right_outer = self.point(points, 263)
-        eye_distance = euclidean(left_outer, right_outer)
-        if eye_distance < 20:
-            return None
-        angle = math.degrees(math.atan2(right_outer[1] - left_outer[1], right_outer[0] - left_outer[0]))
-        return {
-            "center_x": (left_outer[0] + right_outer[0]) / 2.0,
-            "center_y": (left_outer[1] + right_outer[1]) / 2.0 + eye_distance * 0.02,
-            "width": eye_distance * 1.95,
-            "angle": angle,
-        }
+    def apply_glasses(self, frame: Any, geometry: Dict[str, Any]) -> Tuple[Any, Optional[Dict[str, Any]]]:
+        pose = compute_glasses_transform(
+            geometry,
+            scale_factor=self.glasses_scale_factor,
+            y_offset_factor=self.glasses_y_offset_factor,
+        )
+        sticker = self.transform_sticker_rgba(self.glasses, pose["width"], pose["angle_deg"])
+        output, box = self.overlay_rgba_at_center(frame, sticker, (pose["center_x"], pose["center_y"]), label="glasses")
+        if box:
+            box["pose"] = pose
+        return output, box
 
-    def apply_glasses(self, frame: Any, points: Any):
-        pose = self.eye_pose(points)
-        if not pose:
-            return frame
-        sticker = self.rotate_scale_sticker(self.glasses, pose["width"], pose["angle"])
-        return self.overlay_bgra(frame, sticker, (pose["center_x"], pose["center_y"]))
-
-    def hat_pose(self, points: Any) -> Optional[Dict[str, float]]:
-        if len(points) <= 454:
-            return None
-        left_cheek = self.point(points, 234)
-        right_cheek = self.point(points, 454)
-        top_face = self.point(points, 10)
-        face_width = euclidean(left_cheek, right_cheek)
-        if face_width < 30:
-            return None
-        angle = math.degrees(math.atan2(right_cheek[1] - left_cheek[1], right_cheek[0] - left_cheek[0]))
-        desired_width = face_width * 1.28
+    def apply_hat(self, frame: Any, geometry: Dict[str, Any]) -> Tuple[Any, Optional[Dict[str, Any]]]:
         sticker_aspect = self.hat.shape[0] / float(self.hat.shape[1])
-        desired_height = desired_width * sticker_aspect
-        return {
-            "center_x": (left_cheek[0] + right_cheek[0]) / 2.0,
-            "center_y": top_face[1] - desired_height * 0.16,
-            "width": desired_width,
-            "angle": angle,
-        }
+        pose = compute_hat_transform(
+            geometry,
+            sticker_aspect=sticker_aspect,
+            scale_factor=self.hat_scale_factor,
+            y_offset_factor=self.hat_y_offset_factor,
+        )
+        sticker = self.transform_sticker_rgba(self.hat, pose["width"], pose["angle_deg"])
+        output, box = self.overlay_rgba_at_center(frame, sticker, (pose["center_x"], pose["center_y"]), label="hat")
+        if box:
+            box["pose"] = pose
+        return output, box
 
-    def apply_hat(self, frame: Any, points: Any):
-        pose = self.hat_pose(points)
-        if not pose:
-            return frame
-        sticker = self.rotate_scale_sticker(self.hat, pose["width"], pose["angle"])
-        return self.overlay_bgra(frame, sticker, (pose["center_x"], pose["center_y"]))
-
-    def draw_landmarks(self, frame: Any, points: Any):
+    def draw_landmarks(self, frame: Any, points: Any, geometry: Optional[Dict[str, Any]] = None):
         cv2 = self.cv2
         output = frame.copy()
         h, w = output.shape[:2]
@@ -365,6 +391,68 @@ class FaceEffectsProcessor:
         for indices, color in [(FACE_OVAL, (255, 180, 40)), (OUTER_LIPS, (80, 80, 255))]:
             poly = points[indices].astype("int32")
             cv2.polylines(output, [poly], isClosed=True, color=color, thickness=1, lineType=cv2.LINE_AA)
+        if geometry:
+            self.draw_geometry_overlays(output, geometry, [])
+        return output
+
+    def draw_geometry_overlays(self, image: Any, geometry: Dict[str, Any], sticker_boxes: Sequence[Dict[str, Any]]) -> None:
+        cv2 = self.cv2
+
+        def pt(value: Sequence[float]) -> Tuple[int, int]:
+            return int(round(float(value[0]))), int(round(float(value[1])))
+
+        left_eye = pt(geometry["left_eye_center"])
+        right_eye = pt(geometry["right_eye_center"])
+        eye_center = pt(geometry["eye_center"])
+        face_center = pt(geometry["face_center"])
+        brow_center = pt(geometry["brow_center"])
+        forehead_anchor = pt(geometry["forehead_anchor"])
+        cv2.line(image, left_eye, right_eye, (0, 255, 255), 2, cv2.LINE_AA)
+        cv2.circle(image, left_eye, 5, (0, 255, 0), -1, cv2.LINE_AA)
+        cv2.circle(image, right_eye, 5, (0, 128, 255), -1, cv2.LINE_AA)
+        cv2.circle(image, eye_center, 5, (255, 0, 255), -1, cv2.LINE_AA)
+        cv2.circle(image, face_center, 6, (255, 255, 0), -1, cv2.LINE_AA)
+        cv2.circle(image, brow_center, 5, (255, 120, 0), -1, cv2.LINE_AA)
+        cv2.circle(image, forehead_anchor, 5, (80, 255, 255), -1, cv2.LINE_AA)
+        cv2.putText(
+            image,
+            "head_angle={:.1f}, sticker_angle={:.1f}".format(geometry["angle_deg"], geometry["sticker_angle_deg"]),
+            (12, 28),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.65,
+            (20, 20, 20),
+            3,
+            cv2.LINE_AA,
+        )
+        cv2.putText(
+            image,
+            "head_angle={:.1f}, sticker_angle={:.1f}".format(geometry["angle_deg"], geometry["sticker_angle_deg"]),
+            (12, 28),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.65,
+            (255, 255, 255),
+            1,
+            cv2.LINE_AA,
+        )
+        colors = {"glasses": (0, 255, 255), "hat": (80, 180, 255)}
+        for box in sticker_boxes:
+            x1, y1, x2, y2 = box["box"]
+            label = str(box.get("label", "sticker"))
+            color = colors.get(label, (255, 255, 255))
+            cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), color, 2, cv2.LINE_AA)
+            cv2.circle(image, pt(box["center"]), 5, color, -1, cv2.LINE_AA)
+            cv2.putText(image, label, (int(x1), max(18, int(y1) - 6)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 2, cv2.LINE_AA)
+
+    def draw_sticker_geometry(
+        self,
+        frame: Any,
+        points: Any,
+        geometry: Optional[Dict[str, Any]],
+        sticker_boxes: Sequence[Dict[str, Any]],
+    ):
+        output = self.draw_landmarks(frame, points, None)
+        if geometry:
+            self.draw_geometry_overlays(output, geometry, sticker_boxes)
         return output
 
 
@@ -402,8 +490,9 @@ def process_static_images(
     image_paths: Sequence[Path],
     enabled_effects: Set[str],
     draw_landmarks: bool,
+    debug_sticker_geometry: bool,
 ) -> Dict[str, Any]:
-    processor = FaceEffectsProcessor(cfg, enabled_effects, static_image_mode=True)
+    processor = FaceEffectsProcessor(cfg, enabled_effects, static_image_mode=True, debug_sticker_geometry=debug_sticker_geometry)
     cv2 = processor.cv2
     np = processor.np
     records: List[Dict[str, Any]] = []
@@ -419,9 +508,12 @@ def process_static_images(
             output_path = outputs_dir(cfg) / "{}_effects.jpg".format(sample_id)
             landmark_path = outputs_dir(cfg) / "{}_landmarks.jpg".format(sample_id)
             compare_path = outputs_dir(cfg) / "{}_before_after.jpg".format(sample_id)
+            debug_path = debug_geometry_dir(cfg) / "{}_debug_geometry.jpg".format(sample_id)
             write_image(cv2, output_path, result["frame"])
             if result["landmark_frame"] is not None:
                 write_image(cv2, landmark_path, result["landmark_frame"])
+            if result.get("debug_geometry_frame") is not None:
+                write_image(cv2, debug_path, result["debug_geometry_frame"])
             comparison = labeled_before_after(cv2, np, frame, result["frame"])
             write_image(cv2, compare_path, comparison)
             contact_candidates.append(compare_path)
@@ -432,6 +524,9 @@ def process_static_images(
                     "face_detected": result["face_detected"],
                     "output_path": str(output_path),
                     "landmark_path": str(landmark_path) if result["landmark_frame"] is not None else None,
+                    "debug_geometry_path": str(debug_path) if result.get("debug_geometry_frame") is not None else None,
+                    "geometry": result.get("geometry"),
+                    "sticker_boxes": result.get("sticker_boxes"),
                     "before_after_path": str(compare_path),
                     "detection_seconds": result["detection_seconds"],
                     "render_seconds": result["render_seconds"],
@@ -476,6 +571,7 @@ def process_video(
     max_frames: Optional[int],
     fps_override: Optional[float],
     max_keyframes: Optional[int],
+    debug_sticker_geometry: bool = False,
     camera_index: Optional[int] = None,
 ) -> Dict[str, Any]:
     cv2, _, _ = import_runtime_modules()
@@ -483,11 +579,13 @@ def process_video(
     cap = cv2.VideoCapture(capture_source)
     if not cap.isOpened():
         raise FileNotFoundError("Could not open video source: {}".format(capture_source))
-    processor = FaceEffectsProcessor(cfg, enabled_effects, static_image_mode=False)
+    processor = FaceEffectsProcessor(cfg, enabled_effects, static_image_mode=False, debug_sticker_geometry=debug_sticker_geometry)
     out_path = output_video or demo_video_path(cfg)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     key_dir = keyframes_dir(cfg)
     key_dir.mkdir(parents=True, exist_ok=True)
+    dbg_dir = debug_geometry_dir(cfg)
+    dbg_dir.mkdir(parents=True, exist_ok=True)
     source_fps = float(cap.get(cv2.CAP_PROP_FPS) or 0.0)
     output_fps = float(fps_override or source_fps or cfg_get(cfg, "video", "fps", 20) or 20)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
@@ -528,16 +626,22 @@ def process_video(
                 before_path = key_dir / "{}_before.jpg".format(key_id)
                 after_path = key_dir / "{}_after.jpg".format(key_id)
                 landmark_path = key_dir / "{}_landmarks.jpg".format(key_id)
+                debug_path = dbg_dir / "{}_debug_geometry.jpg".format(key_id)
                 write_image(cv2, before_path, frame)
                 write_image(cv2, after_path, result["frame"])
                 if result["landmark_frame"] is not None:
                     write_image(cv2, landmark_path, result["landmark_frame"])
+                if result.get("debug_geometry_frame") is not None:
+                    write_image(cv2, debug_path, result["debug_geometry_frame"])
                 keyframe_records.append(
                     {
                         "frame_index": frame_index,
                         "before_path": str(before_path),
                         "after_path": str(after_path),
                         "landmark_path": str(landmark_path) if result["landmark_frame"] is not None else None,
+                        "debug_geometry_path": str(debug_path) if result.get("debug_geometry_frame") is not None else None,
+                        "geometry": result.get("geometry"),
+                        "sticker_boxes": result.get("sticker_boxes"),
                         "face_detected": result["face_detected"],
                     }
                 )
@@ -564,6 +668,7 @@ def process_video(
         "render_seconds": render_seconds,
         "write_seconds": write_seconds,
         "keyframes": keyframe_records,
+        "debug_sticker_geometry": debug_sticker_geometry,
     }
 
 
@@ -590,7 +695,17 @@ def main() -> None:
         "synthetic_video_from_images": False,
     }
     if args.camera is not None:
-        result = process_video(cfg, Path("camera"), enabled_effects, args.output_video, args.max_frames, args.fps, args.max_keyframes, camera_index=args.camera)
+        result = process_video(
+            cfg,
+            Path("camera"),
+            enabled_effects,
+            args.output_video,
+            args.max_frames,
+            args.fps,
+            args.max_keyframes,
+            debug_sticker_geometry=args.debug_sticker_geometry,
+            camera_index=args.camera,
+        )
         payload.update(result)
     elif args.video is not None:
         video_path = args.video.expanduser()
@@ -598,22 +713,52 @@ def main() -> None:
             video_path = Path.cwd() / video_path
         if not video_path.is_file():
             raise FileNotFoundError("Video does not exist: {}. {}".format(video_path, NO_VIDEO_HINT))
-        result = process_video(cfg, video_path.resolve(), enabled_effects, args.output_video, args.max_frames, args.fps, args.max_keyframes)
+        result = process_video(
+            cfg,
+            video_path.resolve(),
+            enabled_effects,
+            args.output_video,
+            args.max_frames,
+            args.fps,
+            args.max_keyframes,
+            debug_sticker_geometry=args.debug_sticker_geometry,
+        )
         payload.update(result)
     elif args.image is not None or args.input_dir is not None:
         image_paths = resolve_static_image_inputs(cfg, args.image, args.input_dir)
-        result = process_static_images(cfg, image_paths, enabled_effects, draw_landmarks=True)
+        result = process_static_images(
+            cfg,
+            image_paths,
+            enabled_effects,
+            draw_landmarks=True,
+            debug_sticker_geometry=args.debug_sticker_geometry,
+        )
         payload.update(result)
         payload["video_demo_status"] = "skipped_static_image_mode"
     else:
         video_path = locate_user_video(cfg)
         if video_path:
-            result = process_video(cfg, video_path, enabled_effects, args.output_video, args.max_frames, args.fps, args.max_keyframes)
+            result = process_video(
+                cfg,
+                video_path,
+                enabled_effects,
+                args.output_video,
+                args.max_frames,
+                args.fps,
+                args.max_keyframes,
+                debug_sticker_geometry=args.debug_sticker_geometry,
+            )
             payload.update(result)
         else:
             print(NO_VIDEO_HINT)
             image_paths = resolve_static_image_inputs(cfg, None, None)
-            result = process_static_images(cfg, image_paths, enabled_effects, draw_landmarks=True)
+            result = process_static_images(
+                cfg,
+                image_paths,
+                enabled_effects,
+                draw_landmarks=True,
+                debug_sticker_geometry=args.debug_sticker_geometry,
+            )
             payload.update(result)
             payload["video_demo_status"] = "skipped_no_user_video"
             payload["video_hint"] = NO_VIDEO_HINT

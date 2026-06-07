@@ -36,6 +36,9 @@ INNER_LIPS = [
     78, 95, 88, 178, 87, 14, 317, 402, 318, 324, 308, 415, 310, 311, 312,
     13, 82, 81, 80, 191,
 ]
+RIGHT_EYE_REGION = [33, 133, 159, 145, 153, 154, 155, 173, 157, 158, 160, 161, 246]
+LEFT_EYE_REGION = [263, 362, 386, 374, 380, 381, 382, 398, 384, 385, 387, 388, 466]
+BROW_REGION = [46, 52, 53, 55, 63, 65, 66, 70, 105, 107, 276, 282, 283, 285, 293, 295, 296, 300, 334, 336]
 
 
 def stage3_root() -> Path:
@@ -104,6 +107,10 @@ def outputs_dir(cfg: Dict[str, Any]) -> Path:
 
 def keyframes_dir(cfg: Dict[str, Any]) -> Path:
     return outputs_dir(cfg) / "keyframes"
+
+
+def debug_geometry_dir(cfg: Dict[str, Any]) -> Path:
+    return outputs_dir(cfg) / "debug_geometry"
 
 
 def videos_dir(cfg: Dict[str, Any]) -> Path:
@@ -176,6 +183,7 @@ def ensure_task9_dirs(cfg: Dict[str, Any]) -> None:
         stickers_dir(cfg),
         outputs_dir(cfg),
         keyframes_dir(cfg),
+        debug_geometry_dir(cfg),
         videos_dir(cfg),
     ]:
         path.mkdir(parents=True, exist_ok=True)
@@ -364,6 +372,115 @@ def polygon_center(points: Sequence[Tuple[float, float]]) -> Tuple[float, float]
 
 def euclidean(p1: Sequence[float], p2: Sequence[float]) -> float:
     return math.hypot(float(p2[0]) - float(p1[0]), float(p2[1]) - float(p1[1]))
+
+
+def mean_landmark_point(points: Any, indices: Sequence[int]) -> Tuple[float, float]:
+    valid = [idx for idx in indices if idx < len(points)]
+    if not valid:
+        return 0.0, 0.0
+    x = sum(float(points[idx][0]) for idx in valid) / len(valid)
+    y = sum(float(points[idx][1]) for idx in valid) / len(valid)
+    return x, y
+
+
+def landmark_bbox(points: Any, indices: Sequence[int]) -> Tuple[float, float, float, float]:
+    valid = [idx for idx in indices if idx < len(points)]
+    if not valid:
+        return 0.0, 0.0, 0.0, 0.0
+    xs = [float(points[idx][0]) for idx in valid]
+    ys = [float(points[idx][1]) for idx in valid]
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def estimate_face_transform_from_landmarks(points: Any, image_width: int, image_height: int) -> Optional[Dict[str, Any]]:
+    """Estimate stable face geometry from MediaPipe Face Mesh pixel landmarks."""
+    if points is None or len(points) <= max(LEFT_EYE_REGION + RIGHT_EYE_REGION + FACE_OVAL):
+        return None
+
+    eye_a = mean_landmark_point(points, RIGHT_EYE_REGION)
+    eye_b = mean_landmark_point(points, LEFT_EYE_REGION)
+    if eye_a[0] <= eye_b[0]:
+        left_eye_center, right_eye_center = eye_a, eye_b
+    else:
+        left_eye_center, right_eye_center = eye_b, eye_a
+
+    eye_distance = euclidean(left_eye_center, right_eye_center)
+    if eye_distance < max(12.0, min(image_width, image_height) * 0.025):
+        return None
+
+    angle_deg = math.degrees(
+        math.atan2(right_eye_center[1] - left_eye_center[1], right_eye_center[0] - left_eye_center[0])
+    )
+    face_min_x, face_min_y, face_max_x, face_max_y = landmark_bbox(points, FACE_OVAL)
+    bbox_width = max(0.0, face_max_x - face_min_x)
+    cheek_width = 0.0
+    if len(points) > 454:
+        cheek_width = euclidean((float(points[234][0]), float(points[234][1])), (float(points[454][0]), float(points[454][1])))
+    face_width = max(bbox_width, cheek_width, eye_distance * 2.1)
+
+    face_center = ((face_min_x + face_max_x) / 2.0, (face_min_y + face_max_y) / 2.0)
+    brow_center = mean_landmark_point(points, BROW_REGION)
+    if brow_center == (0.0, 0.0):
+        brow_center = (
+            (left_eye_center[0] + right_eye_center[0]) / 2.0,
+            (left_eye_center[1] + right_eye_center[1]) / 2.0 - eye_distance * 0.35,
+        )
+    forehead_anchor = (brow_center[0], brow_center[1] - face_width * 0.32)
+    return {
+        "left_eye_center": left_eye_center,
+        "right_eye_center": right_eye_center,
+        "eye_center": (
+            (left_eye_center[0] + right_eye_center[0]) / 2.0,
+            (left_eye_center[1] + right_eye_center[1]) / 2.0,
+        ),
+        "eye_distance": eye_distance,
+        "angle_deg": angle_deg,
+        "sticker_angle_deg": -angle_deg,
+        "face_width": face_width,
+        "face_bbox": (face_min_x, face_min_y, face_max_x, face_max_y),
+        "face_center": face_center,
+        "brow_center": brow_center,
+        "forehead_anchor": forehead_anchor,
+    }
+
+
+def compute_glasses_transform(
+    geometry: Dict[str, Any],
+    scale_factor: float = 2.2,
+    y_offset_factor: float = 0.03,
+) -> Dict[str, float]:
+    eye_center = geometry["eye_center"]
+    eye_distance = float(geometry["eye_distance"])
+    return {
+        "center_x": float(eye_center[0]),
+        "center_y": float(eye_center[1]) + eye_distance * float(y_offset_factor),
+        "width": eye_distance * float(scale_factor),
+        "angle_deg": float(geometry["sticker_angle_deg"]),
+        "head_angle_deg": float(geometry["angle_deg"]),
+    }
+
+
+def compute_hat_transform(
+    geometry: Dict[str, Any],
+    sticker_aspect: float,
+    scale_factor: float = 1.35,
+    y_offset_factor: float = 0.55,
+) -> Dict[str, float]:
+    face_width = float(geometry["face_width"])
+    hat_width = face_width * float(scale_factor)
+    hat_height = hat_width * float(sticker_aspect)
+    face_center = geometry["face_center"]
+    brow_center = geometry["brow_center"]
+    center_y = float(brow_center[1]) - face_width * float(y_offset_factor)
+    return {
+        "center_x": float(face_center[0]),
+        "center_y": center_y,
+        "width": hat_width,
+        "height": hat_height,
+        "bottom_y": center_y + hat_height / 2.0,
+        "angle_deg": float(geometry["sticker_angle_deg"]),
+        "head_angle_deg": float(geometry["angle_deg"]),
+    }
 
 
 def make_default_glasses(path: Path) -> None:

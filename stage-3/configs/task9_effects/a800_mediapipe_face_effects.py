@@ -32,6 +32,10 @@ effects = dict(
     lipstick_alpha=0.45,
     smooth_strength=0.55,
     whiten_strength=0.35,
+    glasses_scale_factor=2.2,
+    glasses_y_offset_factor=0.03,
+    hat_scale_factor=1.35,
+    hat_y_offset_factor=0.55,
 )
 
 video = dict(
