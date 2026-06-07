@@ -1,0 +1,9 @@
+{
+  "task": "stage3_task9_mediapipe_dynamic_face_effects",
+  "synthetic_video_from_images": false,
+  "ready": false,
+  "video_demo_status": "skipped_no_user_video",
+  "final_demo_video": null,
+  "static_contact_sheet": null,
+  "video_hint": "Please place an mp4 video at reports/task9/assets/input/user_video.mp4 or pass --video <path>."
+}

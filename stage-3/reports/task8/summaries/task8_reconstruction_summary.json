@@ -1,0 +1,1724 @@
+{
+  "task": "stage3_task8_official_3ddfa_v2_single_image_reconstruction",
+  "ready": true,
+  "runner": "official_subprocess",
+  "repo": {
+    "repo_path": "/root/autodl-tmp/task/3DDFA_V2",
+    "repo_exists": true,
+    "commit": "1b6c67601abffc1e9f248b291708aef0e43b55ae",
+    "required_paths": [
+      "demo.py",
+      "TDDFA.py",
+      "TDDFA_ONNX.py",
+      "configs/mb1_120x120.yml",
+      "FaceBoxes",
+      "utils/serialization.py",
+      "utils/functions.py"
+    ],
+    "missing_required_paths": [],
+    "official_config": "/root/autodl-tmp/task/3DDFA_V2/configs/mb1_120x120.yml",
+    "preferred_checkpoint": "/root/autodl-tmp/task/3DDFA_V2/weights/mb1_120x120.pth",
+    "preferred_checkpoint_exists": true,
+    "preferred_onnx": "/root/autodl-tmp/task/3DDFA_V2/weights/mb1_120x120.onnx",
+    "preferred_onnx_exists": false,
+    "checkpoint_candidates": [
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/weights/mb1_120x120.pth",
+        "relative_path": "weights/mb1_120x120.pth",
+        "exists": true
+      },
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/weights/mb1_120x120.onnx",
+        "relative_path": "weights/mb1_120x120.onnx",
+        "exists": false
+      },
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/weights/mb05_120x120.pth",
+        "relative_path": "weights/mb05_120x120.pth",
+        "exists": true
+      },
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/weights/mb05_120x120.onnx",
+        "relative_path": "weights/mb05_120x120.onnx",
+        "exists": false
+      }
+    ],
+    "faceboxes_checkpoint_candidates": [
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/FaceBoxes/weights/FaceBoxesProd.pth",
+        "relative_path": "FaceBoxes/weights/FaceBoxesProd.pth",
+        "exists": true
+      },
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/FaceBoxes/weights/FaceBoxesProd.onnx",
+        "relative_path": "FaceBoxes/weights/FaceBoxesProd.onnx",
+        "exists": false
+      }
+    ],
+    "faceboxes_checkpoint_exists": true,
+    "ready": true,
+    "hint": "3DDFA_V2 repo looks ready for the Task8 wrapper."
+  },
+  "requested_backend": "auto",
+  "selected_backend": "pth",
+  "backend_reason": "auto selected PyTorch pth because weights/mb1_120x120.onnx is unavailable",
+  "selected_mode": "gpu",
+  "mode_reason": "selected from config",
+  "official_outputs": [
+    "2d_sparse",
+    "3d",
+    "pose",
+    "obj"
+  ],
+  "sample_count": 8,
+  "records": [
+    {
+      "sample_id": "sample_000",
+      "input_image": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_000_177442.jpg",
+      "output_dir": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000",
+      "runner": "official_subprocess",
+      "requested_backend": "auto",
+      "selected_backend": "pth",
+      "backend_reason": "auto selected PyTorch pth because weights/mb1_120x120.onnx is unavailable",
+      "selected_mode": "gpu",
+      "mode_reason": "selected from config",
+      "outputs": {
+        "2d_sparse": {
+          "opt": "2d_sparse",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_2d_sparse.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_000_177442.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "2d_sparse",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.291,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_000_177442_2d_sparse.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_000_177442_2d_sparse.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_000_177442_2d_sparse.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_2d_sparse.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "3d": {
+          "opt": "3d",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_3d_overlay.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_000_177442.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "3d",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.123,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_000_177442_3d.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_000_177442_3d.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_000_177442_3d.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_3d_overlay.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "pose": {
+          "opt": "pose",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_pose.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_000_177442.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "pose",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.308,
+                "stdout": "Detect 1 faces\nyaw: 6.0, pitch: 10.3, roll: 1.1\nSave visualization result to examples/results/sample_000_177442_pose.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_000_177442_pose.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_000_177442_pose.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_pose.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "obj": {
+          "opt": "obj",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_mesh.obj"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_000_177442.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "obj",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 4.142,
+                "stdout": "Detect 1 faces\nDump tp examples/results/sample_000_177442_obj.obj\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_000_177442_obj.obj"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_000_177442_obj.obj"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_mesh.obj"
+              ],
+              "success": true
+            }
+          ]
+        }
+      },
+      "success": true,
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_mesh.obj",
+      "landmark_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_2d_sparse.jpg",
+      "overlay_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_3d_overlay.jpg",
+      "pose_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_pose.jpg"
+    },
+    {
+      "sample_id": "sample_001",
+      "input_image": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_001_177621.jpg",
+      "output_dir": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001",
+      "runner": "official_subprocess",
+      "requested_backend": "auto",
+      "selected_backend": "pth",
+      "backend_reason": "auto selected PyTorch pth because weights/mb1_120x120.onnx is unavailable",
+      "selected_mode": "gpu",
+      "mode_reason": "selected from config",
+      "outputs": {
+        "2d_sparse": {
+          "opt": "2d_sparse",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_2d_sparse.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_001_177621.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "2d_sparse",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.295,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_001_177621_2d_sparse.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_001_177621_2d_sparse.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_001_177621_2d_sparse.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_2d_sparse.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "3d": {
+          "opt": "3d",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_3d_overlay.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_001_177621.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "3d",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 4.001,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_001_177621_3d.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_001_177621_3d.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_001_177621_3d.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_3d_overlay.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "pose": {
+          "opt": "pose",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_pose.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_001_177621.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "pose",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.062,
+                "stdout": "Detect 1 faces\nyaw: 18.4, pitch: 10.4, roll: -2.6\nSave visualization result to examples/results/sample_001_177621_pose.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_001_177621_pose.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_001_177621_pose.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_pose.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "obj": {
+          "opt": "obj",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_mesh.obj"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_001_177621.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "obj",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.469,
+                "stdout": "Detect 1 faces\nDump tp examples/results/sample_001_177621_obj.obj\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_001_177621_obj.obj"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_001_177621_obj.obj"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_mesh.obj"
+              ],
+              "success": true
+            }
+          ]
+        }
+      },
+      "success": true,
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_mesh.obj",
+      "landmark_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_2d_sparse.jpg",
+      "overlay_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_3d_overlay.jpg",
+      "pose_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_pose.jpg"
+    },
+    {
+      "sample_id": "sample_002",
+      "input_image": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_002_084524.jpg",
+      "output_dir": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002",
+      "runner": "official_subprocess",
+      "requested_backend": "auto",
+      "selected_backend": "pth",
+      "backend_reason": "auto selected PyTorch pth because weights/mb1_120x120.onnx is unavailable",
+      "selected_mode": "gpu",
+      "mode_reason": "selected from config",
+      "outputs": {
+        "2d_sparse": {
+          "opt": "2d_sparse",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_2d_sparse.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_002_084524.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "2d_sparse",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 4.024,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_002_084524_2d_sparse.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_002_084524_2d_sparse.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_002_084524_2d_sparse.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_2d_sparse.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "3d": {
+          "opt": "3d",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_3d_overlay.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_002_084524.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "3d",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.087,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_002_084524_3d.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_002_084524_3d.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_002_084524_3d.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_3d_overlay.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "pose": {
+          "opt": "pose",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_pose.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_002_084524.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "pose",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.029,
+                "stdout": "Detect 1 faces\nyaw: 4.0, pitch: 6.2, roll: -0.5\nSave visualization result to examples/results/sample_002_084524_pose.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_002_084524_pose.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_002_084524_pose.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_pose.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "obj": {
+          "opt": "obj",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_mesh.obj"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_002_084524.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "obj",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.424,
+                "stdout": "Detect 1 faces\nDump tp examples/results/sample_002_084524_obj.obj\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_002_084524_obj.obj"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_002_084524_obj.obj"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_mesh.obj"
+              ],
+              "success": true
+            }
+          ]
+        }
+      },
+      "success": true,
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_mesh.obj",
+      "landmark_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_2d_sparse.jpg",
+      "overlay_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_3d_overlay.jpg",
+      "pose_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_pose.jpg"
+    },
+    {
+      "sample_id": "sample_003",
+      "input_image": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_003_136573.jpg",
+      "output_dir": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003",
+      "runner": "official_subprocess",
+      "requested_backend": "auto",
+      "selected_backend": "pth",
+      "backend_reason": "auto selected PyTorch pth because weights/mb1_120x120.onnx is unavailable",
+      "selected_mode": "gpu",
+      "mode_reason": "selected from config",
+      "outputs": {
+        "2d_sparse": {
+          "opt": "2d_sparse",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_2d_sparse.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_003_136573.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "2d_sparse",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.461,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_003_136573_2d_sparse.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_003_136573_2d_sparse.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_003_136573_2d_sparse.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_2d_sparse.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "3d": {
+          "opt": "3d",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_3d_overlay.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_003_136573.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "3d",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.759,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_003_136573_3d.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_003_136573_3d.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_003_136573_3d.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_3d_overlay.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "pose": {
+          "opt": "pose",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_pose.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_003_136573.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "pose",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.087,
+                "stdout": "Detect 1 faces\nyaw: 10.0, pitch: 18.6, roll: -1.7\nSave visualization result to examples/results/sample_003_136573_pose.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_003_136573_pose.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_003_136573_pose.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_pose.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "obj": {
+          "opt": "obj",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_mesh.obj"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_003_136573.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "obj",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.486,
+                "stdout": "Detect 1 faces\nDump tp examples/results/sample_003_136573_obj.obj\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_003_136573_obj.obj"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_003_136573_obj.obj"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_mesh.obj"
+              ],
+              "success": true
+            }
+          ]
+        }
+      },
+      "success": true,
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_mesh.obj",
+      "landmark_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_2d_sparse.jpg",
+      "overlay_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_3d_overlay.jpg",
+      "pose_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_pose.jpg"
+    },
+    {
+      "sample_id": "sample_004",
+      "input_image": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_004_129655.jpg",
+      "output_dir": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004",
+      "runner": "official_subprocess",
+      "requested_backend": "auto",
+      "selected_backend": "pth",
+      "backend_reason": "auto selected PyTorch pth because weights/mb1_120x120.onnx is unavailable",
+      "selected_mode": "gpu",
+      "mode_reason": "selected from config",
+      "outputs": {
+        "2d_sparse": {
+          "opt": "2d_sparse",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_2d_sparse.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_004_129655.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "2d_sparse",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 4.067,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_004_129655_2d_sparse.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_004_129655_2d_sparse.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_004_129655_2d_sparse.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_2d_sparse.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "3d": {
+          "opt": "3d",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_3d_overlay.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_004_129655.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "3d",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.049,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_004_129655_3d.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_004_129655_3d.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_004_129655_3d.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_3d_overlay.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "pose": {
+          "opt": "pose",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_pose.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_004_129655.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "pose",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.061,
+                "stdout": "Detect 1 faces\nyaw: -3.5, pitch: 9.7, roll: 0.3\nSave visualization result to examples/results/sample_004_129655_pose.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_004_129655_pose.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_004_129655_pose.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_pose.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "obj": {
+          "opt": "obj",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_mesh.obj"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_004_129655.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "obj",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.481,
+                "stdout": "Detect 1 faces\nDump tp examples/results/sample_004_129655_obj.obj\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_004_129655_obj.obj"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_004_129655_obj.obj"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_mesh.obj"
+              ],
+              "success": true
+            }
+          ]
+        }
+      },
+      "success": true,
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_mesh.obj",
+      "landmark_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_2d_sparse.jpg",
+      "overlay_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_3d_overlay.jpg",
+      "pose_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_pose.jpg"
+    },
+    {
+      "sample_id": "sample_005",
+      "input_image": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_005_162249.jpg",
+      "output_dir": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005",
+      "runner": "official_subprocess",
+      "requested_backend": "auto",
+      "selected_backend": "pth",
+      "backend_reason": "auto selected PyTorch pth because weights/mb1_120x120.onnx is unavailable",
+      "selected_mode": "gpu",
+      "mode_reason": "selected from config",
+      "outputs": {
+        "2d_sparse": {
+          "opt": "2d_sparse",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_2d_sparse.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_005_162249.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "2d_sparse",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 2.923,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_005_162249_2d_sparse.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_005_162249_2d_sparse.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_005_162249_2d_sparse.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_2d_sparse.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "3d": {
+          "opt": "3d",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_3d_overlay.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_005_162249.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "3d",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 2.829,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_005_162249_3d.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_005_162249_3d.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_005_162249_3d.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_3d_overlay.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "pose": {
+          "opt": "pose",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_pose.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_005_162249.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "pose",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 2.884,
+                "stdout": "Detect 1 faces\nyaw: 29.7, pitch: 5.1, roll: 0.1\nSave visualization result to examples/results/sample_005_162249_pose.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_005_162249_pose.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_005_162249_pose.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_pose.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "obj": {
+          "opt": "obj",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_mesh.obj"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_005_162249.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "obj",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.447,
+                "stdout": "Detect 1 faces\nDump tp examples/results/sample_005_162249_obj.obj\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_005_162249_obj.obj"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_005_162249_obj.obj"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_mesh.obj"
+              ],
+              "success": true
+            }
+          ]
+        }
+      },
+      "success": true,
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_mesh.obj",
+      "landmark_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_2d_sparse.jpg",
+      "overlay_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_3d_overlay.jpg",
+      "pose_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_pose.jpg"
+    },
+    {
+      "sample_id": "sample_006",
+      "input_image": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_006_111170.jpg",
+      "output_dir": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006",
+      "runner": "official_subprocess",
+      "requested_backend": "auto",
+      "selected_backend": "pth",
+      "backend_reason": "auto selected PyTorch pth because weights/mb1_120x120.onnx is unavailable",
+      "selected_mode": "gpu",
+      "mode_reason": "selected from config",
+      "outputs": {
+        "2d_sparse": {
+          "opt": "2d_sparse",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_2d_sparse.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_006_111170.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "2d_sparse",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 2.859,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_006_111170_2d_sparse.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_006_111170_2d_sparse.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_006_111170_2d_sparse.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_2d_sparse.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "3d": {
+          "opt": "3d",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_3d_overlay.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_006_111170.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "3d",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 2.928,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_006_111170_3d.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_006_111170_3d.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_006_111170_3d.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_3d_overlay.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "pose": {
+          "opt": "pose",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_pose.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_006_111170.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "pose",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.08,
+                "stdout": "Detect 1 faces\nyaw: 27.3, pitch: 14.7, roll: -2.8\nSave visualization result to examples/results/sample_006_111170_pose.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_006_111170_pose.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_006_111170_pose.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_pose.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "obj": {
+          "opt": "obj",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_mesh.obj"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_006_111170.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "obj",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.46,
+                "stdout": "Detect 1 faces\nDump tp examples/results/sample_006_111170_obj.obj\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_006_111170_obj.obj"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_006_111170_obj.obj"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_mesh.obj"
+              ],
+              "success": true
+            }
+          ]
+        }
+      },
+      "success": true,
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_mesh.obj",
+      "landmark_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_2d_sparse.jpg",
+      "overlay_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_3d_overlay.jpg",
+      "pose_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_pose.jpg"
+    },
+    {
+      "sample_id": "sample_007",
+      "input_image": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_007_008102.jpg",
+      "output_dir": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007",
+      "runner": "official_subprocess",
+      "requested_backend": "auto",
+      "selected_backend": "pth",
+      "backend_reason": "auto selected PyTorch pth because weights/mb1_120x120.onnx is unavailable",
+      "selected_mode": "gpu",
+      "mode_reason": "selected from config",
+      "outputs": {
+        "2d_sparse": {
+          "opt": "2d_sparse",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_2d_sparse.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_007_008102.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "2d_sparse",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.295,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_007_008102_2d_sparse.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_007_008102_2d_sparse.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_007_008102_2d_sparse.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_2d_sparse.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "3d": {
+          "opt": "3d",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_3d_overlay.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_007_008102.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "3d",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.166,
+                "stdout": "Detect 1 faces\nSave visualization result to examples/results/sample_007_008102_3d.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_007_008102_3d.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_007_008102_3d.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_3d_overlay.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "pose": {
+          "opt": "pose",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_pose.jpg"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_007_008102.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "pose",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.239,
+                "stdout": "Detect 1 faces\nyaw: 12.0, pitch: 6.7, roll: -0.6\nSave visualization result to examples/results/sample_007_008102_pose.jpg\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_007_008102_pose.jpg"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_007_008102_pose.jpg"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_pose.jpg"
+              ],
+              "success": true
+            }
+          ]
+        },
+        "obj": {
+          "opt": "obj",
+          "success": true,
+          "backend": "pth",
+          "mode": "gpu",
+          "paths": [
+            "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_mesh.obj"
+          ],
+          "attempts": [
+            {
+              "backend": "pth",
+              "mode": "gpu",
+              "reason": "primary",
+              "result": {
+                "command": [
+                  "/root/miniconda3/bin/python",
+                  "demo.py",
+                  "-c",
+                  "configs/mb1_120x120.yml",
+                  "-f",
+                  "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_007_008102.jpg",
+                  "-m",
+                  "gpu",
+                  "-o",
+                  "obj",
+                  "--show_flag",
+                  "false"
+                ],
+                "cwd": "/root/autodl-tmp/task/3DDFA_V2",
+                "returncode": 0,
+                "seconds": 3.63,
+                "stdout": "Detect 1 faces\nDump tp examples/results/sample_007_008102_obj.obj\n",
+                "stderr": "demo.py:5: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"long\"):\ndemo.py:9: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.\n  if not hasattr(np, \"bool\"):\n"
+              },
+              "official_changed_files": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_007_008102_obj.obj"
+              ],
+              "matched_official_outputs": [
+                "/root/autodl-tmp/task/3DDFA_V2/examples/results/sample_007_008102_obj.obj"
+              ],
+              "archived_outputs": [
+                "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_mesh.obj"
+              ],
+              "success": true
+            }
+          ]
+        }
+      },
+      "success": true,
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_mesh.obj",
+      "landmark_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_2d_sparse.jpg",
+      "overlay_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_3d_overlay.jpg",
+      "pose_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_pose.jpg"
+    }
+  ]
+}

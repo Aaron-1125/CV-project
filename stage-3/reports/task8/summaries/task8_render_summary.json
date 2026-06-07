@@ -1,0 +1,358 @@
+{
+  "task": "stage3_task8_official_3ddfa_v2_single_image_reconstruction",
+  "ready": true,
+  "requested_backend": "auto",
+  "selected_backend": "matplotlib",
+  "backend_reason": "auto selected matplotlib fallback",
+  "image_size": 640,
+  "max_faces": 8000,
+  "angles": [
+    {
+      "name": "frontal",
+      "yaw": 0.0,
+      "pitch": 0.0
+    },
+    {
+      "name": "left_yaw_30",
+      "yaw": -30.0,
+      "pitch": 0.0
+    },
+    {
+      "name": "right_yaw_30",
+      "yaw": 30.0,
+      "pitch": 0.0
+    },
+    {
+      "name": "left_yaw_60",
+      "yaw": -60.0,
+      "pitch": 0.0
+    },
+    {
+      "name": "right_yaw_60",
+      "yaw": 60.0,
+      "pitch": 0.0
+    }
+  ],
+  "records": [
+    {
+      "sample_id": "sample_000",
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_000/official_mesh.obj",
+      "backend": "matplotlib",
+      "backend_reason": "auto selected matplotlib fallback",
+      "views": [
+        {
+          "name": "frontal",
+          "yaw": 0.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_000/frontal.jpg"
+        },
+        {
+          "name": "left_yaw_30",
+          "yaw": -30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_000/left_yaw_30.jpg"
+        },
+        {
+          "name": "right_yaw_30",
+          "yaw": 30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_000/right_yaw_30.jpg"
+        },
+        {
+          "name": "left_yaw_60",
+          "yaw": -60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_000/left_yaw_60.jpg"
+        },
+        {
+          "name": "right_yaw_60",
+          "yaw": 60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_000/right_yaw_60.jpg"
+        }
+      ],
+      "available": true,
+      "multiview_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_000/multiview_grid.jpg"
+    },
+    {
+      "sample_id": "sample_001",
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_001/official_mesh.obj",
+      "backend": "matplotlib",
+      "backend_reason": "auto selected matplotlib fallback",
+      "views": [
+        {
+          "name": "frontal",
+          "yaw": 0.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_001/frontal.jpg"
+        },
+        {
+          "name": "left_yaw_30",
+          "yaw": -30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_001/left_yaw_30.jpg"
+        },
+        {
+          "name": "right_yaw_30",
+          "yaw": 30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_001/right_yaw_30.jpg"
+        },
+        {
+          "name": "left_yaw_60",
+          "yaw": -60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_001/left_yaw_60.jpg"
+        },
+        {
+          "name": "right_yaw_60",
+          "yaw": 60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_001/right_yaw_60.jpg"
+        }
+      ],
+      "available": true,
+      "multiview_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_001/multiview_grid.jpg"
+    },
+    {
+      "sample_id": "sample_002",
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_002/official_mesh.obj",
+      "backend": "matplotlib",
+      "backend_reason": "auto selected matplotlib fallback",
+      "views": [
+        {
+          "name": "frontal",
+          "yaw": 0.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_002/frontal.jpg"
+        },
+        {
+          "name": "left_yaw_30",
+          "yaw": -30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_002/left_yaw_30.jpg"
+        },
+        {
+          "name": "right_yaw_30",
+          "yaw": 30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_002/right_yaw_30.jpg"
+        },
+        {
+          "name": "left_yaw_60",
+          "yaw": -60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_002/left_yaw_60.jpg"
+        },
+        {
+          "name": "right_yaw_60",
+          "yaw": 60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_002/right_yaw_60.jpg"
+        }
+      ],
+      "available": true,
+      "multiview_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_002/multiview_grid.jpg"
+    },
+    {
+      "sample_id": "sample_003",
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_003/official_mesh.obj",
+      "backend": "matplotlib",
+      "backend_reason": "auto selected matplotlib fallback",
+      "views": [
+        {
+          "name": "frontal",
+          "yaw": 0.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_003/frontal.jpg"
+        },
+        {
+          "name": "left_yaw_30",
+          "yaw": -30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_003/left_yaw_30.jpg"
+        },
+        {
+          "name": "right_yaw_30",
+          "yaw": 30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_003/right_yaw_30.jpg"
+        },
+        {
+          "name": "left_yaw_60",
+          "yaw": -60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_003/left_yaw_60.jpg"
+        },
+        {
+          "name": "right_yaw_60",
+          "yaw": 60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_003/right_yaw_60.jpg"
+        }
+      ],
+      "available": true,
+      "multiview_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_003/multiview_grid.jpg"
+    },
+    {
+      "sample_id": "sample_004",
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_004/official_mesh.obj",
+      "backend": "matplotlib",
+      "backend_reason": "auto selected matplotlib fallback",
+      "views": [
+        {
+          "name": "frontal",
+          "yaw": 0.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_004/frontal.jpg"
+        },
+        {
+          "name": "left_yaw_30",
+          "yaw": -30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_004/left_yaw_30.jpg"
+        },
+        {
+          "name": "right_yaw_30",
+          "yaw": 30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_004/right_yaw_30.jpg"
+        },
+        {
+          "name": "left_yaw_60",
+          "yaw": -60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_004/left_yaw_60.jpg"
+        },
+        {
+          "name": "right_yaw_60",
+          "yaw": 60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_004/right_yaw_60.jpg"
+        }
+      ],
+      "available": true,
+      "multiview_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_004/multiview_grid.jpg"
+    },
+    {
+      "sample_id": "sample_005",
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_005/official_mesh.obj",
+      "backend": "matplotlib",
+      "backend_reason": "auto selected matplotlib fallback",
+      "views": [
+        {
+          "name": "frontal",
+          "yaw": 0.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_005/frontal.jpg"
+        },
+        {
+          "name": "left_yaw_30",
+          "yaw": -30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_005/left_yaw_30.jpg"
+        },
+        {
+          "name": "right_yaw_30",
+          "yaw": 30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_005/right_yaw_30.jpg"
+        },
+        {
+          "name": "left_yaw_60",
+          "yaw": -60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_005/left_yaw_60.jpg"
+        },
+        {
+          "name": "right_yaw_60",
+          "yaw": 60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_005/right_yaw_60.jpg"
+        }
+      ],
+      "available": true,
+      "multiview_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_005/multiview_grid.jpg"
+    },
+    {
+      "sample_id": "sample_006",
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_006/official_mesh.obj",
+      "backend": "matplotlib",
+      "backend_reason": "auto selected matplotlib fallback",
+      "views": [
+        {
+          "name": "frontal",
+          "yaw": 0.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_006/frontal.jpg"
+        },
+        {
+          "name": "left_yaw_30",
+          "yaw": -30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_006/left_yaw_30.jpg"
+        },
+        {
+          "name": "right_yaw_30",
+          "yaw": 30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_006/right_yaw_30.jpg"
+        },
+        {
+          "name": "left_yaw_60",
+          "yaw": -60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_006/left_yaw_60.jpg"
+        },
+        {
+          "name": "right_yaw_60",
+          "yaw": 60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_006/right_yaw_60.jpg"
+        }
+      ],
+      "available": true,
+      "multiview_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_006/multiview_grid.jpg"
+    },
+    {
+      "sample_id": "sample_007",
+      "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_007/official_mesh.obj",
+      "backend": "matplotlib",
+      "backend_reason": "auto selected matplotlib fallback",
+      "views": [
+        {
+          "name": "frontal",
+          "yaw": 0.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_007/frontal.jpg"
+        },
+        {
+          "name": "left_yaw_30",
+          "yaw": -30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_007/left_yaw_30.jpg"
+        },
+        {
+          "name": "right_yaw_30",
+          "yaw": 30.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_007/right_yaw_30.jpg"
+        },
+        {
+          "name": "left_yaw_60",
+          "yaw": -60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_007/left_yaw_60.jpg"
+        },
+        {
+          "name": "right_yaw_60",
+          "yaw": 60.0,
+          "pitch": 0.0,
+          "path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_007/right_yaw_60.jpg"
+        }
+      ],
+      "available": true,
+      "multiview_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/rendered_views/sample_007/multiview_grid.jpg"
+    }
+  ]
+}

@@ -477,6 +477,11 @@ def relpath_for_markdown(path_value: Any, markdown_file: Path) -> str:
     if not path_value:
         return ""
     path = Path(str(path_value))
+    if path.is_absolute() and not path.exists():
+        parts = path.parts
+        if "stage-3" in parts:
+            idx = parts.index("stage-3")
+            path = stage3_root().joinpath(*parts[idx + 1 :])
     if not path.is_absolute():
         path = stage3_root() / path
     try:

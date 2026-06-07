@@ -1,0 +1,113 @@
+{
+  "task": "stage3_task8_official_3ddfa_v2_single_image_reconstruction",
+  "checked_at": "2026-06-04 21:13:32",
+  "python": "3.8.10 (default, Jun  4 2021, 15:09:15) \n[GCC 7.5.0]",
+  "python_executable": "/root/miniconda3/bin/python",
+  "platform": "Linux-5.15.0-78-generic-x86_64-with-glibc2.17",
+  "cwd": "/root/autodl-tmp/CV-project/stage-3",
+  "env": {
+    "3DDFA_REPO": null,
+    "CELEBA_ROOT": "/root/autodl-pub/CelebA",
+    "CUDA_VISIBLE_DEVICES": null
+  },
+  "repo": {
+    "repo_path": "/root/autodl-tmp/task/3DDFA_V2",
+    "repo_exists": true,
+    "commit": "1b6c67601abffc1e9f248b291708aef0e43b55ae",
+    "required_paths": [
+      "demo.py",
+      "TDDFA.py",
+      "TDDFA_ONNX.py",
+      "configs/mb1_120x120.yml",
+      "FaceBoxes",
+      "utils/serialization.py",
+      "utils/functions.py"
+    ],
+    "missing_required_paths": [],
+    "official_config": "/root/autodl-tmp/task/3DDFA_V2/configs/mb1_120x120.yml",
+    "preferred_checkpoint": "/root/autodl-tmp/task/3DDFA_V2/weights/mb1_120x120.pth",
+    "preferred_checkpoint_exists": true,
+    "preferred_onnx": "/root/autodl-tmp/task/3DDFA_V2/weights/mb1_120x120.onnx",
+    "preferred_onnx_exists": false,
+    "checkpoint_candidates": [
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/weights/mb1_120x120.pth",
+        "relative_path": "weights/mb1_120x120.pth",
+        "exists": true
+      },
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/weights/mb1_120x120.onnx",
+        "relative_path": "weights/mb1_120x120.onnx",
+        "exists": false
+      },
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/weights/mb05_120x120.pth",
+        "relative_path": "weights/mb05_120x120.pth",
+        "exists": true
+      },
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/weights/mb05_120x120.onnx",
+        "relative_path": "weights/mb05_120x120.onnx",
+        "exists": false
+      }
+    ],
+    "faceboxes_checkpoint_candidates": [
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/FaceBoxes/weights/FaceBoxesProd.pth",
+        "relative_path": "FaceBoxes/weights/FaceBoxesProd.pth",
+        "exists": true
+      },
+      {
+        "path": "/root/autodl-tmp/task/3DDFA_V2/FaceBoxes/weights/FaceBoxesProd.onnx",
+        "relative_path": "FaceBoxes/weights/FaceBoxesProd.onnx",
+        "exists": false
+      }
+    ],
+    "faceboxes_checkpoint_exists": true,
+    "ready": true,
+    "hint": "3DDFA_V2 repo looks ready for the Task8 wrapper."
+  },
+  "requested_backend": "auto",
+  "selected_backend": "pth",
+  "backend_reason": "auto selected PyTorch pth because weights/mb1_120x120.onnx is unavailable",
+  "dependencies": {
+    "cv2": {
+      "available": true,
+      "version": "4.13.0"
+    },
+    "yaml": {
+      "available": true,
+      "version": "6.0"
+    },
+    "numpy": {
+      "available": true,
+      "version": "1.24.2"
+    },
+    "torch": {
+      "available": true,
+      "version": "2.0.0+cu118"
+    },
+    "onnxruntime": {
+      "available": true,
+      "version": "1.19.2"
+    },
+    "PIL": {
+      "available": true,
+      "version": "9.4.0"
+    },
+    "matplotlib": {
+      "available": true,
+      "version": "3.7.1"
+    },
+    "trimesh": {
+      "available": false
+    },
+    "pyrender": {
+      "available": false
+    },
+    "pytorch3d": {
+      "available": false
+    }
+  },
+  "ready": true
+}

@@ -1,0 +1,88 @@
+{
+  "task": "stage3_task8_official_3ddfa_v2_single_image_reconstruction",
+  "ready": true,
+  "sample_count": 8,
+  "requested_sample_count": 8,
+  "source_dataset": "CelebA",
+  "source_root": "/root/autodl-tmp/celeba",
+  "source_image_dir": "/root/autodl-tmp/celeba/images",
+  "recursive": false,
+  "output_directory": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples",
+  "input_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/input_samples_grid.jpg",
+  "input_image_paths": [
+    "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_000_177442.jpg",
+    "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_001_177621.jpg",
+    "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_002_084524.jpg",
+    "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_003_136573.jpg",
+    "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_004_129655.jpg",
+    "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_005_162249.jpg",
+    "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_006_111170.jpg",
+    "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_007_008102.jpg"
+  ],
+  "samples": [
+    {
+      "sample_id": "sample_000",
+      "filename": "sample_000_177442.jpg",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/177442.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_000_177442.jpg",
+      "link_mode": "symlink",
+      "action": "existing"
+    },
+    {
+      "sample_id": "sample_001",
+      "filename": "sample_001_177621.jpg",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/177621.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_001_177621.jpg",
+      "link_mode": "symlink",
+      "action": "symlink"
+    },
+    {
+      "sample_id": "sample_002",
+      "filename": "sample_002_084524.jpg",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/084524.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_002_084524.jpg",
+      "link_mode": "symlink",
+      "action": "symlink"
+    },
+    {
+      "sample_id": "sample_003",
+      "filename": "sample_003_136573.jpg",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/136573.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_003_136573.jpg",
+      "link_mode": "symlink",
+      "action": "symlink"
+    },
+    {
+      "sample_id": "sample_004",
+      "filename": "sample_004_129655.jpg",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/129655.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_004_129655.jpg",
+      "link_mode": "symlink",
+      "action": "symlink"
+    },
+    {
+      "sample_id": "sample_005",
+      "filename": "sample_005_162249.jpg",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/162249.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_005_162249.jpg",
+      "link_mode": "symlink",
+      "action": "symlink"
+    },
+    {
+      "sample_id": "sample_006",
+      "filename": "sample_006_111170.jpg",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/111170.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_006_111170.jpg",
+      "link_mode": "symlink",
+      "action": "symlink"
+    },
+    {
+      "sample_id": "sample_007",
+      "filename": "sample_007_008102.jpg",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/008102.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_007_008102.jpg",
+      "link_mode": "symlink",
+      "action": "symlink"
+    }
+  ]
+}

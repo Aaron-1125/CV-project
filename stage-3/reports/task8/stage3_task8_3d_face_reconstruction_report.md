@@ -19,22 +19,108 @@
 
 ## 3. 实验设置
 
-- 数据来源: `N/A`，样本数 `N/A`。
-- 输入样本目录: `N/A`。
-- 3DDFA_V2 repo: `N/A`。
-- 3DDFA_V2 commit: `N/A`。
-- 官方配置: `N/A`。
+- 数据来源: `CelebA`，样本数 `8`。
+- 输入样本目录: `/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples`。
+- 3DDFA_V2 repo: `/root/autodl-tmp/task/3DDFA_V2`。
+- 3DDFA_V2 commit: `1b6c67601abffc1e9f248b291708aef0e43b55ae`。
+- 官方配置: `/root/autodl-tmp/task/3DDFA_V2/configs/mb1_120x120.yml`。
 - 默认 runner: `official_subprocess`。
-- 重建 backend: `N/A`。
-- 运行环境 Python: `N/A`。
+- 重建 backend: `pth`。
+- 运行环境 Python: `3.8.10 (default, Jun  4 2021, 15:09:15) `。
 
 输入样本预览：
 
-N/A
+![input samples](assets/input_samples/input_samples_grid.jpg)
 
 ## 4. 重建结果
 
-尚未生成重建结果。请先运行 `stage3_task8_run_reconstruction.py`。
+### sample_000
+
+- Input: ![Input](assets/input_samples/sample_000_177442.jpg)
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_000/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_000/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_000/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_000/official_mesh.obj`
+- Multi-view render: available
+
+![sample_000 multiview](assets/rendered_views/sample_000/multiview_grid.jpg)
+
+### sample_001
+
+- Input: ![Input](assets/input_samples/sample_001_177621.jpg)
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_001/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_001/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_001/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_001/official_mesh.obj`
+- Multi-view render: available
+
+![sample_001 multiview](assets/rendered_views/sample_001/multiview_grid.jpg)
+
+### sample_002
+
+- Input: ![Input](assets/input_samples/sample_002_084524.jpg)
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_002/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_002/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_002/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_002/official_mesh.obj`
+- Multi-view render: available
+
+![sample_002 multiview](assets/rendered_views/sample_002/multiview_grid.jpg)
+
+### sample_003
+
+- Input: ![Input](assets/input_samples/sample_003_136573.jpg)
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_003/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_003/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_003/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_003/official_mesh.obj`
+- Multi-view render: available
+
+![sample_003 multiview](assets/rendered_views/sample_003/multiview_grid.jpg)
+
+### sample_004
+
+- Input: ![Input](assets/input_samples/sample_004_129655.jpg)
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_004/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_004/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_004/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_004/official_mesh.obj`
+- Multi-view render: available
+
+![sample_004 multiview](assets/rendered_views/sample_004/multiview_grid.jpg)
+
+### sample_005
+
+- Input: ![Input](assets/input_samples/sample_005_162249.jpg)
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_005/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_005/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_005/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_005/official_mesh.obj`
+- Multi-view render: available
+
+![sample_005 multiview](assets/rendered_views/sample_005/multiview_grid.jpg)
+
+### sample_006
+
+- Input: ![Input](assets/input_samples/sample_006_111170.jpg)
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_006/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_006/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_006/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_006/official_mesh.obj`
+- Multi-view render: available
+
+![sample_006 multiview](assets/rendered_views/sample_006/multiview_grid.jpg)
+
+### sample_007
+
+- Input: ![Input](assets/input_samples/sample_007_008102.jpg)
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_007/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_007/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_007/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_007/official_mesh.obj`
+- Multi-view render: available
+
+![sample_007 multiview](assets/rendered_views/sample_007/multiview_grid.jpg)
 
 ## 5. 结果分析
 
