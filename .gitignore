@@ -8,6 +8,8 @@ __pycache__/
 venv/
 
 outputs/
+!stage-3/reports/task9/assets/outputs/
+!stage-3/reports/task9/assets/outputs/**
 data/
 checkpoints/
 stage-2/external/
@@ -21,4 +23,3 @@ stage-2/reports/task5/*.tar.gz
 *.tar
 *.tar.gz
 *.zip
-

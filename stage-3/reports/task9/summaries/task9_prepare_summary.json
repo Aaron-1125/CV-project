@@ -1,39 +1,46 @@
 {
   "task": "stage3_task9_mediapipe_dynamic_face_effects",
   "ready": true,
-  "prepared_at": "2026-06-05T19:08:30",
-  "static_sample_count": 2,
-  "requested_sample_count": 2,
-  "source_dataset": "input_dir",
-  "source_root": "/Users/aaron/Documents/字节实习/task/CV project/stage-1/reports/assets/inputs/public_lfw",
-  "source_image_dir": "/Users/aaron/Documents/字节实习/task/CV project/stage-1/reports/assets/inputs/public_lfw",
-  "output_static_image_dir": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/input/static_images",
-  "static_input_grid": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/input/static_images/static_input_grid.jpg",
+  "prepared_at": "2026-06-07T15:59:30",
+  "static_sample_count": 3,
+  "requested_sample_count": 3,
+  "source_dataset": "CelebA_static_only",
+  "source_root": "/root/autodl-tmp/celeba",
+  "source_image_dir": "/root/autodl-tmp/celeba/images",
+  "source_error": null,
+  "output_static_image_dir": "/root/autodl-tmp/CV-project/stage-3/reports/task9/assets/input/static_images",
+  "static_input_grid": "/root/autodl-tmp/CV-project/stage-3/reports/task9/assets/input/static_images/static_input_grid.jpg",
   "static_images": [
     {
       "sample_id": "static_000",
-      "source_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-1/reports/assets/inputs/public_lfw/lfw_public_02.jpg",
-      "staged_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/input/static_images/static_000_lfw_public_02.jpg",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/065343.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task9/assets/input/static_images/static_000_065343.jpg",
       "action": "copy"
     },
     {
       "sample_id": "static_001",
-      "source_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-1/reports/assets/inputs/public_lfw/lfw_public_00.jpg",
-      "staged_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/input/static_images/static_001_lfw_public_00.jpg",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/127331.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task9/assets/input/static_images/static_001_127331.jpg",
+      "action": "copy"
+    },
+    {
+      "sample_id": "static_002",
+      "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/078632.png",
+      "staged_path": "/root/autodl-tmp/CV-project/stage-3/reports/task9/assets/input/static_images/static_002_078632.jpg",
       "action": "copy"
     }
   ],
   "stickers": {
-    "glasses_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/stickers/glasses.png",
-    "hat_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/stickers/hat.png",
+    "glasses_path": "/root/autodl-tmp/CV-project/stage-3/reports/task9/assets/stickers/glasses.png",
+    "hat_path": "/root/autodl-tmp/CV-project/stage-3/reports/task9/assets/stickers/hat.png",
     "actions": {
-      "glasses": "generated",
-      "hat": "generated"
+      "glasses": "existing",
+      "hat": "existing"
     }
   },
-  "user_video_status": "missing",
-  "user_video_path": null,
-  "default_video_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/input/user_video.mp4",
-  "video_hint": "Please place an mp4 video at reports/task9/assets/input/user_video.mp4 or pass --video <path>.",
+  "user_video_status": "available",
+  "user_video_path": "/root/autodl-tmp/CV-project/stage-3/reports/task9/assets/input/user_video.mp4",
+  "default_video_path": "/root/autodl-tmp/CV-project/stage-3/reports/task9/assets/input/user_video.mp4",
+  "video_hint": null,
   "synthetic_video_from_images": false
 }

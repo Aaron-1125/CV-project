@@ -19,21 +19,33 @@ MediaPipe Face Mesh 可在单张图像或视频帧中预测 468 个三维人脸�
 
 ## 3. 实验设置
 
-- 静态图片来源: `input_dir`。
-- 静态样本数量: `2`。
-- 用户视频状态: `missing`。
+- 静态图片来源: `CelebA_static_only`。
+- 静态样本数量: `3`。
+- 用户视频状态: `available`。
 - 默认用户视频路径: `reports/task9/assets/input/user_video.mp4`。
-- OpenCV: `N/A`。
+- OpenCV: `4.13.0`。
 - MediaPipe: `N/A`。
-- Python: `3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 11:23:37) [Clang 14.0.6 ]`。
+- Python: `3.8.10 (default, Jun  4 2021, 15:09:15) `。
 
 ## 4. 动态视频 Demo
 
-动态视频 demo 未生成。
+视频 demo 已生成：
 
-- Status: `skipped_no_user_video`
-- Reason: no user mp4 was provided.
-- Hint: `Please place an mp4 video at reports/task9/assets/input/user_video.mp4 or pass --video <path>.`
+- Demo video: `assets/videos/task9_dynamic_effects_demo.mp4`
+- Benchmark FPS: `0.2587003045476775`
+- Processed frames: `912`
+- Faces detected frames: `912`
+
+关键帧：
+
+- Frame 0 after: ![Frame 0 after](assets/outputs/keyframes/keyframe_00000_after.jpg)
+- Frame 0 landmarks: ![Frame 0 landmarks](assets/outputs/keyframes/keyframe_00000_landmarks.jpg)
+- Frame 114 after: ![Frame 114 after](assets/outputs/keyframes/keyframe_00114_after.jpg)
+- Frame 114 landmarks: ![Frame 114 landmarks](assets/outputs/keyframes/keyframe_00114_landmarks.jpg)
+- Frame 228 after: ![Frame 228 after](assets/outputs/keyframes/keyframe_00228_after.jpg)
+- Frame 228 landmarks: ![Frame 228 landmarks](assets/outputs/keyframes/keyframe_00228_landmarks.jpg)
+- Frame 342 after: ![Frame 342 after](assets/outputs/keyframes/keyframe_00342_after.jpg)
+- Frame 342 landmarks: ![Frame 342 landmarks](assets/outputs/keyframes/keyframe_00342_landmarks.jpg)
 
 ## 5. 静态效果展示
 
@@ -41,12 +53,12 @@ MediaPipe Face Mesh 可在单张图像或视频帧中预测 468 个三维人脸�
 
 ## 6. 性能分析
 
-- Benchmark type: `N/A`。
-- 平均 FPS: `N/A`。
+- Benchmark type: `video`。
+- 平均 FPS: `0.2587003045476775`。
 - 图片吞吐: `N/A` images/s。
-- 平均检测耗时: `N/A` ms。
-- 平均渲染耗时: `N/A` ms。
-- 平均写入耗时: `N/A` ms。
+- 平均检测耗时: `11.151863999354342` ms。
+- 平均渲染耗时: `3786.89993147967` ms。
+- 平均写入耗时: `49.35372877955894` ms。
 - CPU/GPU 说明: 本实验主要使用 MediaPipe + OpenCV，标准 Python pipeline 主要由 CPU 执行。A800 可被记录为环境信息，但本任务不强制使用 GPU，也不假设 MediaPipe 使用 A800。
 
 ## 7. 局限性

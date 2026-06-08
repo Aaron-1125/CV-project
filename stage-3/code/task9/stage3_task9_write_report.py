@@ -96,6 +96,39 @@ def video_section(effects: Dict[str, Any], demo: Dict[str, Any], perf: Dict[str,
 - Hint: `{}`""".format(reason, NO_VIDEO_HINT)
 
 
+def performance_profile_section(perf: Dict[str, Any]) -> str:
+    profiles = perf.get("profiles", [])
+    if not profiles:
+        return "尚未生成分效果 benchmark。"
+    lines = [
+        "| Profile | FPS | Detection ms | Sticker ms | Beauty ms | Lipstick ms | Write ms | Total ms |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+
+    def fmt(value: Any) -> str:
+        if value is None:
+            return "N/A"
+        try:
+            return "{:.3f}".format(float(value))
+        except Exception:
+            return str(value)
+
+    for row in profiles:
+        lines.append(
+            "| `{}` | {} | {} | {} | {} | {} | {} | {} |".format(
+                row.get("profile", "N/A"),
+                fmt(row.get("fps")),
+                fmt(row.get("detection_ms_per_frame")),
+                fmt(row.get("sticker_ms_per_frame")),
+                fmt(row.get("beauty_ms_per_frame")),
+                fmt(row.get("lipstick_ms_per_frame")),
+                fmt(row.get("write_ms_per_frame")),
+                fmt(row.get("total_ms_per_frame")),
+            )
+        )
+    return "\n".join(lines)
+
+
 def main() -> None:
     args = parse_args()
     cfg = load_config(args.config)
@@ -111,6 +144,7 @@ def main() -> None:
     mp_version = deps.get("mediapipe", {}).get("version", "N/A") if isinstance(deps, dict) else "N/A"
     static_section = collect_static_result_lines(effects, demo, prepare, output)
     video_demo = video_section(effects, demo, perf, output)
+    profile_section = performance_profile_section(perf)
     markdown = """# Stage3 Task9: 基于人脸关键点的动态贴纸与美颜美妆
 
 ## 1. 任务简介
@@ -151,12 +185,23 @@ MediaPipe Face Mesh 可在单张图像或视频帧中预测 468 个三维人脸�
 ## 6. 性能分析
 
 - Benchmark type: `{benchmark_type}`。
+- Processing mode: `{processing_mode}`。
+- Process size: `{process_width}` x `{process_height}`。
 - 平均 FPS: `{average_fps}`。
 - 图片吞吐: `{images_per_second}` images/s。
 - 平均检测耗时: `{avg_det_ms}` ms。
+- 平均贴纸耗时: `{avg_sticker_ms}` ms。
+- 平均美颜耗时: `{avg_beauty_ms}` ms。
+- 平均口红耗时: `{avg_lipstick_ms}` ms。
 - 平均渲染耗时: `{avg_render_ms}` ms。
 - 平均写入耗时: `{avg_write_ms}` ms。
 - CPU/GPU 说明: 本实验主要使用 MediaPipe + OpenCV，标准 Python pipeline 主要由 CPU 执行。A800 可被记录为环境信息，但本任务不强制使用 GPU，也不假设 MediaPipe 使用 A800。
+
+分效果 benchmark:
+
+{profile_section}
+
+性能优化说明：Face Mesh 检测本身通常较快，主要瓶颈来自 CPU 图像特效渲染。优化版提供 fast mode，通过降低处理分辨率、只在 face/lips ROI 内做美颜、在 ROI 小图上执行 bilateral filter、以及贴纸旋转缩放缓存来提升吞吐。`--device cuda` 仅作为可选实验标记；若没有自定义 GPU MediaPipe/OpenCV/Torch 图像处理实现，summary 会明确记录 fallback CPU。
 
 ## 7. 局限性
 
@@ -178,11 +223,18 @@ Task9 构建了一个轻量、稳定、可复现的人脸关键点动态特效 p
         video_demo=video_demo,
         static_section=static_section,
         benchmark_type=perf.get("benchmark_type", "N/A"),
+        processing_mode=effects.get("processing_mode", perf.get("processing_mode", "N/A")),
+        process_width=effects.get("process_width", perf.get("process_width", "N/A")),
+        process_height=effects.get("process_height", perf.get("process_height", "N/A")),
         average_fps=perf.get("average_fps", "N/A"),
         images_per_second=perf.get("images_per_second", "N/A"),
         avg_det_ms=perf.get("average_detection_ms", "N/A"),
+        avg_sticker_ms=perf.get("average_sticker_ms", "N/A"),
+        avg_beauty_ms=perf.get("average_beauty_ms", "N/A"),
+        avg_lipstick_ms=perf.get("average_lipstick_ms", "N/A"),
         avg_render_ms=perf.get("average_render_ms", "N/A"),
         avg_write_ms=perf.get("average_write_ms", "N/A"),
+        profile_section=profile_section,
     )
     write_text(output, markdown)
     write_json(

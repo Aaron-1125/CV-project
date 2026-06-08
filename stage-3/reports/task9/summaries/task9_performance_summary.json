@@ -1,0 +1,39 @@
+{
+  "task": "stage3_task9_mediapipe_dynamic_face_effects",
+  "effects": [
+    "glasses",
+    "hat",
+    "lipstick",
+    "smooth",
+    "whiten"
+  ],
+  "cpu_gpu_note": "This experiment mainly uses MediaPipe + OpenCV and is primarily CPU-executed in the standard Python pipeline. A800 is recorded if visible but is not required for Task9.",
+  "gpu": {
+    "pipeline_note": "Task9 uses MediaPipe Face Mesh + OpenCV. This benchmark treats the pipeline as CPU-bound unless a custom GPU MediaPipe/OpenCV build is used.",
+    "torch_available": true,
+    "cuda_available": true,
+    "torch_version": "2.0.0+cu118",
+    "cuda_version": "11.8",
+    "gpu_count": 1,
+    "gpu_names": [
+      "NVIDIA A800-SXM4-80GB"
+    ]
+  },
+  "benchmark_type": "video",
+  "input_video": "/root/autodl-tmp/CV-project/stage-3/reports/task9/assets/input/user_video.mp4",
+  "temporary_output_video_deleted": "/tmp/task9_benchmark_yx8nudik.mp4",
+  "source_total_frames": 912,
+  "source_fps": 25.0,
+  "output_fps_for_writer": 25.0,
+  "processed_frames": 912,
+  "faces_detected_frames": 912,
+  "total_seconds": 3525.3147521205246,
+  "average_fps": 0.2587003045476775,
+  "average_detection_ms": 11.151863999354342,
+  "average_render_ms": 3786.89993147967,
+  "average_write_ms": 49.35372877955894,
+  "detection_seconds": 10.17049996741116,
+  "render_seconds": 3453.6527375094593,
+  "write_seconds": 45.010600646957755,
+  "note": "Benchmark writes processed frames to a temporary mp4 and deletes it after timing."
+}

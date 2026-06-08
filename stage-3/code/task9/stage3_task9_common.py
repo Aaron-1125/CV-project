@@ -374,6 +374,74 @@ def euclidean(p1: Sequence[float], p2: Sequence[float]) -> float:
     return math.hypot(float(p2[0]) - float(p1[0]), float(p2[1]) - float(p1[1]))
 
 
+def clamp_int(value: Any, minimum: int, maximum: int) -> int:
+    try:
+        number = int(round(float(value)))
+    except Exception:
+        number = minimum
+    return max(minimum, min(maximum, number))
+
+
+def quantize_number(value: float, step: float) -> float:
+    step = float(step or 1.0)
+    if step <= 0:
+        return float(value)
+    return round(float(value) / step) * step
+
+
+def expanded_bbox(
+    bbox: Sequence[float],
+    image_width: int,
+    image_height: int,
+    margin: float = 0.15,
+    min_size: int = 8,
+) -> Tuple[int, int, int, int]:
+    x1, y1, x2, y2 = [float(v) for v in bbox]
+    width = max(1.0, x2 - x1)
+    height = max(1.0, y2 - y1)
+    pad_x = width * float(margin)
+    pad_y = height * float(margin)
+    x1_i = clamp_int(math.floor(x1 - pad_x), 0, max(0, image_width - 1))
+    y1_i = clamp_int(math.floor(y1 - pad_y), 0, max(0, image_height - 1))
+    x2_i = clamp_int(math.ceil(x2 + pad_x), 1, image_width)
+    y2_i = clamp_int(math.ceil(y2 + pad_y), 1, image_height)
+    if x2_i - x1_i < min_size:
+        center = (x1_i + x2_i) // 2
+        x1_i = clamp_int(center - min_size // 2, 0, max(0, image_width - 1))
+        x2_i = clamp_int(x1_i + min_size, 1, image_width)
+    if y2_i - y1_i < min_size:
+        center = (y1_i + y2_i) // 2
+        y1_i = clamp_int(center - min_size // 2, 0, max(0, image_height - 1))
+        y2_i = clamp_int(y1_i + min_size, 1, image_height)
+    return x1_i, y1_i, x2_i, y2_i
+
+
+def compute_process_size(
+    source_width: int,
+    source_height: int,
+    target_width: int = 0,
+    target_height: int = 0,
+    keep_aspect_ratio: bool = True,
+) -> Tuple[int, int]:
+    """Return the frame size used for detection/effects/output."""
+    source_width = max(1, int(source_width))
+    source_height = max(1, int(source_height))
+    target_width = int(target_width or 0)
+    target_height = int(target_height or 0)
+    if target_width <= 0 and target_height <= 0:
+        return source_width, source_height
+    if target_width <= 0:
+        scale = target_height / float(source_height)
+        return max(1, int(round(source_width * scale))), max(1, target_height)
+    if target_height <= 0:
+        scale = target_width / float(source_width)
+        return max(1, target_width), max(1, int(round(source_height * scale)))
+    if not keep_aspect_ratio:
+        return max(1, target_width), max(1, target_height)
+    scale = min(target_width / float(source_width), target_height / float(source_height))
+    return max(1, int(round(source_width * scale))), max(1, int(round(source_height * scale)))
+
+
 def mean_landmark_point(points: Any, indices: Sequence[int]) -> Tuple[float, float]:
     valid = [idx for idx in indices if idx < len(points)]
     if not valid:

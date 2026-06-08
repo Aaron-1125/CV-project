@@ -15,6 +15,7 @@ from stage3_task9_common import (
     NO_VIDEO_HINT,
     OUTER_LIPS,
     cfg_get,
+    compute_process_size,
     compute_glasses_transform,
     compute_hat_transform,
     debug_geometry_dir,
@@ -23,13 +24,16 @@ from stage3_task9_common import (
     effects_summary_path,
     ensure_default_stickers,
     ensure_task9_dirs,
+    expanded_bbox,
     glasses_path,
     hat_path,
     keyframes_dir,
+    landmark_bbox,
     list_images,
     load_config,
     locate_user_video,
     outputs_dir,
+    quantize_number,
     safe_stem,
     save_image_grid,
     static_contact_sheet_path,
@@ -55,6 +59,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-frames", type=int, default=None)
     parser.add_argument("--fps", type=float, default=None)
     parser.add_argument("--max-keyframes", type=int, default=None)
+    parser.add_argument("--process-width", type=int, default=None, help="Resize video frames to this width before detection/effects.")
+    parser.add_argument("--process-height", type=int, default=None, help="Resize video frames to this height before detection/effects.")
+    parser.add_argument("--fast-mode", action="store_true", help="Use realtime-friendly defaults such as 640x360 processing.")
+    parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu", help="Optional experimental device flag. CUDA falls back to CPU for this OpenCV/MediaPipe pipeline.")
     parser.add_argument("--draw-landmarks", action="store_true", help="Also save landmark visualizations for static images.")
     parser.add_argument("--debug-sticker-geometry", action="store_true", help="Save sticker anchor/angle/scale debug visualizations.")
     parser.add_argument("--force", action="store_true", help="Overwrite existing output files.")
@@ -130,10 +138,21 @@ class FaceEffectsProcessor:
         self.smooth_strength = clamp_strength(cfg_get(cfg, "effects", "smooth_strength", 0.55), 0.55)
         self.whiten_strength = clamp_strength(cfg_get(cfg, "effects", "whiten_strength", 0.35), 0.35)
         self.lipstick_alpha = clamp_strength(cfg_get(cfg, "effects", "lipstick_alpha", 0.45), 0.45)
+        self.face_roi_margin = float(cfg_get(cfg, "effects", "face_roi_margin", 0.15))
+        self.lips_roi_margin = float(cfg_get(cfg, "effects", "lips_roi_margin", 0.25))
+        self.smooth_backend = str(cfg_get(cfg, "effects", "smooth_backend", "bilateral_fast"))
+        self.smooth_downscale = max(0.1, min(1.0, float(cfg_get(cfg, "effects", "smooth_downscale", 0.5))))
+        self.smooth_diameter = int(cfg_get(cfg, "effects", "smooth_diameter", 5) or 5)
+        self.smooth_sigma_color = float(cfg_get(cfg, "effects", "smooth_sigma_color", 30) or 30)
+        self.smooth_sigma_space = float(cfg_get(cfg, "effects", "smooth_sigma_space", 30) or 30)
         self.glasses_scale_factor = float(cfg_get(cfg, "effects", "glasses_scale_factor", 2.2))
         self.glasses_y_offset_factor = float(cfg_get(cfg, "effects", "glasses_y_offset_factor", 0.03))
         self.hat_scale_factor = float(cfg_get(cfg, "effects", "hat_scale_factor", 1.35))
         self.hat_y_offset_factor = float(cfg_get(cfg, "effects", "hat_y_offset_factor", 0.55))
+        self.sticker_cache_enabled = bool(cfg_get(cfg, "stickers", "cache_enabled", True))
+        self.angle_quantization = float(cfg_get(cfg, "stickers", "angle_quantization", 5) or 5)
+        self.size_quantization = float(cfg_get(cfg, "stickers", "size_quantization", 8) or 8)
+        self.sticker_cache: Dict[Tuple[str, int, int], Any] = {}
         rgb = list(cfg_get(cfg, "effects", "lipstick_color", (190, 35, 80)))
         if len(rgb) != 3:
             rgb = [190, 35, 80]
@@ -172,24 +191,37 @@ class FaceEffectsProcessor:
         geometry = None
         sticker_boxes: List[Dict[str, Any]] = []
         render_seconds = 0.0
+        beauty_seconds = 0.0
+        lipstick_seconds = 0.0
+        sticker_seconds = 0.0
         face_detected = points is not None
         if face_detected:
             h, w = frame_bgr.shape[:2]
             geometry = estimate_face_transform_from_landmarks(points, w, h)
             started = time.perf_counter()
             if "smooth" in self.enabled_effects:
+                effect_started = time.perf_counter()
                 output = self.apply_smooth(output, points)
+                beauty_seconds += time.perf_counter() - effect_started
             if "whiten" in self.enabled_effects:
+                effect_started = time.perf_counter()
                 output = self.apply_whiten(output, points)
+                beauty_seconds += time.perf_counter() - effect_started
             if "lipstick" in self.enabled_effects:
+                effect_started = time.perf_counter()
                 output = self.apply_lipstick(output, points)
+                lipstick_seconds += time.perf_counter() - effect_started
             if geometry:
                 if "hat" in self.enabled_effects:
+                    effect_started = time.perf_counter()
                     output, box = self.apply_hat(output, geometry)
+                    sticker_seconds += time.perf_counter() - effect_started
                     if box:
                         sticker_boxes.append(box)
                 if "glasses" in self.enabled_effects:
+                    effect_started = time.perf_counter()
                     output, box = self.apply_glasses(output, geometry)
+                    sticker_seconds += time.perf_counter() - effect_started
                     if box:
                         sticker_boxes.append(box)
             render_seconds = time.perf_counter() - started
@@ -205,20 +237,23 @@ class FaceEffectsProcessor:
             "sticker_boxes": sticker_boxes,
             "face_detected": face_detected,
             "detection_seconds": detection_seconds,
+            "sticker_seconds": sticker_seconds,
+            "beauty_seconds": beauty_seconds,
+            "lipstick_seconds": lipstick_seconds,
             "render_seconds": render_seconds,
         }
 
     def point(self, points: Any, index: int) -> Tuple[float, float]:
         return float(points[index][0]), float(points[index][1])
 
-    def face_mask(self, shape: Tuple[int, int, int], points: Any, blur: bool = True):
+    def polygon_mask(self, shape: Tuple[int, int, int], points: Any, indices: Sequence[int], blur: bool = True):
         cv2 = self.cv2
         np = self.np
         h, w = shape[:2]
         mask = np.zeros((h, w), dtype=np.float32)
-        if len(points) <= max(FACE_OVAL):
+        if len(points) <= max(indices):
             return mask
-        poly = points[FACE_OVAL].astype(np.int32)
+        poly = points[indices].astype(np.int32)
         poly[:, 0] = np.clip(poly[:, 0], 0, w - 1)
         poly[:, 1] = np.clip(poly[:, 1], 0, h - 1)
         cv2.fillPoly(mask, [poly], 1.0)
@@ -226,6 +261,9 @@ class FaceEffectsProcessor:
             sigma = max(5, int(min(h, w) * 0.018))
             mask = cv2.GaussianBlur(mask, (0, 0), sigmaX=sigma, sigmaY=sigma)
         return np.clip(mask, 0.0, 1.0)
+
+    def face_mask(self, shape: Tuple[int, int, int], points: Any, blur: bool = True):
+        return self.polygon_mask(shape, points, FACE_OVAL, blur=blur)
 
     def blend_with_mask(self, base: Any, effect: Any, mask: Any, strength: float):
         np = self.np
@@ -235,22 +273,42 @@ class FaceEffectsProcessor:
 
     def apply_smooth(self, frame: Any, points: Any):
         cv2 = self.cv2
-        mask = self.face_mask(frame.shape, points, blur=True)
-        filtered = cv2.bilateralFilter(frame, d=9, sigmaColor=65, sigmaSpace=65)
-        return self.blend_with_mask(frame, filtered, mask, self.smooth_strength)
+        x1, y1, x2, y2 = self.landmark_roi(points, FACE_OVAL, frame.shape, self.face_roi_margin)
+        if x2 <= x1 or y2 <= y1:
+            return frame
+        roi = frame[y1:y2, x1:x2]
+        local_points = points.copy()
+        local_points[:, 0] -= x1
+        local_points[:, 1] -= y1
+        mask = self.face_mask(roi.shape, local_points, blur=True)
+        filtered = self.fast_bilateral_roi(roi)
+        blended = self.blend_with_mask(roi, filtered, mask, self.smooth_strength)
+        output = frame.copy()
+        output[y1:y2, x1:x2] = blended
+        return output
 
     def apply_whiten(self, frame: Any, points: Any):
         cv2 = self.cv2
         np = self.np
-        mask = self.face_mask(frame.shape, points, blur=True)
-        lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB).astype(np.float32)
+        x1, y1, x2, y2 = self.landmark_roi(points, FACE_OVAL, frame.shape, self.face_roi_margin)
+        if x2 <= x1 or y2 <= y1:
+            return frame
+        roi = frame[y1:y2, x1:x2]
+        local_points = points.copy()
+        local_points[:, 0] -= x1
+        local_points[:, 1] -= y1
+        mask = self.face_mask(roi.shape, local_points, blur=True)
+        lab = cv2.cvtColor(roi, cv2.COLOR_BGR2LAB).astype(np.float32)
         l_channel = lab[:, :, 0]
         lab[:, :, 0] = l_channel + (255.0 - l_channel) * (0.22 * self.whiten_strength)
         brightened = cv2.cvtColor(np.clip(lab, 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR)
         hsv = cv2.cvtColor(brightened, cv2.COLOR_BGR2HSV).astype(np.float32)
         hsv[:, :, 1] = np.clip(hsv[:, :, 1] * (1.0 + 0.04 * self.whiten_strength), 0, 255)
         brightened = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2BGR)
-        return self.blend_with_mask(frame, brightened, mask, min(0.85, 0.85 * self.whiten_strength + 0.1))
+        blended = self.blend_with_mask(roi, brightened, mask, min(0.85, 0.85 * self.whiten_strength + 0.1))
+        output = frame.copy()
+        output[y1:y2, x1:x2] = blended
+        return output
 
     def lip_mask(self, shape: Tuple[int, int, int], points: Any):
         cv2 = self.cv2
@@ -272,18 +330,64 @@ class FaceEffectsProcessor:
 
     def apply_lipstick(self, frame: Any, points: Any):
         np = self.np
-        mask = self.lip_mask(frame.shape, points)
-        color_layer = np.zeros_like(frame)
+        x1, y1, x2, y2 = self.landmark_roi(points, OUTER_LIPS, frame.shape, self.lips_roi_margin, min_size=6)
+        if x2 <= x1 or y2 <= y1:
+            return frame
+        roi = frame[y1:y2, x1:x2]
+        local_points = points.copy()
+        local_points[:, 0] -= x1
+        local_points[:, 1] -= y1
+        mask = self.lip_mask(roi.shape, local_points)
+        color_layer = np.zeros_like(roi)
         color_layer[:, :] = self.lipstick_bgr
         alpha = np.clip(mask[..., None] * self.lipstick_alpha, 0.0, 1.0)
-        output = frame.astype(np.float32) * (1.0 - alpha) + color_layer.astype(np.float32) * alpha
-        return np.clip(output, 0, 255).astype(np.uint8)
+        blended = roi.astype(np.float32) * (1.0 - alpha) + color_layer.astype(np.float32) * alpha
+        output = frame.copy()
+        output[y1:y2, x1:x2] = np.clip(blended, 0, 255).astype(np.uint8)
+        return output
 
-    def transform_sticker_rgba(self, sticker: Any, desired_width: float, angle_degrees: float):
+    def landmark_roi(
+        self,
+        points: Any,
+        indices: Sequence[int],
+        shape: Tuple[int, int, int],
+        margin: float,
+        min_size: int = 8,
+    ) -> Tuple[int, int, int, int]:
+        h, w = shape[:2]
+        return expanded_bbox(landmark_bbox(points, indices), w, h, margin=margin, min_size=min_size)
+
+    def fast_bilateral_roi(self, roi: Any):
+        cv2 = self.cv2
+        if roi.size == 0:
+            return roi
+        d = max(1, int(self.smooth_diameter))
+        if self.smooth_backend != "bilateral_fast" or self.smooth_downscale >= 0.98:
+            return cv2.bilateralFilter(roi, d=d, sigmaColor=self.smooth_sigma_color, sigmaSpace=self.smooth_sigma_space)
+        h, w = roi.shape[:2]
+        small_w = max(8, int(round(w * self.smooth_downscale)))
+        small_h = max(8, int(round(h * self.smooth_downscale)))
+        small = cv2.resize(roi, (small_w, small_h), interpolation=cv2.INTER_AREA)
+        filtered_small = cv2.bilateralFilter(
+            small,
+            d=d,
+            sigmaColor=self.smooth_sigma_color,
+            sigmaSpace=self.smooth_sigma_space,
+        )
+        return cv2.resize(filtered_small, (w, h), interpolation=cv2.INTER_LINEAR)
+
+    def transform_sticker_rgba(self, sticker_name: str, sticker: Any, desired_width: float, angle_degrees: float):
         cv2 = self.cv2
         desired_width = max(10.0, float(desired_width))
+        cached_width = int(quantize_number(desired_width, self.size_quantization))
+        cached_angle = int(quantize_number(angle_degrees, self.angle_quantization))
+        cache_key = (sticker_name, cached_width, cached_angle)
+        if self.sticker_cache_enabled and cache_key in self.sticker_cache:
+            return self.sticker_cache[cache_key]
+        transform_width = float(cached_width if self.sticker_cache_enabled else desired_width)
+        transform_angle = float(cached_angle if self.sticker_cache_enabled else angle_degrees)
         h, w = sticker.shape[:2]
-        scale = desired_width / float(w)
+        scale = transform_width / float(w)
         resized = cv2.resize(
             sticker,
             (max(1, int(w * scale)), max(1, int(h * scale))),
@@ -291,14 +395,14 @@ class FaceEffectsProcessor:
         )
         rh, rw = resized.shape[:2]
         center = (rw / 2.0, rh / 2.0)
-        matrix = cv2.getRotationMatrix2D(center, angle_degrees, 1.0)
+        matrix = cv2.getRotationMatrix2D(center, transform_angle, 1.0)
         cos_v = abs(matrix[0, 0])
         sin_v = abs(matrix[0, 1])
         new_w = int((rh * sin_v) + (rw * cos_v))
         new_h = int((rh * cos_v) + (rw * sin_v))
         matrix[0, 2] += (new_w / 2.0) - center[0]
         matrix[1, 2] += (new_h / 2.0) - center[1]
-        return cv2.warpAffine(
+        transformed = cv2.warpAffine(
             resized,
             matrix,
             (new_w, new_h),
@@ -306,9 +410,12 @@ class FaceEffectsProcessor:
             borderMode=cv2.BORDER_CONSTANT,
             borderValue=(0, 0, 0, 0),
         )
+        if self.sticker_cache_enabled:
+            self.sticker_cache[cache_key] = transformed
+        return transformed
 
     def rotate_scale_sticker(self, sticker: Any, desired_width: float, angle_degrees: float):
-        return self.transform_sticker_rgba(sticker, desired_width, angle_degrees)
+        return self.transform_sticker_rgba("sticker", sticker, desired_width, angle_degrees)
 
     def overlay_rgba_at_center(
         self,
@@ -360,7 +467,7 @@ class FaceEffectsProcessor:
             scale_factor=self.glasses_scale_factor,
             y_offset_factor=self.glasses_y_offset_factor,
         )
-        sticker = self.transform_sticker_rgba(self.glasses, pose["width"], pose["angle_deg"])
+        sticker = self.transform_sticker_rgba("glasses", self.glasses, pose["width"], pose["angle_deg"])
         output, box = self.overlay_rgba_at_center(frame, sticker, (pose["center_x"], pose["center_y"]), label="glasses")
         if box:
             box["pose"] = pose
@@ -374,7 +481,7 @@ class FaceEffectsProcessor:
             scale_factor=self.hat_scale_factor,
             y_offset_factor=self.hat_y_offset_factor,
         )
-        sticker = self.transform_sticker_rgba(self.hat, pose["width"], pose["angle_deg"])
+        sticker = self.transform_sticker_rgba("hat", self.hat, pose["width"], pose["angle_deg"])
         output, box = self.overlay_rgba_at_center(frame, sticker, (pose["center_x"], pose["center_y"]), label="hat")
         if box:
             box["pose"] = pose
@@ -544,11 +651,41 @@ def process_static_images(
     }
 
 
-def resize_frame_to_config(cv2: Any, cfg: Dict[str, Any], frame: Any):
-    width = int(cfg_get(cfg, "video", "width", 0) or 0)
-    height = int(cfg_get(cfg, "video", "height", 0) or 0)
-    if width > 0 and height > 0 and (frame.shape[1] != width or frame.shape[0] != height):
-        return cv2.resize(frame, (width, height), interpolation=cv2.INTER_AREA)
+def resolve_process_dimensions(
+    cfg: Dict[str, Any],
+    source_width: int,
+    source_height: int,
+    process_width: Optional[int] = None,
+    process_height: Optional[int] = None,
+    fast_mode: Optional[bool] = None,
+) -> Tuple[int, int, bool]:
+    configured_fast = bool(cfg_get(cfg, "video", "fast_mode", False))
+    use_fast = configured_fast if fast_mode is None else bool(fast_mode)
+    if use_fast and process_width is None and process_height is None:
+        target_width, target_height = 640, 360
+    else:
+        target_width = int(process_width if process_width is not None else cfg_get(cfg, "video", "process_width", 0) or 0)
+        target_height = int(process_height if process_height is not None else cfg_get(cfg, "video", "process_height", 0) or 0)
+        if target_width <= 0 and target_height <= 0:
+            target_width = int(cfg_get(cfg, "video", "width", 0) or 0)
+            target_height = int(cfg_get(cfg, "video", "height", 0) or 0)
+    keep_aspect = bool(cfg_get(cfg, "video", "keep_aspect_ratio", True))
+    width, height = compute_process_size(source_width, source_height, target_width, target_height, keep_aspect)
+    return width, height, use_fast
+
+
+def resize_frame_to_config(
+    cv2: Any,
+    cfg: Dict[str, Any],
+    frame: Any,
+    process_width: Optional[int] = None,
+    process_height: Optional[int] = None,
+    fast_mode: Optional[bool] = None,
+):
+    height, width = frame.shape[:2]
+    out_width, out_height, _ = resolve_process_dimensions(cfg, width, height, process_width, process_height, fast_mode)
+    if out_width > 0 and out_height > 0 and (width != out_width or height != out_height):
+        return cv2.resize(frame, (out_width, out_height), interpolation=cv2.INTER_AREA)
     return frame
 
 
@@ -571,6 +708,10 @@ def process_video(
     max_frames: Optional[int],
     fps_override: Optional[float],
     max_keyframes: Optional[int],
+    process_width: Optional[int],
+    process_height: Optional[int],
+    fast_mode: Optional[bool],
+    device: str,
     debug_sticker_geometry: bool = False,
     camera_index: Optional[int] = None,
 ) -> Dict[str, Any]:
@@ -596,7 +737,11 @@ def process_video(
     faces_detected = 0
     detection_seconds = 0.0
     render_seconds = 0.0
+    sticker_seconds = 0.0
+    beauty_seconds = 0.0
+    lipstick_seconds = 0.0
     write_seconds = 0.0
+    process_size: Optional[Tuple[int, int]] = None
     keyframe_records: List[Dict[str, Any]] = []
     started = time.perf_counter()
     try:
@@ -606,7 +751,9 @@ def process_video(
             ok, frame = cap.read()
             if not ok:
                 break
-            frame = resize_frame_to_config(cv2, cfg, frame)
+            frame = resize_frame_to_config(cv2, cfg, frame, process_width, process_height, fast_mode)
+            if process_size is None:
+                process_size = (int(frame.shape[1]), int(frame.shape[0]))
             if writer is None:
                 h, w = frame.shape[:2]
                 fourcc = cv2.VideoWriter_fourcc(*"mp4v")
@@ -617,6 +764,9 @@ def process_video(
             result = processor.process_frame(frame, save_landmark_frame=save_keyframe)
             detection_seconds += result["detection_seconds"]
             render_seconds += result["render_seconds"]
+            sticker_seconds += result.get("sticker_seconds", 0.0)
+            beauty_seconds += result.get("beauty_seconds", 0.0)
+            lipstick_seconds += result.get("lipstick_seconds", 0.0)
             faces_detected += 1 if result["face_detected"] else 0
             write_started = time.perf_counter()
             writer.write(result["frame"])
@@ -655,18 +805,35 @@ def process_video(
     elapsed = time.perf_counter() - started
     return {
         "mode": "video",
+        "processing_mode": "fast" if (fast_mode or bool(cfg_get(cfg, "video", "fast_mode", False))) else "quality",
+        "device_requested": device,
+        "device_used": "cpu",
+        "device_note": "CUDA was requested but this standard MediaPipe/OpenCV pipeline remains CPU-bound." if device == "cuda" else "CPU MediaPipe/OpenCV pipeline.",
         "input_video": str(video_path) if camera_index is None else "camera:{}".format(camera_index),
         "output_video": str(out_path),
         "source_fps": source_fps,
         "output_fps": output_fps,
+        "process_width": process_size[0] if process_size else None,
+        "process_height": process_size[1] if process_size else None,
         "total_frames_in_source": total_frames,
         "processed_frames": processed_frames,
         "faces_detected_frames": faces_detected,
         "average_processing_fps": processed_frames / elapsed if elapsed > 0 else 0.0,
         "total_seconds": elapsed,
         "detection_seconds": detection_seconds,
+        "sticker_seconds": sticker_seconds,
+        "beauty_seconds": beauty_seconds,
+        "lipstick_seconds": lipstick_seconds,
         "render_seconds": render_seconds,
         "write_seconds": write_seconds,
+        "average_detection_ms": (detection_seconds / processed_frames * 1000.0) if processed_frames else None,
+        "average_sticker_ms": (sticker_seconds / processed_frames * 1000.0) if processed_frames else None,
+        "average_beauty_ms": (beauty_seconds / processed_frames * 1000.0) if processed_frames else None,
+        "average_lipstick_ms": (lipstick_seconds / processed_frames * 1000.0) if processed_frames else None,
+        "average_render_ms": (render_seconds / processed_frames * 1000.0) if processed_frames else None,
+        "average_write_ms": (write_seconds / processed_frames * 1000.0) if processed_frames else None,
+        "sticker_cache_size": len(processor.sticker_cache),
+        "sticker_cache_enabled": processor.sticker_cache_enabled,
         "keyframes": keyframe_records,
         "debug_sticker_geometry": debug_sticker_geometry,
     }
@@ -703,6 +870,10 @@ def main() -> None:
             args.max_frames,
             args.fps,
             args.max_keyframes,
+            args.process_width,
+            args.process_height,
+            True if args.fast_mode else None,
+            args.device,
             debug_sticker_geometry=args.debug_sticker_geometry,
             camera_index=args.camera,
         )
@@ -721,6 +892,10 @@ def main() -> None:
             args.max_frames,
             args.fps,
             args.max_keyframes,
+            args.process_width,
+            args.process_height,
+            True if args.fast_mode else None,
+            args.device,
             debug_sticker_geometry=args.debug_sticker_geometry,
         )
         payload.update(result)
@@ -746,6 +921,10 @@ def main() -> None:
                 args.max_frames,
                 args.fps,
                 args.max_keyframes,
+                args.process_width,
+                args.process_height,
+                True if args.fast_mode else None,
+                args.device,
                 debug_sticker_geometry=args.debug_sticker_geometry,
             )
             payload.update(result)
