@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import shutil
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -32,10 +33,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-dir", type=Path, default=None, help="Use images from this directory instead of CelebA.")
     parser.add_argument("--image-list", type=Path, default=None, help="Text file with one image path per line.")
     parser.add_argument("--sample-count", type=int, default=None)
+    parser.add_argument("--sample-seed", type=int, default=None)
+    parser.add_argument("--sample-strategy", choices=["random", "first", "sequential"], default=None)
     parser.add_argument("--output-dir", type=Path, default=None)
     parser.add_argument("--link-mode", choices=["symlink", "copy"], default=None)
     parser.add_argument("--recursive", action="store_true", help="Recursively scan --input-dir or CelebA image root.")
     parser.add_argument("--force", action="store_true", help="Replace existing staged sample files.")
+    parser.add_argument("--clear-existing", action="store_true", help="Remove existing staged input samples before preparing the new set.")
     return parser.parse_args()
 
 
@@ -95,25 +99,34 @@ def main() -> None:
     args = parse_args()
     cfg = load_config(args.config)
     count = args.sample_count if args.sample_count is not None else int(cfg_get(cfg, "data", "sample_count", 8))
+    sample_seed = args.sample_seed if args.sample_seed is not None else int(cfg_get(cfg, "data", "sample_seed", cfg.get("seed", 20260604)))
+    sample_strategy = args.sample_strategy or str(cfg_get(cfg, "data", "sample_strategy", "random"))
     link_mode = args.link_mode or str(cfg_get(cfg, "data", "link_mode", "symlink"))
     output_dir = args.output_dir or input_samples_dir(cfg)
+    if args.clear_existing and output_dir.exists():
+        shutil.rmtree(str(output_dir))
     source = collect_source_images(args, cfg)
-    selected = select_samples(source["images"], count, int(cfg.get("seed", 20260604)))
+    selected = select_samples(source["images"], count, sample_seed, sample_strategy)
     records = stage_samples(selected, output_dir, link_mode, args.force)
     grid_path = output_dir / "input_samples_grid.jpg"
-    grid = save_image_grid([Path(row["staged_path"]) for row in records], [row["sample_id"] for row in records], grid_path)
+    grid_records = records[: min(12, len(records))]
+    grid = save_image_grid([Path(row["staged_path"]) for row in grid_records], [row["sample_id"] for row in grid_records], grid_path)
     summary_dir(cfg).mkdir(parents=True, exist_ok=True)
     payload = {
         "task": cfg.get("task_name"),
         "ready": True,
         "sample_count": len(records),
         "requested_sample_count": count,
+        "actual_sample_count": len(records),
+        "sample_seed": sample_seed,
+        "sample_strategy": sample_strategy,
         "source_dataset": source["source_dataset"],
         "source_root": source.get("source_root"),
         "source_image_dir": source.get("source_image_dir"),
         "recursive": source.get("recursive"),
         "output_directory": str(output_dir),
         "input_grid": str(grid) if grid else None,
+        "input_grid_sample_count": len(grid_records),
         "input_image_paths": [row["staged_path"] for row in records],
         "samples": records,
     }

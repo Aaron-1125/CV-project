@@ -372,7 +372,7 @@ def read_image_list(path: Any) -> List[Path]:
     return images
 
 
-def select_samples(paths: List[Path], count: int, seed: int) -> List[Path]:
+def select_samples(paths: List[Path], count: int, seed: int, strategy: str = "random") -> List[Path]:
     if count <= 0:
         raise ValueError("sample_count must be positive")
     unique = []
@@ -384,6 +384,11 @@ def select_samples(paths: List[Path], count: int, seed: int) -> List[Path]:
             seen.add(key)
     if not unique:
         raise ValueError("No input images are available for Task8")
+    strategy = strategy.lower()
+    if strategy in ("first", "sequential"):
+        return unique[: min(count, len(unique))]
+    if strategy != "random":
+        raise ValueError("Unsupported sample_strategy: {}".format(strategy))
     rng = random.Random(seed)
     shuffled = list(unique)
     rng.shuffle(shuffled)
@@ -405,7 +410,14 @@ def copy_or_symlink(source: Path, target: Path, mode: str = "symlink", force: bo
             else:
                 target.unlink()
         else:
-            return "existing"
+            try:
+                if target.resolve() == source.resolve():
+                    return "existing"
+            except Exception:
+                pass
+            raise FileExistsError(
+                "{} already exists and does not point to {}. Pass --clear-existing or --force.".format(target, source)
+            )
     if mode == "copy":
         shutil.copy2(str(source), str(target))
         return "copy"
@@ -476,18 +488,23 @@ def truncate_text(text: str, limit: int = 4000) -> str:
 def relpath_for_markdown(path_value: Any, markdown_file: Path) -> str:
     if not path_value:
         return ""
-    path = Path(str(path_value))
-    if path.is_absolute() and not path.exists():
-        parts = path.parts
-        if "stage-3" in parts:
-            idx = parts.index("stage-3")
-            path = stage3_root().joinpath(*parts[idx + 1 :])
+    path = resolve_existing_stage3_path(path_value)
     if not path.is_absolute():
         path = stage3_root() / path
     try:
         return Path(os.path.relpath(str(path), str(markdown_file.parent))).as_posix()
     except Exception:
         return str(path_value)
+
+
+def resolve_existing_stage3_path(path_value: Any) -> Path:
+    path = Path(str(path_value))
+    if path.is_absolute() and not path.exists():
+        parts = path.parts
+        if "stage-3" in parts:
+            idx = parts.index("stage-3")
+            return stage3_root().joinpath(*parts[idx + 1 :])
+    return path
 
 
 def save_image_grid(image_paths: List[Path], labels: List[str], output_path: Path, thumb_size: int = 180) -> Optional[Path]:

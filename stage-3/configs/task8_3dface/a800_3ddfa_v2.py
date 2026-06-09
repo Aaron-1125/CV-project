@@ -31,8 +31,10 @@ third_party = dict(
 )
 
 data = dict(
-    celeba_root="/root/autodl-pub/CelebA",
-    sample_count=8,
+    celeba_root="/root/autodl-tmp/celeba",
+    sample_count=500,
+    sample_seed=20260608,
+    sample_strategy="random",
     link_mode="symlink",
     recursive=False,
 )
@@ -45,10 +47,17 @@ reconstruction = dict(
     show_flag=False,
     allow_cpu_fallback=True,
     allow_backend_fallback=True,
+    resume=True,
+    skip_existing=True,
+    continue_on_error=True,
+    max_samples=None,
 )
 
 render = dict(
     backend="auto",
+    render_all=False,
+    max_render_samples=12,
+    render_sample_strategy="first_success",
     image_size=640,
     max_faces=8000,
     angles=[
@@ -58,6 +67,11 @@ render = dict(
         dict(name="left_yaw_60", yaw=-60.0, pitch=0.0),
         dict(name="right_yaw_60", yaw=60.0, pitch=0.0),
     ],
+)
+
+report = dict(
+    max_showcase_samples=12,
+    show_failure_examples=True,
 )
 
 reports = dict(

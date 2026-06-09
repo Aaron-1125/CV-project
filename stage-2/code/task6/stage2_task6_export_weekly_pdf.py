@@ -222,7 +222,9 @@ def image_flowables(source_dir: Path, alt: str, path_text: str, styles: dict[str
 
     max_width = A4[0] - 3.4 * cm
     normalized_path = path_text.replace("\\", "/")
-    if "/assets/weekly/" in normalized_path:
+    if "_3col" in normalized_path:
+        max_height = 17.8 * cm
+    elif "/assets/weekly/" in normalized_path:
         max_height = 7.2 * cm
     elif "/evaluation/" in normalized_path:
         max_height = 8.2 * cm
@@ -348,7 +350,7 @@ def parse_markdown(source: Path, styles: dict[str, ParagraphStyle]):
             flush_paragraph()
             flowables.append(Paragraph(markdown_inline(line[4:].strip()), styles["h3"]))
             continue
-        if line.startswith("- "):
+        if line.startswith("- ") or line.startswith("* "):
             flush_paragraph()
             flowables.append(Paragraph(markdown_inline(line[2:].strip()), styles["bullet"], bulletText="-"))
             continue

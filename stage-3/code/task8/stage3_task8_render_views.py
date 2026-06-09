@@ -16,6 +16,7 @@ from stage3_task8_common import (
     reconstruction_summary_path,
     render_summary_path,
     rendered_views_dir,
+    resolve_existing_stage3_path,
     save_image_grid,
     summary_dir,
     write_json,
@@ -28,6 +29,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--backend", choices=["auto", "pyrender", "matplotlib", "none"], default=None)
     parser.add_argument("--image-size", type=int, default=None)
     parser.add_argument("--max-faces", type=int, default=None)
+    parser.add_argument("--render-all", action="store_true", default=None, help="Render every successful reconstruction instead of the showcase subset.")
+    parser.add_argument("--max-render-samples", type=int, default=None)
     return parser.parse_args()
 
 
@@ -225,6 +228,28 @@ def render_one(
     return render_matplotlib(obj_path, output_path, yaw, pitch, image_size, max_faces)
 
 
+def successful_records(recon: Dict[str, Any]) -> List[Dict[str, Any]]:
+    records = []
+    for sample in recon.get("records", []):
+        obj_value = sample.get("obj_path")
+        if not sample.get("success") or not obj_value:
+            continue
+        obj_path = resolve_existing_stage3_path(obj_value)
+        if obj_path.exists():
+            row = dict(sample)
+            row["resolved_obj_path"] = str(obj_path)
+            records.append(row)
+    return records
+
+
+def select_render_records(records: List[Dict[str, Any]], render_all: bool, max_render_samples: int, strategy: str) -> List[Dict[str, Any]]:
+    if render_all:
+        return records
+    if strategy != "first_success":
+        raise ValueError("Unsupported render_sample_strategy: {}".format(strategy))
+    return records[:max_render_samples]
+
+
 def main() -> None:
     args = parse_args()
     cfg = load_config(args.config)
@@ -236,11 +261,16 @@ def main() -> None:
     backend, backend_reason = choose_render_backend(requested_backend)
     image_size = args.image_size or int(cfg_get(cfg, "render", "image_size", 640))
     max_faces = args.max_faces or int(cfg_get(cfg, "render", "max_faces", 8000))
+    render_all = bool(cfg_get(cfg, "render", "render_all", False)) if args.render_all is None else bool(args.render_all)
+    max_render_samples = args.max_render_samples if args.max_render_samples is not None else int(cfg_get(cfg, "render", "max_render_samples", 12))
+    render_strategy = str(cfg_get(cfg, "render", "render_sample_strategy", "first_success"))
     angles = parse_angles(cfg)
+    successful = successful_records(recon)
+    render_targets = select_render_records(successful, render_all, max_render_samples, render_strategy)
     records = []
-    for sample in recon.get("records", []):
+    for sample in render_targets:
         sample_id = sample.get("sample_id")
-        obj_value = sample.get("obj_path")
+        obj_value = sample.get("resolved_obj_path") or sample.get("obj_path")
         out_dir = rendered_views_dir(cfg) / str(sample_id)
         record: Dict[str, Any] = {
             "sample_id": sample_id,
@@ -289,6 +319,12 @@ def main() -> None:
         "backend_reason": backend_reason,
         "image_size": image_size,
         "max_faces": max_faces,
+        "total_successful_reconstructions": len(successful),
+        "rendered_count": sum(1 for row in records if row.get("available")),
+        "attempted_render_count": len(records),
+        "max_render_samples": max_render_samples,
+        "render_all": render_all,
+        "render_sample_strategy": render_strategy,
         "angles": angles,
         "records": records,
     }

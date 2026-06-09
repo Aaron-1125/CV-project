@@ -32,7 +32,7 @@ MediaPipe Face Mesh 可在单张图像或视频帧中预测 468 个三维人脸�
 视频 demo 已生成：
 
 - Demo video: `assets/videos/task9_dynamic_effects_demo.mp4`
-- Benchmark FPS: `0.2587003045476775`
+- Benchmark FPS: `5.379004486990989`
 - Processed frames: `912`
 - Faces detected frames: `912`
 
@@ -54,12 +54,28 @@ MediaPipe Face Mesh 可在单张图像或视频帧中预测 468 个三维人脸�
 ## 6. 性能分析
 
 - Benchmark type: `video`。
-- 平均 FPS: `0.2587003045476775`。
+- Processing mode: `quality`。
+- Process size: `2160` x `4096`。
+- 平均 FPS: `5.379004486990989`。
 - 图片吞吐: `N/A` images/s。
-- 平均检测耗时: `11.151863999354342` ms。
-- 平均渲染耗时: `3786.89993147967` ms。
-- 平均写入耗时: `49.35372877955894` ms。
+- 平均检测耗时: `9.187342104779784` ms。
+- 平均贴纸耗时: `17.246056656483887` ms。
+- 平均美颜耗时: `83.02906757269643` ms。
+- 平均口红耗时: `4.717958000439562` ms。
+- 平均渲染耗时: `105.01267348024014` ms。
+- 平均写入耗时: `55.2670280714601` ms。
 - CPU/GPU 说明: 本实验主要使用 MediaPipe + OpenCV，标准 Python pipeline 主要由 CPU 执行。A800 可被记录为环境信息，但本任务不强制使用 GPU，也不假设 MediaPipe 使用 A800。
+
+分效果 benchmark:
+
+| Profile | FPS | Detection ms | Sticker ms | Beauty ms | Lipstick ms | Write ms | Total ms |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `landmark_only` | 12.845 | 8.322 | 0.000 | 0.000 | 0.000 | 52.733 | 77.850 |
+| `stickers_only` | 10.457 | 9.120 | 18.037 | 0.000 | 0.000 | 52.678 | 95.632 |
+| `beauty_only` | 6.145 | 9.369 | 0.000 | 81.473 | 0.000 | 55.228 | 162.739 |
+| `full_effects` | 5.379 | 9.187 | 17.246 | 83.029 | 4.718 | 55.267 | 185.908 |
+
+性能优化说明：Face Mesh 检测本身通常较快，主要瓶颈来自 CPU 图像特效渲染。优化版提供 fast mode，通过降低处理分辨率、只在 face/lips ROI 内做美颜、在 ROI 小图上执行 bilateral filter、以及贴纸旋转缩放缓存来提升吞吐。`--device cuda` 仅作为可选实验标记；若没有自定义 GPU MediaPipe/OpenCV/Torch 图像处理实现，summary 会明确记录 fallback CPU。
 
 ## 7. 局限性
 
