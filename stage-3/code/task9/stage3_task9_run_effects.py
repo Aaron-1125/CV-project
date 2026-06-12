@@ -417,6 +417,42 @@ class FaceEffectsProcessor:
     def rotate_scale_sticker(self, sticker: Any, desired_width: float, angle_degrees: float):
         return self.transform_sticker_rgba("sticker", sticker, desired_width, angle_degrees)
 
+    def transform_sticker_rgba_with_anchor(
+        self,
+        sticker_name: str,
+        sticker: Any,
+        desired_width: float,
+        angle_degrees: float,
+        sticker_anchor: Tuple[float, float],
+    ) -> Tuple[Any, Tuple[float, float]]:
+        """Rotate/scale sticker and return the transformed sticker-anchor pixel."""
+        cv2 = self.cv2
+        desired_width = max(10.0, float(desired_width))
+        cached_width = int(quantize_number(desired_width, self.size_quantization))
+        cached_angle = int(quantize_number(angle_degrees, self.angle_quantization))
+        transform_width = float(cached_width if self.sticker_cache_enabled else desired_width)
+        transform_angle = float(cached_angle if self.sticker_cache_enabled else angle_degrees)
+        h, w = sticker.shape[:2]
+        scale = transform_width / float(w)
+        resized_w = max(1, int(w * scale))
+        resized_h = max(1, int(h * scale))
+        center = (resized_w / 2.0, resized_h / 2.0)
+        matrix = cv2.getRotationMatrix2D(center, transform_angle, 1.0)
+        cos_v = abs(matrix[0, 0])
+        sin_v = abs(matrix[0, 1])
+        new_w = int((resized_h * sin_v) + (resized_w * cos_v))
+        new_h = int((resized_h * cos_v) + (resized_w * sin_v))
+        matrix[0, 2] += (new_w / 2.0) - center[0]
+        matrix[1, 2] += (new_h / 2.0) - center[1]
+        anchor_x = max(0.0, min(1.0, float(sticker_anchor[0]))) * resized_w
+        anchor_y = max(0.0, min(1.0, float(sticker_anchor[1]))) * resized_h
+        transformed_anchor = (
+            float(matrix[0, 0] * anchor_x + matrix[0, 1] * anchor_y + matrix[0, 2]),
+            float(matrix[1, 0] * anchor_x + matrix[1, 1] * anchor_y + matrix[1, 2]),
+        )
+        transformed = self.transform_sticker_rgba(sticker_name, sticker, desired_width, angle_degrees)
+        return transformed, transformed_anchor
+
     def overlay_rgba_at_center(
         self,
         frame: Any,
@@ -457,6 +493,50 @@ class FaceEffectsProcessor:
         }
         return output, box
 
+    def overlay_rgba_with_anchor(
+        self,
+        frame: Any,
+        overlay: Any,
+        anchor_xy: Tuple[float, float],
+        overlay_anchor_xy: Tuple[float, float],
+        label: str = "sticker",
+    ) -> Tuple[Any, Optional[Dict[str, Any]]]:
+        np = self.np
+        h, w = frame.shape[:2]
+        oh, ow = overlay.shape[:2]
+        x1 = int(round(float(anchor_xy[0]) - float(overlay_anchor_xy[0])))
+        y1 = int(round(float(anchor_xy[1]) - float(overlay_anchor_xy[1])))
+        x2 = x1 + ow
+        y2 = y1 + oh
+        clip_x1 = max(0, x1)
+        clip_y1 = max(0, y1)
+        clip_x2 = min(w, x2)
+        clip_y2 = min(h, y2)
+        if clip_x1 >= clip_x2 or clip_y1 >= clip_y2:
+            return frame, None
+        ox1 = clip_x1 - x1
+        oy1 = clip_y1 - y1
+        ox2 = ox1 + (clip_x2 - clip_x1)
+        oy2 = oy1 + (clip_y2 - clip_y1)
+        sticker_roi = overlay[oy1:oy2, ox1:ox2]
+        alpha = sticker_roi[:, :, 3:4].astype(np.float32) / 255.0
+        roi = frame[clip_y1:clip_y2, clip_x1:clip_x2].astype(np.float32)
+        blended = sticker_roi[:, :, :3].astype(np.float32) * alpha + roi * (1.0 - alpha)
+        output = frame.copy()
+        output[clip_y1:clip_y2, clip_x1:clip_x2] = np.clip(blended, 0, 255).astype(np.uint8)
+        center_xy = (x1 + ow / 2.0, y1 + oh / 2.0)
+        box = {
+            "label": label,
+            "center": (float(center_xy[0]), float(center_xy[1])),
+            "anchor": (float(anchor_xy[0]), float(anchor_xy[1])),
+            "overlay_anchor": (float(overlay_anchor_xy[0]), float(overlay_anchor_xy[1])),
+            "box": (float(x1), float(y1), float(x2), float(y2)),
+            "clipped_box": (float(clip_x1), float(clip_y1), float(clip_x2), float(clip_y2)),
+            "width": float(ow),
+            "height": float(oh),
+        }
+        return output, box
+
     def overlay_bgra(self, frame: Any, overlay: Any, center_xy: Tuple[float, float]):
         output, _ = self.overlay_rgba_at_center(frame, overlay, center_xy)
         return output
@@ -481,8 +561,21 @@ class FaceEffectsProcessor:
             scale_factor=self.hat_scale_factor,
             y_offset_factor=self.hat_y_offset_factor,
         )
-        sticker = self.transform_sticker_rgba("hat", self.hat, pose["width"], pose["angle_deg"])
-        output, box = self.overlay_rgba_at_center(frame, sticker, (pose["center_x"], pose["center_y"]), label="hat")
+        sticker_anchor = (pose.get("sticker_anchor_x", 0.5), pose.get("sticker_anchor_y", 0.82))
+        sticker, overlay_anchor = self.transform_sticker_rgba_with_anchor(
+            "hat",
+            self.hat,
+            pose["width"],
+            pose["angle_deg"],
+            sticker_anchor=sticker_anchor,
+        )
+        output, box = self.overlay_rgba_with_anchor(
+            frame,
+            sticker,
+            (pose["anchor_x"], pose["anchor_y"]),
+            overlay_anchor,
+            label="hat",
+        )
         if box:
             box["pose"] = pose
         return output, box
@@ -514,6 +607,7 @@ class FaceEffectsProcessor:
         face_center = pt(geometry["face_center"])
         brow_center = pt(geometry["brow_center"])
         forehead_anchor = pt(geometry["forehead_anchor"])
+        hat_anchor = pt(geometry.get("hat_anchor", geometry["forehead_anchor"]))
         cv2.line(image, left_eye, right_eye, (0, 255, 255), 2, cv2.LINE_AA)
         cv2.circle(image, left_eye, 5, (0, 255, 0), -1, cv2.LINE_AA)
         cv2.circle(image, right_eye, 5, (0, 128, 255), -1, cv2.LINE_AA)
@@ -521,6 +615,14 @@ class FaceEffectsProcessor:
         cv2.circle(image, face_center, 6, (255, 255, 0), -1, cv2.LINE_AA)
         cv2.circle(image, brow_center, 5, (255, 120, 0), -1, cv2.LINE_AA)
         cv2.circle(image, forehead_anchor, 5, (80, 255, 255), -1, cv2.LINE_AA)
+        cv2.circle(image, hat_anchor, 6, (80, 180, 255), -1, cv2.LINE_AA)
+        face_up_axis = geometry.get("face_up_axis", (0.0, -1.0))
+        eye_distance = float(geometry.get("eye_distance", 40.0))
+        up_tip = (
+            int(round(float(eye_center[0]) + float(face_up_axis[0]) * eye_distance * 0.9)),
+            int(round(float(eye_center[1]) + float(face_up_axis[1]) * eye_distance * 0.9)),
+        )
+        cv2.arrowedLine(image, eye_center, up_tip, (255, 180, 255), 2, cv2.LINE_AA, tipLength=0.25)
         cv2.putText(
             image,
             "head_angle={:.1f}, sticker_angle={:.1f}".format(geometry["angle_deg"], geometry["sticker_angle_deg"]),
@@ -548,6 +650,8 @@ class FaceEffectsProcessor:
             color = colors.get(label, (255, 255, 255))
             cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), color, 2, cv2.LINE_AA)
             cv2.circle(image, pt(box["center"]), 5, color, -1, cv2.LINE_AA)
+            if "anchor" in box:
+                cv2.circle(image, pt(box["anchor"]), 6, (0, 0, 255), -1, cv2.LINE_AA)
             cv2.putText(image, label, (int(x1), max(18, int(y1) - 6)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 2, cv2.LINE_AA)
 
     def draw_sticker_geometry(

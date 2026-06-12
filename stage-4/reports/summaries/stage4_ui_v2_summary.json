@@ -1,0 +1,25 @@
+{
+  "app_version": "stage4_ui_v2",
+  "home_page": true,
+  "local_import_page": true,
+  "realtime_camera_page": true,
+  "local_video_export_supported": true,
+  "local_image_export_supported": true,
+  "realtime_camera_supported": true,
+  "gui_uses_subprocess_for_cv": true,
+  "gui_imports_cv2": false,
+  "gui_imports_mediapipe": false,
+  "gui_imports_backend": false,
+  "realtime_cli_entry": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/code/stage4_live_camera_cli.py",
+  "local_cli_entry": {
+    "video": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/code/stage4_run_cli.py",
+    "image": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/code/stage4_process_image_cli.py"
+  },
+  "known_limitations": [
+    "Realtime camera uses an independent OpenCV subprocess window.",
+    "The desktop GUI does not embed realtime frames.",
+    "macOS camera permission must be granted to the terminal/Python process.",
+    "Current realtime mode is for functional validation, not commercial-grade AR."
+  ],
+  "manual_check_required": true
+}

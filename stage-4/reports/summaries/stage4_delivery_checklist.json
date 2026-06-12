@@ -1,0 +1,28 @@
+{
+  "has_cli": true,
+  "has_desktop_app_entry": true,
+  "has_backend": true,
+  "has_config": true,
+  "has_summary": true,
+  "has_report": true,
+  "has_readme": true,
+  "has_requirements": true,
+  "has_output_video": true,
+  "has_keyframes": true,
+  "cli_smoke_test_passed": true,
+  "desktop_app_checked": true,
+  "stage2_modified": false,
+  "stage3_modified": false,
+  "known_limitations": [
+    "fast_preview is scaled preview, not a commercial realtime guarantee.",
+    "MediaPipe + OpenCV Python pipeline is primarily CPU-bound.",
+    "Stickers can drift under occlusion, fast motion, or extreme pose.",
+    "OpenCV beauty effects are not commercial-grade beautification.",
+    "ArcFace, StarGAN, and 3DDFA are reserved for later upgrades."
+  ],
+  "next_steps": [
+    "Manually confirm the PySide6 desktop window and controls.",
+    "Package with PyInstaller after UI acceptance.",
+    "Optimize ROI processing and video writing if longer videos are required."
+  ]
+}

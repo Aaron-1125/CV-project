@@ -52,7 +52,9 @@ def sample_section(record: Dict[str, Any], render_records: Dict[str, Dict[str, A
     lines = [
         "### {}".format(sample_id),
         "",
-        image_line("Input", record.get("input_image"), output),
+        image_line("Input", record.get("input_image"), output)
+        if md_path(record.get("input_image"), output)
+        else "- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.",
         image_line("2D sparse landmarks", record.get("landmark_path"), output),
         image_line("3D overlay", record.get("overlay_path"), output),
         image_line("Pose", record.get("pose_path"), output),

@@ -1,0 +1,147 @@
+{
+  "task": "stage4_local_vision_app_integration",
+  "generated_at": "2026-06-11T23:52:47",
+  "purpose": "Integrate Stage3 Task9 dynamic effects into a local desktop visual application.",
+  "no_retraining": true,
+  "no_dataset_download": true,
+  "directories": {
+    "stage2_dir": {
+      "path": "/Users/aaron/Documents/字节实习/task/CV project/stage-2",
+      "exists": true
+    },
+    "stage3_dir": {
+      "path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3",
+      "exists": true
+    },
+    "task9_code_dir": {
+      "path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/code/task9",
+      "exists": true
+    },
+    "task9_run_effects": {
+      "path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/code/task9/stage3_task9_run_effects.py",
+      "exists": true
+    },
+    "task9_common": {
+      "path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/code/task9/stage3_task9_common.py",
+      "exists": true
+    },
+    "task9_report_dir": {
+      "path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9",
+      "exists": true
+    },
+    "stage4_dir": {
+      "path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4",
+      "exists": true
+    }
+  },
+  "task9_reuse": {
+    "effects": [
+      "glasses",
+      "hat",
+      "smooth",
+      "whiten",
+      "lipstick"
+    ],
+    "frame_entry": "FaceEffectsProcessor.process_frame",
+    "video_entry": "process_video",
+    "sys_path_adapter": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/code/task9"
+  },
+  "default_video": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/videos/task9_dynamic_effects_demo.mp4",
+  "configured_video_candidates": [
+    "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/videos/task9_dynamic_effects_demo.mp4",
+    "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/input/user_video.mp4",
+    "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/input/videos/user_video.mp4",
+    "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/inputs/user_video.mp4"
+  ],
+  "found_videos": [
+    {
+      "path": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/videos/task9_dynamic_effects_demo.mp4",
+      "exists": true,
+      "size_bytes": 59635455,
+      "size_mb": 56.87,
+      "width": 2160,
+      "height": 4096,
+      "duration_seconds": 36.48,
+      "metadata_source": "ffprobe"
+    }
+  ],
+  "stage4_outputs": {
+    "summary": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/summaries/stage4_integration_summary.json",
+    "report_dir": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports",
+    "asset_dir": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets",
+    "video_dir": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/videos"
+  },
+  "validation": {
+    "static_checks": {
+      "py_compile": "passed",
+      "cli_help": "passed",
+      "check_env": "passed",
+      "write_report": "passed"
+    },
+    "video_smoke_test": {
+      "status": "ready_not_run_by_report_writer",
+      "required_dependencies": [
+        "cv2",
+        "mediapipe"
+      ],
+      "input_video": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/videos/task9_dynamic_effects_demo.mp4",
+      "processed_frame_count": null,
+      "fps": null,
+      "avg_ms_per_frame": null,
+      "output_path": null,
+      "note": "Run the CLI smoke command to record measured metrics."
+    },
+    "desktop_app": {
+      "status": "ready_to_start",
+      "required_any": [
+        "PySide6",
+        "PyQt6"
+      ],
+      "graceful_missing_dependency_message": true
+    },
+    "runtime_modes": {
+      "fast_preview": "Scaled preview mode for quick local validation.",
+      "quality_export": "Higher-resolution export mode using the same MediaPipe + OpenCV Python pipeline."
+    }
+  },
+  "dependencies": {
+    "cv2": {
+      "available": true,
+      "version": "4.11.0",
+      "path": "/opt/anaconda3/envs/cv-stage4/lib/python3.11/site-packages/cv2/__init__.py"
+    },
+    "mediapipe": {
+      "available": true,
+      "version": "0.10.21",
+      "path": "/opt/anaconda3/envs/cv-stage4/lib/python3.11/site-packages/mediapipe/__init__.py"
+    },
+    "PySide6": {
+      "available": true,
+      "version": "6.11.1",
+      "path": "/opt/anaconda3/envs/cv-stage4/lib/python3.11/site-packages/PySide6/__init__.py"
+    },
+    "PyQt6": {
+      "available": false
+    }
+  },
+  "python": {
+    "executable": "/opt/anaconda3/envs/cv-stage4/bin/python",
+    "version": "3.11.15",
+    "platform": "macOS-26.5-arm64-arm-64bit",
+    "cwd": "/Users/aaron/Documents/字节实习/task/CV project"
+  },
+  "upgrade_interfaces": {
+    "arcface": "arcface_identity_recognition",
+    "stargan": "stargan_attribute_editing",
+    "threeddfa": "3ddfa_reconstruction"
+  },
+  "repo_relative_key_paths": {
+    "stage2_dir": "stage-2",
+    "stage3_dir": "stage-3",
+    "task9_code_dir": "stage-3/code/task9",
+    "task9_run_effects": "stage-3/code/task9/stage3_task9_run_effects.py",
+    "task9_common": "stage-3/code/task9/stage3_task9_common.py",
+    "task9_report_dir": "stage-3/reports/task9",
+    "stage4_dir": "stage-4"
+  }
+}

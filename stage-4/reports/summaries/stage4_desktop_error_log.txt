@@ -1,0 +1,10 @@
+$ /opt/anaconda3/envs/cv-stage4/bin/python '/Users/aaron/Documents/字节实习/task/CV project/stage-4/code/stage4_live_camera_worker.py' --camera 0 --process-width 720 --controls '/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/runtime/live_controls.json' --preview '/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/runtime/live_preview.jpg' --status '/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/runtime/live_status.json' --screenshot-dir '/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/screenshots'
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1781190038.636712 8613417 gl_context.cc:369] GL version: 2.1 (2.1 Metal - 90.5), renderer: Apple M4
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+W0000 00:00:1781190038.646737 8613485 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1781190038.649947 8613491 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+Stage4 embedded realtime worker started.
+W0000 00:00:1781190040.995854 8613489 landmark_projection_calculator.cc:186] Using NORM_RECT without IMAGE_DIMENSIONS is only supported for the square ROI. Provide IMAGE_DIMENSIONS or use PROJECTION_MATRIX.
+QProcess error: ProcessError.Crashed
+Subprocess failed with exit code 15.

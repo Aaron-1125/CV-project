@@ -1,13 +1,13 @@
 {
   "task": "stage3_task8_official_3ddfa_v2_single_image_reconstruction",
-  "checked_at": "2026-06-04 21:13:32",
+  "checked_at": "2026-06-09 16:42:05",
   "python": "3.8.10 (default, Jun  4 2021, 15:09:15) \n[GCC 7.5.0]",
   "python_executable": "/root/miniconda3/bin/python",
   "platform": "Linux-5.15.0-78-generic-x86_64-with-glibc2.17",
   "cwd": "/root/autodl-tmp/CV-project/stage-3",
   "env": {
     "3DDFA_REPO": null,
-    "CELEBA_ROOT": "/root/autodl-pub/CelebA",
+    "CELEBA_ROOT": "/root/autodl-tmp/celeba",
     "CUDA_VISIBLE_DEVICES": null
   },
   "repo": {
@@ -73,7 +73,7 @@
   "dependencies": {
     "cv2": {
       "available": true,
-      "version": "4.13.0"
+      "version": "4.8.1"
     },
     "yaml": {
       "available": true,

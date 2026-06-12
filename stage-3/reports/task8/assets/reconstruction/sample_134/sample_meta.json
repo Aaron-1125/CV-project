@@ -1,0 +1,18 @@
+{
+  "sample_id": "sample_134",
+  "input_image": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples/sample_134_176241.jpg",
+  "input_filename": "sample_134_176241.jpg",
+  "source_path": "/root/autodl-tmp/celeba/Img/img_align_celeba_png/176241.png",
+  "success": true,
+  "status": "success",
+  "official_outputs": [
+    "2d_sparse",
+    "3d",
+    "pose",
+    "obj"
+  ],
+  "obj_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_134/official_mesh.obj",
+  "landmark_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_134/official_2d_sparse.jpg",
+  "overlay_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_134/official_3d_overlay.jpg",
+  "pose_path": "/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/reconstruction/sample_134/official_pose.jpg"
+}

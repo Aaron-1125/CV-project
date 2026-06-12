@@ -491,6 +491,8 @@ def relpath_for_markdown(path_value: Any, markdown_file: Path) -> str:
     path = resolve_existing_stage3_path(path_value)
     if not path.is_absolute():
         path = stage3_root() / path
+    if not path.exists():
+        return ""
     try:
         return Path(os.path.relpath(str(path), str(markdown_file.parent))).as_posix()
     except Exception:

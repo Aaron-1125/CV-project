@@ -1,0 +1,19 @@
+{
+  "effects": [
+    "glasses",
+    "whiten"
+  ],
+  "smooth_strength": 0.55,
+  "whiten_strength": 0.35,
+  "lipstick_alpha": 0.45,
+  "show_fps": true,
+  "process_width": 720,
+  "camera_index": 0,
+  "recording": false,
+  "recording_output_path": "",
+  "user_selected_recording_path": false,
+  "recording_fps": 30.0,
+  "recording_fourcc": "mp4v",
+  "stop_signal": true,
+  "updated_at": "20260611_235331"
+}

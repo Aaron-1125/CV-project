@@ -1,0 +1,230 @@
+{
+  "stage": "stage4",
+  "task": "project_integration",
+  "generated_at": "2026-06-11T17:06:24",
+  "backend": "stage3_task9_mediapipe_opencv",
+  "input_video": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/videos/task9_dynamic_effects_demo.mp4",
+  "output_video": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/videos/stage4_task9_effects_export.mp4",
+  "enabled_effects": [
+    "glasses",
+    "whiten"
+  ],
+  "debug_options": {
+    "fps_stat_recorded": true,
+    "landmarks_keyframe_debug": true,
+    "debug_sticker_geometry": false
+  },
+  "mode": "fast_preview",
+  "fast_mode": true,
+  "process_width": 720,
+  "max_frames": 30,
+  "processed_frame_count": 30,
+  "fps": 36.594097878495795,
+  "processing_fps": 36.594097878495795,
+  "avg_ms_per_frame": 27.326811097251873,
+  "output_resolution": {
+    "width": 380,
+    "height": 720
+  },
+  "environment": {
+    "python_executable": "/opt/anaconda3/envs/cv-stage4/bin/python",
+    "python_version": "3.11.15",
+    "platform": "macOS-26.5-arm64-arm-64bit",
+    "cv2_version": "4.11.0",
+    "numpy_version": "1.26.4",
+    "mediapipe_version": "0.10.21",
+    "has_mediapipe_solutions": true,
+    "has_face_mesh": true,
+    "pyside6_version": "6.11.1",
+    "pyqt6_version": null,
+    "pip_check": {
+      "status": "warning",
+      "returncode": 1,
+      "output": "mediapipe 0.10.21 is not supported on this platform"
+    }
+  },
+  "output_files": {
+    "video": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/videos/stage4_task9_effects_export.mp4",
+    "summary": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/summaries/stage4_integration_summary.json",
+    "report": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/stage4_project_integration_report.md",
+    "keyframes": [
+      "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/keyframes/frame_start.jpg",
+      "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/keyframes/frame_middle.jpg",
+      "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/keyframes/frame_end.jpg"
+    ]
+  },
+  "status": {
+    "cli_smoke_test": "passed",
+    "desktop_app": "launch_smoke_checked_no_immediate_crash_terminated_after_4s_manual_visual_confirmation_needed",
+    "report_generated": true
+  },
+  "notes": [
+    "Stage4 first delivery focuses on Task9 dynamic face effects integration.",
+    "fast_preview is a scaled preview mode; quality_export is not guaranteed realtime.",
+    "Task9 uses a MediaPipe + OpenCV Python pipeline, primarily CPU-bound in this setup.",
+    "fps and landmarks are debug/statistical outputs, not beauty effects.",
+    "ArcFace, StarGAN, and 3DDFA are reserved as later upgrade interfaces only.",
+    "Current CLI uses the v1 interface: --video, --effects, --fast-mode, --process-width, --max-frames, --output-video, --summary.",
+    "pip check warning: mediapipe 0.10.21 is not supported on this platform",
+    "Desktop GUI uses QProcess to call the CLI and intentionally avoids importing cv2, numpy, mediapipe, stage4_backend, or Stage3 Task9 in the GUI process.",
+    "Stage4 UI V3 embeds realtime preview by polling worker-generated preview JPG/status JSON while controls are written through live_controls.json.",
+    "Hat sticker geometry uses eye centers, local face axes, forehead anchor, and sticker-anchor alignment for more stable off-center and tilted-head placement.",
+    "Local video export defaults to full-length, original-resolution processing unless fast preview options are explicitly enabled.",
+    "Desktop local import and realtime recording support user-selected output paths, with timestamped defaults under stage-4/reports/assets/."
+  ],
+  "raw_task9_result": {
+    "mode": "video",
+    "processing_mode": "fast",
+    "device_requested": "cpu",
+    "device_used": "cpu",
+    "device_note": "CPU MediaPipe/OpenCV pipeline.",
+    "input_video": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task9/assets/videos/task9_dynamic_effects_demo.mp4",
+    "output_video": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/videos/stage4_task9_effects_export.mp4",
+    "source_fps": 25.0,
+    "output_fps": 25.0,
+    "process_width": 380,
+    "process_height": 720,
+    "total_frames_in_source": 912,
+    "processed_frames": 30,
+    "faces_detected_frames": 30,
+    "average_processing_fps": 36.594097878495795,
+    "total_seconds": 0.8198043329175562,
+    "detection_seconds": 0.05582862382289022,
+    "sticker_seconds": 0.003238668665289879,
+    "beauty_seconds": 0.06977687613107264,
+    "lipstick_seconds": 0.0,
+    "render_seconds": 0.07304233382456005,
+    "write_seconds": 0.01703483099117875,
+    "average_detection_ms": 1.860954127429674,
+    "average_sticker_ms": 0.10795562217632929,
+    "average_beauty_ms": 2.3258958710357547,
+    "average_lipstick_ms": 0.0,
+    "average_render_ms": 2.4347444608186684,
+    "average_write_ms": 0.5678276997059584,
+    "sticker_cache_size": 3,
+    "sticker_cache_enabled": true,
+    "keyframes": [
+      {
+        "frame_index": 0,
+        "before_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00000_before.jpg",
+        "after_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00000_after.jpg",
+        "landmark_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00000_landmarks.jpg",
+        "debug_geometry_path": null,
+        "geometry": {
+          "left_eye_center": [
+            189.65022512582632,
+            246.40989919809195
+          ],
+          "right_eye_center": [
+            224.27635310246393,
+            235.96499868539664
+          ],
+          "eye_center": [
+            206.96328911414514,
+            241.1874489417443
+          ],
+          "eye_distance": 36.16717690634131,
+          "angle_deg": -16.785829269380333,
+          "sticker_angle_deg": 16.785829269380333,
+          "face_width": 77.55424499511719,
+          "face_bbox": [
+            170.44581604003906,
+            208.12362670898438,
+            248.00006103515625,
+            305.5415954589844
+          ],
+          "face_center": [
+            209.22293853759766,
+            256.8326110839844
+          ],
+          "brow_center": [
+            205.11205291748047,
+            229.60887298583984
+          ],
+          "forehead_anchor": [
+            205.11205291748047,
+            204.79151458740233
+          ]
+        },
+        "sticker_boxes": [
+          {
+            "label": "glasses",
+            "center": [
+              206.96328911414514,
+              242.27246424893454
+            ],
+            "box": [
+              165.0,
+              218.0,
+              249.0,
+              266.0
+            ],
+            "clipped_box": [
+              165.0,
+              218.0,
+              249.0,
+              266.0
+            ],
+            "width": 84.0,
+            "height": 48.0,
+            "pose": {
+              "center_x": 206.96328911414514,
+              "center_y": 242.27246424893454,
+              "width": 79.56778919395089,
+              "angle_deg": 16.785829269380333,
+              "head_angle_deg": -16.785829269380333
+            }
+          }
+        ],
+        "face_detected": true
+      }
+    ],
+    "debug_sticker_geometry": false
+  },
+  "raw_options": {
+    "effects": [
+      "glasses",
+      "whiten"
+    ],
+    "smooth_strength": 0.55,
+    "whiten_strength": 0.35,
+    "lipstick_alpha": 0.45,
+    "fast_mode": true,
+    "process_width": 720,
+    "process_height": 720,
+    "max_frames": 30,
+    "fps": null,
+    "max_keyframes": null,
+    "device": "cpu",
+    "debug_sticker_geometry": false
+  },
+  "dependencies": {
+    "cv2": {
+      "available": true,
+      "version": "4.11.0",
+      "path": "/opt/anaconda3/envs/cv-stage4/lib/python3.11/site-packages/cv2/__init__.py"
+    },
+    "mediapipe": {
+      "available": true,
+      "version": "0.10.21",
+      "path": "/opt/anaconda3/envs/cv-stage4/lib/python3.11/site-packages/mediapipe/__init__.py"
+    },
+    "PySide6": {
+      "available": true,
+      "version": "6.11.1",
+      "path": "/opt/anaconda3/envs/cv-stage4/lib/python3.11/site-packages/PySide6/__init__.py"
+    },
+    "PyQt6": {
+      "available": false
+    }
+  },
+  "python": {
+    "executable": "/opt/anaconda3/envs/cv-stage4/bin/python",
+    "version": "3.11.15",
+    "platform": "macOS-26.5-arm64-arm-64bit",
+    "cwd": "/Users/aaron/Documents/字节实习/task/CV project"
+  },
+  "full_length_export": false,
+  "original_resolution_export": false,
+  "user_selected_output_path": false
+}

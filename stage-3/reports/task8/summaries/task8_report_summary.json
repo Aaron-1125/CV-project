@@ -1,6 +1,12 @@
 {
   "ready": true,
   "report": "/Users/aaron/Documents/字节实习/task/CV project/stage-3/reports/task8/stage3_task8_3d_face_reconstruction_report.md",
-  "samples_in_report": 8,
+  "samples_in_report": 12,
+  "requested_samples": 500,
+  "actual_input_samples": 500,
+  "successful_reconstructions": 500,
+  "failed_reconstructions": 0,
+  "success_rate": 1.0,
+  "rendered_showcase_samples": 12,
   "render_ready": true
 }

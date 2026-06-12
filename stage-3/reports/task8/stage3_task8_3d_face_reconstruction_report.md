@@ -4,6 +4,8 @@
 
 本实验基于官方 3DDFA_V2 完成单图 3D 人脸重建，stage-3 只实现样本准备、官方推理调用、结果整理和可视化。本文工作重点是实验流程搭建、样本选择、结果可视化与分析，不是自研 3D 人脸重建模型，也没有重写 3DMM fitting、mesh reconstruction 或 landmark detection 的核心算法。
 
+本次从 CelebA 中抽取 500 张测试图进行 3DDFA_V2 单图三维重建。500 张测试增强了流程稳定性验证，但该结果仍然是官方 3DDFA_V2 的 3DMM-based single-image reconstruction，不是高精度 3D 扫描。
+
 交付内容包括：
 
 - `code/task8/`: Task8 wrapper 脚本。
@@ -19,7 +21,7 @@
 
 ## 3. 实验设置
 
-- 数据来源: `CelebA`，样本数 `8`。
+- 数据来源: `CelebA`，请求样本数 `500`，实际输入 `500`。
 - 输入样本目录: `/root/autodl-tmp/CV-project/stage-3/reports/task8/assets/input_samples`。
 - 3DDFA_V2 repo: `/root/autodl-tmp/task/3DDFA_V2`。
 - 3DDFA_V2 commit: `1b6c67601abffc1e9f248b291708aef0e43b55ae`。
@@ -27,16 +29,32 @@
 - 默认 runner: `official_subprocess`。
 - 重建 backend: `pth`。
 - 运行环境 Python: `3.8.10 (default, Jun  4 2021, 15:09:15) `。
+- 抽样 seed: `20260608`。
+- 抽样策略: `random`。
 
-输入样本预览：
+输入样本预览只展示前若干张，不展示 500 张全集：
 
 ![input samples](assets/input_samples/input_samples_grid.jpg)
 
-## 4. 重建结果
+## 4. 全量统计
+
+| 指标 | 结果 |
+|---|---:|
+| Requested samples | 500 |
+| Actual input samples | 500 |
+| Successful reconstructions | 500 |
+| Failed reconstructions | 0 |
+| Success rate | 100.00% |
+| Rendered showcase samples | 12 |
+| Backend | pth |
+| Mode | gpu |
+| Outputs | 2d_sparse / 3d / pose / obj |
+
+## 5. 精选结果展示
 
 ### sample_000
 
-- Input: ![Input](assets/input_samples/sample_000_177442.jpg)
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
 - 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_000/official_2d_sparse.jpg)
 - 3D overlay: ![3D overlay](assets/reconstruction/sample_000/official_3d_overlay.jpg)
 - Pose: ![Pose](assets/reconstruction/sample_000/official_pose.jpg)
@@ -47,7 +65,7 @@
 
 ### sample_001
 
-- Input: ![Input](assets/input_samples/sample_001_177621.jpg)
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
 - 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_001/official_2d_sparse.jpg)
 - 3D overlay: ![3D overlay](assets/reconstruction/sample_001/official_3d_overlay.jpg)
 - Pose: ![Pose](assets/reconstruction/sample_001/official_pose.jpg)
@@ -58,7 +76,7 @@
 
 ### sample_002
 
-- Input: ![Input](assets/input_samples/sample_002_084524.jpg)
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
 - 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_002/official_2d_sparse.jpg)
 - 3D overlay: ![3D overlay](assets/reconstruction/sample_002/official_3d_overlay.jpg)
 - Pose: ![Pose](assets/reconstruction/sample_002/official_pose.jpg)
@@ -69,7 +87,7 @@
 
 ### sample_003
 
-- Input: ![Input](assets/input_samples/sample_003_136573.jpg)
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
 - 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_003/official_2d_sparse.jpg)
 - 3D overlay: ![3D overlay](assets/reconstruction/sample_003/official_3d_overlay.jpg)
 - Pose: ![Pose](assets/reconstruction/sample_003/official_pose.jpg)
@@ -80,7 +98,7 @@
 
 ### sample_004
 
-- Input: ![Input](assets/input_samples/sample_004_129655.jpg)
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
 - 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_004/official_2d_sparse.jpg)
 - 3D overlay: ![3D overlay](assets/reconstruction/sample_004/official_3d_overlay.jpg)
 - Pose: ![Pose](assets/reconstruction/sample_004/official_pose.jpg)
@@ -91,7 +109,7 @@
 
 ### sample_005
 
-- Input: ![Input](assets/input_samples/sample_005_162249.jpg)
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
 - 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_005/official_2d_sparse.jpg)
 - 3D overlay: ![3D overlay](assets/reconstruction/sample_005/official_3d_overlay.jpg)
 - Pose: ![Pose](assets/reconstruction/sample_005/official_pose.jpg)
@@ -102,7 +120,7 @@
 
 ### sample_006
 
-- Input: ![Input](assets/input_samples/sample_006_111170.jpg)
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
 - 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_006/official_2d_sparse.jpg)
 - 3D overlay: ![3D overlay](assets/reconstruction/sample_006/official_3d_overlay.jpg)
 - Pose: ![Pose](assets/reconstruction/sample_006/official_pose.jpg)
@@ -113,7 +131,7 @@
 
 ### sample_007
 
-- Input: ![Input](assets/input_samples/sample_007_008102.jpg)
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
 - 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_007/official_2d_sparse.jpg)
 - 3D overlay: ![3D overlay](assets/reconstruction/sample_007/official_3d_overlay.jpg)
 - Pose: ![Pose](assets/reconstruction/sample_007/official_pose.jpg)
@@ -122,36 +140,91 @@
 
 ![sample_007 multiview](assets/rendered_views/sample_007/multiview_grid.jpg)
 
-## 5. 结果分析
+### sample_008
+
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_008/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_008/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_008/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_008/official_mesh.obj`
+- Multi-view render: available
+
+![sample_008 multiview](assets/rendered_views/sample_008/multiview_grid.jpg)
+
+### sample_009
+
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_009/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_009/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_009/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_009/official_mesh.obj`
+- Multi-view render: available
+
+![sample_009 multiview](assets/rendered_views/sample_009/multiview_grid.jpg)
+
+### sample_010
+
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_010/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_010/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_010/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_010/official_mesh.obj`
+- Multi-view render: available
+
+![sample_010 multiview](assets/rendered_views/sample_010/multiview_grid.jpg)
+
+### sample_011
+
+- Input: original CelebA symlink omitted from local deliverable; see input grid and prepare summary.
+- 2D sparse landmarks: ![2D sparse landmarks](assets/reconstruction/sample_011/official_2d_sparse.jpg)
+- 3D overlay: ![3D overlay](assets/reconstruction/sample_011/official_3d_overlay.jpg)
+- Pose: ![Pose](assets/reconstruction/sample_011/official_pose.jpg)
+- OBJ mesh: `assets/reconstruction/sample_011/official_mesh.obj`
+- Multi-view render: available
+
+![sample_011 multiview](assets/rendered_views/sample_011/multiview_grid.jpg)
+
+## 6. 失败样本摘要
+
+本次 summary 中暂无失败样本记录。
+
+## 7. 结果分析
 
 正脸样本通常能得到较稳定的稠密人脸 mesh、68 点稀疏关键点和较自然的 3D overlay。轻微侧脸在 3DDFA_V2 的姿态建模范围内通常仍可恢复脸部整体几何，但被遮挡的一侧和边缘纹理会更依赖模型先验。遮挡、夸张表情、强光照、模糊或极端姿态会影响 FaceBoxes 检测和 TDDFA 参数估计，表现为关键点偏移、overlay 不贴合或 obj 局部纹理异常。
 
 本 pipeline 默认优先复用官方 `demo.py` 的输出，因此结果应尽量接近官方 3DDFA_V2 demo。若 wrapper 收集结果与官方 demo 不一致，应优先检查输入 basename、`examples/results/` 扫描逻辑、backend 选择和官方依赖，而不是修改模型参数。
 
-## 6. 局限性
+## 8. 局限性
 
 - 单图 3D 重建存在深度歧义，侧脸背面和遮挡区域主要由模型先验补全。
 - 结果依赖官方 FaceBoxes/FaceBoxes_ONNX 的检测质量；检测失败时后续重建无法稳定进行。
 - 本实验不训练模型、不改网络结构、不调 3DMM 基，只使用官方推荐配置和权重。
 - 多角度渲染只是基于官方 obj 的轻量可视化；如果 `pyrender/trimesh/matplotlib` 不可用，报告保留官方 overlay、pose、landmark 和 obj 输出，并在 summary 中记录 render unavailable。
 
-## 7. 运行与交付说明
+## 9. 运行与交付说明
 
-AutoDL smoke:
+AutoDL 500-sample run:
 
 ```bash
 export 3DDFA_REPO=/root/autodl-tmp/task/3DDFA_V2
-export CELEBA_ROOT=/root/autodl-pub/CelebA
+export CELEBA_ROOT=/root/autodl-tmp/celeba
 cd /root/autodl-tmp/CV-project/stage-3
 
 python code/task8/stage3_task8_check_env.py --config configs/task8_3dface/a800_3ddfa_v2.py
-python code/task8/stage3_task8_prepare_samples.py --config configs/task8_3dface/a800_3ddfa_v2.py --celeba-root "$CELEBA_ROOT" --sample-count 1
-python code/task8/stage3_task8_run_reconstruction.py --config configs/task8_3dface/a800_3ddfa_v2.py --max-samples 1
+python code/task8/stage3_task8_prepare_samples.py --config configs/task8_3dface/a800_3ddfa_v2.py --celeba-root "$CELEBA_ROOT" --sample-count 500 --clear-existing
+python code/task8/stage3_task8_run_reconstruction.py --config configs/task8_3dface/a800_3ddfa_v2.py --resume --skip-existing --continue-on-error
 python code/task8/stage3_task8_render_views.py --config configs/task8_3dface/a800_3ddfa_v2.py
 python code/task8/stage3_task8_write_report.py --config configs/task8_3dface/a800_3ddfa_v2.py
 ```
 
-Full run: 去掉 `--sample-count 1` 和 `--max-samples 1`，默认扩展到 8 张。
+分段续跑示例：
+
+```bash
+python code/task8/stage3_task8_run_reconstruction.py --config configs/task8_3dface/a800_3ddfa_v2.py --resume --skip-existing --continue-on-error --start-index 0 --end-index 100
+python code/task8/stage3_task8_run_reconstruction.py --config configs/task8_3dface/a800_3ddfa_v2.py --resume --skip-existing --continue-on-error --start-index 100 --end-index 200
+```
+
+默认只渲染成功样本中的前 12 张。只有显式传入 `--render-all` 才会渲染全部成功样本。
 
 3DDFA_V2 准备方式：
 
@@ -178,6 +251,6 @@ sh ./build.sh
 - `*.pth`、`*.onnx`、checkpoint、缓存
 - 大量逐样本中间输出
 
-## 8. 结论
+## 10. 结论
 
-Task8 使用官方 3DDFA_V2 完成了从单张人脸图像到 3D mesh、landmark/overlay/pose 可视化、多角度展示和 Markdown 报告的可复现流程。stage-3 保持轻量，只保存课程交付所需 wrapper、配置、summary、报告和少量结果图。
+Task8 使用官方 3DDFA_V2 完成了从 CelebA 单张人脸图像到 3D mesh、landmark/overlay/pose 可视化、多角度展示和 Markdown 报告的可复现流程。500 张测试用于验证 pipeline 稳定性；stage-3 保持轻量，只保存课程交付所需 wrapper、配置、summary、报告和少量精选结果图。

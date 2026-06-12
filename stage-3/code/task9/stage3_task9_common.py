@@ -476,6 +476,15 @@ def estimate_face_transform_from_landmarks(points: Any, image_width: int, image_
     if eye_distance < max(12.0, min(image_width, image_height) * 0.025):
         return None
 
+    eye_mid = (
+        (left_eye_center[0] + right_eye_center[0]) / 2.0,
+        (left_eye_center[1] + right_eye_center[1]) / 2.0,
+    )
+    face_x_axis = (
+        (right_eye_center[0] - left_eye_center[0]) / eye_distance,
+        (right_eye_center[1] - left_eye_center[1]) / eye_distance,
+    )
+    face_up_axis = (face_x_axis[1], -face_x_axis[0])
     angle_deg = math.degrees(
         math.atan2(right_eye_center[1] - left_eye_center[1], right_eye_center[0] - left_eye_center[0])
     )
@@ -484,24 +493,37 @@ def estimate_face_transform_from_landmarks(points: Any, image_width: int, image_
     cheek_width = 0.0
     if len(points) > 454:
         cheek_width = euclidean((float(points[234][0]), float(points[234][1])), (float(points[454][0]), float(points[454][1])))
-    face_width = max(bbox_width, cheek_width, eye_distance * 2.1)
+    fallback_face_width = eye_distance * 2.35
+    if cheek_width >= eye_distance * 1.6:
+        face_width = cheek_width
+    elif bbox_width >= eye_distance * 1.6:
+        face_width = min(bbox_width, eye_distance * 3.2)
+    else:
+        face_width = fallback_face_width
+    face_width = max(face_width, fallback_face_width)
 
     face_center = ((face_min_x + face_max_x) / 2.0, (face_min_y + face_max_y) / 2.0)
     brow_center = mean_landmark_point(points, BROW_REGION)
     if brow_center == (0.0, 0.0):
         brow_center = (
-            (left_eye_center[0] + right_eye_center[0]) / 2.0,
-            (left_eye_center[1] + right_eye_center[1]) / 2.0 - eye_distance * 0.35,
+            eye_mid[0] + face_up_axis[0] * eye_distance * 0.35,
+            eye_mid[1] + face_up_axis[1] * eye_distance * 0.35,
         )
-    forehead_anchor = (brow_center[0], brow_center[1] - face_width * 0.32)
+    forehead_anchor = (
+        brow_center[0] + face_up_axis[0] * eye_distance * 0.45,
+        brow_center[1] + face_up_axis[1] * eye_distance * 0.45,
+    )
+    hat_anchor = (
+        forehead_anchor[0] + face_up_axis[0] * eye_distance * 0.20,
+        forehead_anchor[1] + face_up_axis[1] * eye_distance * 0.20,
+    )
     return {
         "left_eye_center": left_eye_center,
         "right_eye_center": right_eye_center,
-        "eye_center": (
-            (left_eye_center[0] + right_eye_center[0]) / 2.0,
-            (left_eye_center[1] + right_eye_center[1]) / 2.0,
-        ),
+        "eye_center": eye_mid,
         "eye_distance": eye_distance,
+        "face_x_axis": face_x_axis,
+        "face_up_axis": face_up_axis,
         "angle_deg": angle_deg,
         "sticker_angle_deg": -angle_deg,
         "face_width": face_width,
@@ -509,6 +531,9 @@ def estimate_face_transform_from_landmarks(points: Any, image_width: int, image_
         "face_center": face_center,
         "brow_center": brow_center,
         "forehead_anchor": forehead_anchor,
+        "hat_anchor": hat_anchor,
+        "hat_width": max(face_width * 1.35, eye_distance * 3.0),
+        "hat_angle_deg": -angle_deg,
     }
 
 
@@ -535,19 +560,26 @@ def compute_hat_transform(
     y_offset_factor: float = 0.55,
 ) -> Dict[str, float]:
     face_width = float(geometry["face_width"])
-    hat_width = face_width * float(scale_factor)
+    eye_distance = float(geometry["eye_distance"])
+    hat_width = max(face_width * float(scale_factor), eye_distance * 3.0)
     hat_height = hat_width * float(sticker_aspect)
-    face_center = geometry["face_center"]
-    brow_center = geometry["brow_center"]
-    center_y = float(brow_center[1]) - face_width * float(y_offset_factor)
+    hat_anchor = geometry.get("hat_anchor")
+    if not hat_anchor:
+        brow_center = geometry["brow_center"]
+        face_up_axis = geometry.get("face_up_axis", (0.0, -1.0))
+        hat_anchor = (
+            float(brow_center[0]) + float(face_up_axis[0]) * face_width * float(y_offset_factor),
+            float(brow_center[1]) + float(face_up_axis[1]) * face_width * float(y_offset_factor),
+        )
     return {
-        "center_x": float(face_center[0]),
-        "center_y": center_y,
+        "anchor_x": float(hat_anchor[0]),
+        "anchor_y": float(hat_anchor[1]),
         "width": hat_width,
         "height": hat_height,
-        "bottom_y": center_y + hat_height / 2.0,
         "angle_deg": float(geometry["sticker_angle_deg"]),
         "head_angle_deg": float(geometry["angle_deg"]),
+        "sticker_anchor_x": 0.5,
+        "sticker_anchor_y": 0.82,
     }
 
 

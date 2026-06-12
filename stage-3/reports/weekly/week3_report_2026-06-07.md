@@ -5,7 +5,7 @@
 ## 1. 本周已完成
 
 * 完成 Stage3 Task7.x StarGAN 人脸属性编辑交付，整理官方 StarGAN wrapper、CelebA 数据准备、预训练 sanity check、自训练/预训练效果对比、属性编辑指标、身份保持指标和独立报告目录。
-* 完成 Stage3 Task8.x 3DDFA_V2 单图三维人脸重建交付，整理官方 3DDFA_V2 subprocess wrapper、CelebA 输入样本、2D sparse landmarks、3D overlay、pose、OBJ mesh 和多视角渲染结果。
+* 完成 Stage3 Task8.x 3DDFA_V2 单图三维人脸重建扩展实验，从 CelebA 中抽取 500 张测试图片进行 reconstruction，并输出 2D sparse landmarks、3D overlay、pose、OBJ mesh、多视角渲染和 summary 统计。报告中只展示精选样本，完整统计保存在 `reports/task8/summaries/`。
 * 完成 Stage3 Task9.x MediaPipe Face Mesh 动态人脸特效交付，支持真实 mp4 视频输入，输出眼镜、帽子、磨皮、美白、口红动态效果、关键帧和 demo video。
 * Stage3 代码集中在 `code/task7/`、`code/task8/`、`code/task9/`，报告和结果集中在 `reports/task7/`、`reports/task8/`、`reports/task9/`，权重、原始数据和第三方 repo 不进入最终 repo 交付。
 
@@ -42,15 +42,15 @@ python code/task9/stage3_task9_benchmark.py --help
 
 ![Task7 StarGAN help 运行截图](assets/stage3_task7_help.png)
 
-### 2.3 Task8 3DDFA_V2 help 运行截图
+### 2.3 Task8 500 张 CelebA 重建结果检查
 
-对应任务：Stage3 Task8.x 单图三维人脸重建。
+对应任务：Stage3 Task8.x 500 张 CelebA 单图三维人脸重建。
 
-运行内容：本地运行 `python code/task8/stage3_task8_run_reconstruction.py --help`，确认官方 3DDFA_V2 subprocess wrapper 的 backend、mode、样本数和输出参数。
+运行内容：读取 Task8 prepare/reconstruction/render summary，检查 500 张输入样本、成功重建数量、失败数量、后端选择、OBJ 输出和精选多视角渲染结果。
 
-结果解读：Task8 wrapper 入口正常；实际 3DDFA_V2 官方 repo、权重和 GPU 推理结果以 AutoDL summary 记录为准，第三方 repo 不放入 stage-3。
+结果解读：500 张实验比原少量样本更能说明 pipeline 稳定性；报告展示精选样本，全部结果通过 summary 和结果目录交付。下方截图为本地真实读取 Task8 prepare/reconstruction/render/report summary 后生成的终端检查结果。
 
-![Task8 3DDFA_V2 help 运行截图](assets/stage3_task8_help.png)
+![Task8 500 张 CelebA 重建结果检查截图](assets/stage3_task8_500_summary_terminal.png)
 
 ### 2.4 Task9 动态特效 help 与 py_compile 运行截图
 
@@ -94,23 +94,31 @@ FID/IS 本次未计算，因此本报告主要使用属性编辑成功率、身�
 
 ### 3.2 Task8 3DDFA_V2 单图三维人脸重建
 
-Task8 使用官方 3DDFA_V2 完成单图 3D face reconstruction。输入是少量 CelebA 静态人脸样本，输出包括 2D sparse landmarks、3D overlay、pose estimation、OBJ mesh 和多视角渲染图。
+Task8 使用官方 3DDFA_V2 完成 single-image 3D face reconstruction。本次扩展实验不再只使用少量示例图，而是从 CelebA 中随机抽取 500 张测试图片，批量执行 2D sparse landmark、3D overlay、pose estimation 和 OBJ mesh 导出。为避免报告过大，多视角渲染只对精选成功样本进行展示，完整 reconstruction 统计保存在 summary 文件中。
 
-stage-3 只保存 wrapper、summary 和输出结果，官方 3DDFA_V2 repo 以外部路径和 commit 记录，不复制进交付目录。
+stage-3 只保存 wrapper、summary 和输出结果，官方 3DDFA_V2 repo 以外部路径和 commit 记录，不复制进交付目录。本次 input grid 只展示 500 张中的抽样缩略图，完整输入列表记录在 `task8_prepare_summary.json`。
 
 | 指标 | 结果 |
 | --- | --- |
-| 输入样本数 | 8 |
-| 成功重建样本数 | 8 |
+| Requested samples | 500 |
+| Actual input samples | 500 |
+| Processed samples | 500 |
+| Successful reconstructions | 500 |
+| Failed reconstructions | 0 |
+| Success rate | 100.00% |
+| Pending samples | 0 |
+| Skipped existing outputs | 20 |
 | Reconstruction backend | pth |
-| Reconstruction mode | gpu |
+| Mode | gpu |
+| Official outputs | 2d_sparse / 3d / pose / obj |
+| Rendered showcase samples | 12 |
 | Render backend | matplotlib |
-| 输出类型 | 2d_sparse / 3d / pose / obj |
+| Render strategy | first_success, render_all=false |
 | 多视角角度 | frontal / left_yaw_30 / right_yaw_30 / left_yaw_60 / right_yaw_60 |
 
-结果结论：3DDFA_V2 官方 wrapper 能从单张人脸恢复粗略 3D 形状并导出 OBJ；但重建精度依赖官方模型和输入质量，本阶段不做精细几何误差评估。
+从 500 张 CelebA 测试图的批量结果看，3DDFA_V2 wrapper 能够稳定完成单图 3DMM-based reconstruction，并生成 landmarks、3D overlay、pose 和 OBJ mesh 等交付结果。本次 summary 显示 500 张全部生成必需输出，失败样本数为 0；需要注意的是，该实验验证的是官方 3DDFA_V2 单图重建和可视化 pipeline 的稳定性，并未进行 NeRF 训练，也没有进行高精度三维扫描级误差评估。
 
-![Task8 CelebA 输入样本](../task8/assets/input_samples/input_samples_grid.jpg)
+![Task8 500 张 CelebA 输入样本抽样总览](../task8/assets/input_samples/input_samples_grid.jpg)
 
 ![Task8 2D sparse landmarks](../task8/assets/reconstruction/sample_000/official_2d_sparse.jpg)
 
@@ -118,7 +126,11 @@ stage-3 只保存 wrapper、summary 和输出结果，官方 3DDFA_V2 repo 以�
 
 ![Task8 pose estimation](../task8/assets/reconstruction/sample_000/official_pose.jpg)
 
-![Task8 OBJ 多视角渲染](../task8/assets/rendered_views/sample_000/multiview_grid.jpg)
+![Task8 sample 000 多视角渲染](../task8/assets/rendered_views/sample_000/multiview_grid.jpg)
+
+![Task8 sample 001 多视角渲染](../task8/assets/rendered_views/sample_001/multiview_grid.jpg)
+
+![Task8 sample 002 多视角渲染](../task8/assets/rendered_views/sample_002/multiview_grid.jpg)
 
 ---PAGEBREAK---
 
@@ -260,64 +272,72 @@ def predict_generated_attrs(cfg: dict[str, Any], model: nn.Module, manifest: dic
 文件：`code/task8/stage3_task8_run_reconstruction.py`
 
 ```python
-def build_official_command(
-    cfg: Dict[str, Any],
-    image_path: Path,
-    opt: str,
-    backend: str,
-    mode: str,
-    python_bin: str,
-) -> List[str]:
-    cmd = [
-        python_bin,
-        "demo.py",
-        "-c",
-        official_config_arg(cfg),
-        "-f",
-        str(image_path),
-        "-m",
-        mode,
-        "-o",
-        opt,
-        "--show_flag",
-        show_flag_value(cfg),
-    ]
-    if backend == "onnx":
-        cmd.append("--onnx")
-    return cmd
+parser.add_argument("--max-samples", type=int, default=None)
+parser.add_argument("--start-index", type=int, default=0)
+parser.add_argument("--end-index", type=int, default=None)
+parser.add_argument("--outputs", nargs="+", choices=["2d_sparse", "2d_dense", "3d", "depth", "pncc", "pose", "uv_tex", "ply", "obj"], default=None)
+parser.add_argument("--force", action="store_true", help="Replace each sample reconstruction directory before running.")
+parser.add_argument("--resume", action="store_true", default=None, help="Load previous reconstruction summary and update records incrementally.")
+parser.add_argument("--skip-existing", action="store_true", default=None, help="Skip samples whose archived outputs already match the current input.")
+parser.add_argument("--continue-on-error", action="store_true", default=None, help="Record per-sample failures and continue with remaining samples.")
+
+def select_work_items(samples: List[Dict[str, Any]], start_index: int, end_index: Optional[int], max_samples: Optional[int]) -> List[Dict[str, Any]]:
+    if start_index < 0:
+        raise ValueError("--start-index must be non-negative")
+    end = len(samples) if end_index is None else min(end_index, len(samples))
+    if end < start_index:
+        raise ValueError("--end-index must be greater than or equal to --start-index")
+    selected = samples[start_index:end]
+    if max_samples is not None:
+        selected = selected[:max_samples]
+    return selected
+
+def previous_records_by_id(cfg: Dict[str, Any], resume: bool) -> Dict[str, Dict[str, Any]]:
+    path = reconstruction_summary_path(cfg)
+    if not resume or not path.exists():
+        return {}
+    try:
+        previous = read_json(path)
+    except Exception:
+        return {}
+    return {str(row.get("sample_id")): row for row in previous.get("records", []) if row.get("sample_id")}
 ```
 
-解释：Task8 没有复制或改写官方 3DDFA_V2，而是通过 subprocess 调用官方 `demo.py`。stage-3 保存 wrapper、summary 和归档结果，第三方 repo 路径、backend 和 commit 写入 summary，便于复现实验。
+解释：Task8 的 reconstruction wrapper 已经按批处理方式组织，支持 `--resume`、`--skip-existing`、`--continue-on-error`、`--start-index`、`--end-index` 和 `--max-samples`。500 张实验中，单张失败不会默认中断整个批处理；已存在且与当前输入匹配的结果会被记录为 skipped existing，从而避免重复运行官方 demo。每张样本归档 `official_2d_sparse.jpg`、`official_3d_overlay.jpg`、`official_pose.jpg` 和 `official_mesh.obj`，最终 summary 统计 sample_count、success_count、failure_count、skipped_count 和 success_rate。
 
 ### 4.5 Task8 OBJ 多视角渲染
 
 文件：`code/task8/stage3_task8_render_views.py`
 
 ```python
-def parse_angles(cfg: Dict[str, Any]) -> List[Dict[str, float]]:
-    raw = cfg_get(cfg, "render", "angles", [])
-    angles = []
-    for item in raw:
-        if isinstance(item, dict):
-            angles.append(
-                {
-                    "name": str(item.get("name", "view")),
-                    "yaw": float(item.get("yaw", 0.0)),
-                    "pitch": float(item.get("pitch", 0.0)),
-                }
-            )
-        elif isinstance(item, (tuple, list)) and len(item) >= 2:
-            angles.append({"name": str(item[0]), "yaw": float(item[1]), "pitch": float(item[2]) if len(item) > 2 else 0.0})
-    if not angles:
-        angles = [
-            {"name": "frontal", "yaw": 0.0, "pitch": 0.0},
-            {"name": "left_yaw_30", "yaw": -30.0, "pitch": 0.0},
-            {"name": "right_yaw_30", "yaw": 30.0, "pitch": 0.0},
-        ]
-    return angles
+def select_render_records(records: List[Dict[str, Any]], render_all: bool, max_render_samples: int, strategy: str) -> List[Dict[str, Any]]:
+    if render_all:
+        return records
+    if strategy != "first_success":
+        raise ValueError("Unsupported render_sample_strategy: {}".format(strategy))
+    return records[:max_render_samples]
+
+
+def main() -> None:
+    args = parse_args()
+    cfg = load_config(args.config)
+    recon_path = reconstruction_summary_path(cfg)
+    if not recon_path.exists():
+        raise FileNotFoundError("Missing reconstruction summary: {}. Run stage3_task8_run_reconstruction.py first.".format(recon_path))
+    recon = read_json(recon_path)
+    requested_backend = args.backend or str(cfg_get(cfg, "render", "backend", "auto"))
+    backend, backend_reason = choose_render_backend(requested_backend)
+    image_size = args.image_size or int(cfg_get(cfg, "render", "image_size", 640))
+    max_faces = args.max_faces or int(cfg_get(cfg, "render", "max_faces", 8000))
+    render_all = bool(cfg_get(cfg, "render", "render_all", False)) if args.render_all is None else bool(args.render_all)
+    max_render_samples = args.max_render_samples if args.max_render_samples is not None else int(cfg_get(cfg, "render", "max_render_samples", 12))
+    render_strategy = str(cfg_get(cfg, "render", "render_sample_strategy", "first_success"))
+    angles = parse_angles(cfg)
+    successful = successful_records(recon)
+    render_targets = select_render_records(successful, render_all, max_render_samples, render_strategy)
 ```
 
-解释：多视角渲染根据配置生成不同 yaw 角度。当前 summary 选择 matplotlib fallback，适合把 OBJ mesh 以稳定、轻量的方式渲染成 frontal 和左右 yaw 视角图。
+解释：多视角渲染默认不处理全部 500 张成功样本，而是从 successful reconstruction 中选取 `max_render_samples=12` 个精选样本。这样既能展示 OBJ mesh 的 frontal、left/right yaw 30 和 left/right yaw 60 视角，也避免报告和提交包因为 500 张全部渲染而过大。当前 summary 选择 matplotlib fallback，render_all=false，render_sample_strategy=first_success。
 
 ### 4.6 Task9 Face Mesh 单帧处理
 
@@ -459,10 +479,13 @@ def empty_profile_totals() -> Dict[str, float]:
 | Task7 report | `reports/task7/stage3_task7_stargan_attribute_editing_report.md` |
 | Task7 summaries | `reports/task7/summaries/` |
 | Task7 assets | `reports/task7/assets/` |
-| Task8 report | `reports/task8/stage3_task8_3d_face_reconstruction_report.md` |
-| Task8 summaries | `reports/task8/summaries/` |
-| Task8 rendered views | `reports/task8/assets/rendered_views/` |
-| Task8 OBJ mesh outputs | `reports/task8/assets/reconstruction/*/official_mesh.obj` |
+| Task8 500 张重建报告 | `reports/task8/stage3_task8_3d_face_reconstruction_report.md` |
+| Task8 500 张 prepare summary | `reports/task8/summaries/task8_prepare_summary.json` |
+| Task8 500 张 reconstruction summary | `reports/task8/summaries/task8_reconstruction_summary.json` |
+| Task8 多视角渲染 summary | `reports/task8/summaries/task8_render_summary.json` |
+| Task8 输入样本总览 | `reports/task8/assets/input_samples/input_samples_grid.jpg` |
+| Task8 精选重建结果 | `reports/task8/assets/reconstruction/` |
+| Task8 精选多视角渲染 | `reports/task8/assets/rendered_views/` |
 | Task9 report | `reports/task9/stage3_task9_dynamic_face_effects_report.md` |
 | Task9 performance summary | `reports/task9/summaries/task9_performance_summary.json` |
 | Task9 effects summary | `reports/task9/summaries/task9_effects_summary.json` |
