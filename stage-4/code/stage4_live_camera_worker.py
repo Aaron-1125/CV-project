@@ -21,7 +21,7 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from stage4_backend import EFFECT_CHOICES, Stage4FrameProcessor, options_from_values
-from stage4_common import load_python_config
+from stage4_common import load_python_config, stage4_asset_dir, stage4_report_dir
 
 
 DEFAULT_CONTROLS: Dict[str, Any] = {
@@ -42,14 +42,16 @@ DEFAULT_CONTROLS: Dict[str, Any] = {
 
 
 def parse_args() -> argparse.Namespace:
+    runtime_dir = stage4_report_dir() / "runtime"
+    screenshot_dir = stage4_asset_dir() / "screenshots"
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default=None)
     parser.add_argument("--camera", type=int, default=0)
     parser.add_argument("--process-width", type=int, default=720)
-    parser.add_argument("--controls", type=Path, default=Path("stage-4/reports/runtime/live_controls.json"))
-    parser.add_argument("--preview", type=Path, default=Path("stage-4/reports/runtime/live_preview.jpg"))
-    parser.add_argument("--status", type=Path, default=Path("stage-4/reports/runtime/live_status.json"))
-    parser.add_argument("--screenshot-dir", type=Path, default=Path("stage-4/reports/assets/screenshots"))
+    parser.add_argument("--controls", type=Path, default=runtime_dir / "live_controls.json")
+    parser.add_argument("--preview", type=Path, default=runtime_dir / "live_preview.jpg")
+    parser.add_argument("--status", type=Path, default=runtime_dir / "live_status.json")
+    parser.add_argument("--screenshot-dir", type=Path, default=screenshot_dir)
     return parser.parse_args()
 
 

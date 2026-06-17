@@ -1,0 +1,31 @@
+{
+  "packaging_target": "macOS",
+  "app_name": "Stage4FaceEffects.app",
+  "unified_entry": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/code/stage4_app_main.py",
+  "pyinstaller_spec": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/packaging/stage4_face_effects.spec",
+  "build_script": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/packaging/build_macos_app.sh",
+  "dist_app_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/packaging/dist/Stage4FaceEffects.app",
+  "source_mode_supported": true,
+  "frozen_mode_supported": true,
+  "gui_mode": "--gui",
+  "run_cli_mode": "--run-cli",
+  "live_worker_mode": "--live-worker",
+  "write_report_mode": "--write-report",
+  "check_env_mode": "--check-env",
+  "user_data_dir": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports",
+  "frozen_user_data_dir": "/Users/aaron/Documents/Stage4FaceEffects",
+  "notarized": false,
+  "codesign": "ad_hoc",
+  "app_bundle_exists": true,
+  "executable_exists": true,
+  "info_plist_exists": true,
+  "known_limitations": [
+    "The current build is for local course-project demonstration on macOS only.",
+    "The app is not Apple-notarized; macOS may require right-click Open or manual permission approval.",
+    "Camera permission must be granted to Stage4FaceEffects after packaging.",
+    "Local export, realtime camera, and recording should be manually verified after building the .app.",
+    "PyInstaller may warn about optional MediaPipe genai/torch submodules; Stage4 Task9 face effects do not use that path.",
+    "Windows, Android, and iOS packaging are out of scope for this stage."
+  ],
+  "manual_check_required": true
+}

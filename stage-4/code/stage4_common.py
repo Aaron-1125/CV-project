@@ -13,17 +13,26 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional
 
+from stage4_packaging_utils import (
+    app_base_dir,
+    bundled_or_source_path,
+    is_frozen,
+    source_repo_root,
+    source_stage4_root,
+    user_data_dir,
+)
+
 
 def now_ts() -> str:
     return datetime.now().isoformat(timespec="seconds")
 
 
 def stage4_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+    return app_base_dir() / "stage-4" if is_frozen() else source_stage4_root()
 
 
 def repo_root() -> Path:
-    return stage4_root().parent
+    return app_base_dir() if is_frozen() else source_repo_root()
 
 
 def stage3_root() -> Path:
@@ -39,7 +48,7 @@ def stage4_code_dir() -> Path:
 
 
 def stage4_report_dir() -> Path:
-    return stage4_root() / "reports"
+    return user_data_dir()
 
 
 def stage4_asset_dir() -> Path:
@@ -63,18 +72,19 @@ def stage4_report_path() -> Path:
 
 
 def default_stage4_config_path() -> Path:
-    return stage4_root() / "configs" / "stage4_app_config.py"
+    return bundled_or_source_path("stage-4/configs/stage4_app_config.py")
 
 
 def ensure_stage4_dirs() -> None:
-    for path in [
-        stage4_code_dir(),
-        stage4_root() / "configs",
+    paths = [
         stage4_report_dir(),
         stage4_asset_dir(),
         stage4_video_dir(),
         stage4_summary_dir(),
-    ]:
+    ]
+    if not is_frozen():
+        paths.extend([stage4_code_dir(), stage4_root() / "configs"])
+    for path in paths:
         path.mkdir(parents=True, exist_ok=True)
 
 
@@ -82,6 +92,8 @@ def resolve_repo_path(path_value: Any) -> Path:
     path = Path(str(path_value)).expanduser()
     if path.is_absolute():
         return path
+    if is_frozen() and len(path.parts) >= 2 and path.parts[0] == "stage-4" and path.parts[1] == "reports":
+        return stage4_report_dir().joinpath(*path.parts[2:])
     return repo_root() / path
 
 
@@ -99,7 +111,7 @@ def resolve_cwd_or_repo_path(path_value: Any) -> Path:
     cwd_candidate = Path.cwd() / path
     if cwd_candidate.exists():
         return cwd_candidate
-    return repo_root() / path
+    return resolve_repo_path(path)
 
 
 def add_task9_to_path() -> Path:

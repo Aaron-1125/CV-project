@@ -1,12 +1,14 @@
 {
   "stage": "stage4",
   "task": "project_integration",
-  "generated_at": "2026-06-11T23:40:29",
+  "generated_at": "2026-06-13T18:53:07",
   "backend": "stage3_task9_mediapipe_opencv",
   "input_video": "/Users/aaron/Downloads/8724304-uhd_2160_4096_25fps.mp4",
-  "output_video": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/videos/stage4_desktop_export.mp4",
+  "output_video": "/Users/aaron/Desktop/stage4_local_export_20260613_185109.mp4",
   "enabled_effects": [
     "glasses",
+    "lipstick",
+    "smooth",
     "whiten"
   ],
   "debug_options": {
@@ -14,17 +16,20 @@
     "landmarks_keyframe_debug": true,
     "debug_sticker_geometry": false
   },
-  "mode": "fast_preview",
-  "fast_mode": true,
-  "process_width": 720,
-  "max_frames": 30,
-  "processed_frame_count": 30,
-  "fps": 37.15776536999234,
-  "processing_fps": 37.15776536999234,
-  "avg_ms_per_frame": 26.912274999388803,
+  "mode": "quality_export",
+  "fast_mode": false,
+  "process_width": null,
+  "max_frames": null,
+  "full_length_export": true,
+  "original_resolution_export": true,
+  "user_selected_output_path": true,
+  "processed_frame_count": 912,
+  "fps": 14.433355122945347,
+  "processing_fps": 14.433355122945347,
+  "avg_ms_per_frame": 69.28396006901096,
   "output_resolution": {
-    "width": 380,
-    "height": 720
+    "width": 2160,
+    "height": 4096
   },
   "environment": {
     "python_executable": "/opt/anaconda3/envs/cv-stage4/bin/python",
@@ -44,7 +49,7 @@
     }
   },
   "output_files": {
-    "video": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/videos/stage4_desktop_export.mp4",
+    "video": "/Users/aaron/Desktop/stage4_local_export_20260613_185109.mp4",
     "summary": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/summaries/stage4_desktop_export_summary.json",
     "report": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/stage4_project_integration_report.md",
     "keyframes": [
@@ -68,38 +73,40 @@
     "Desktop GUI uses QProcess to call the CLI and intentionally avoids importing cv2, numpy, mediapipe, stage4_backend, or Stage3 Task9 in the GUI process.",
     "Stage4 UI V3 embeds realtime preview by polling worker-generated preview JPG/status JSON while controls are written through live_controls.json.",
     "Hat sticker geometry uses eye centers, local face axes, forehead anchor, and sticker-anchor alignment for more stable off-center and tilted-head placement.",
+    "Local video export defaults to full-length, original-resolution processing unless fast preview options are explicitly enabled.",
+    "Desktop local import and realtime recording support user-selected output paths, with timestamped defaults under stage-4/reports/assets/.",
     "pip check warning: mediapipe 0.10.21 is not supported on this platform"
   ],
   "raw_task9_result": {
     "mode": "video",
-    "processing_mode": "fast",
+    "processing_mode": "quality",
     "device_requested": "cpu",
     "device_used": "cpu",
     "device_note": "CPU MediaPipe/OpenCV pipeline.",
     "input_video": "/Users/aaron/Downloads/8724304-uhd_2160_4096_25fps.mp4",
-    "output_video": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/videos/stage4_desktop_export.mp4",
+    "output_video": "/Users/aaron/Desktop/stage4_local_export_20260613_185109.mp4",
     "source_fps": 25.0,
     "output_fps": 25.0,
-    "process_width": 380,
-    "process_height": 720,
+    "process_width": 2160,
+    "process_height": 4096,
     "total_frames_in_source": 912,
-    "processed_frames": 30,
-    "faces_detected_frames": 30,
-    "average_processing_fps": 37.15776536999234,
-    "total_seconds": 0.8073682499816641,
-    "detection_seconds": 0.05014550080522895,
-    "sticker_seconds": 0.002821580972522497,
-    "beauty_seconds": 0.07108070806134492,
-    "lipstick_seconds": 0.0,
-    "render_seconds": 0.07392791600432247,
-    "write_seconds": 0.015493459068238735,
-    "average_detection_ms": 1.6715166935076315,
-    "average_sticker_ms": 0.09405269908408324,
-    "average_beauty_ms": 2.369356935378164,
-    "average_lipstick_ms": 0.0,
-    "average_render_ms": 2.464263866810749,
-    "average_write_ms": 0.5164486356079578,
-    "sticker_cache_size": 3,
+    "processed_frames": 912,
+    "faces_detected_frames": 912,
+    "average_processing_fps": 14.433355122945347,
+    "total_seconds": 63.186971582937986,
+    "detection_seconds": 2.816516336519271,
+    "sticker_seconds": 2.3969351985724643,
+    "beauty_seconds": 30.380453000892885,
+    "lipstick_seconds": 2.200275986455381,
+    "render_seconds": 34.980032024672255,
+    "write_seconds": 14.84569236135576,
+    "average_detection_ms": 3.088285456709727,
+    "average_sticker_ms": 2.628218419487351,
+    "average_beauty_ms": 33.31190022027729,
+    "average_lipstick_ms": 2.412583318481777,
+    "average_render_ms": 38.35529827266695,
+    "average_write_ms": 16.278171448854998,
+    "sticker_cache_size": 44,
     "sticker_cache_enabled": true,
     "keyframes": [
       {
@@ -110,81 +117,697 @@
         "debug_geometry_path": null,
         "geometry": {
           "left_eye_center": [
-            189.16478435809796,
-            242.43441889836237
+            1086.821533203125,
+            1388.4517446664663
           ],
           "right_eye_center": [
-            223.76503577599158,
-            232.91334298940805
+            1270.9179030198318,
+            1316.757061298077
           ],
           "eye_center": [
-            206.46491006704477,
-            237.6738809438852
+            1178.8697181114785,
+            1352.6044029822715
           ],
-          "eye_distance": 35.88632447946598,
+          "eye_distance": 197.56416932982378,
           "face_x_axis": [
-            0.9641625861598545,
-            -0.265312094427565
+            0.9318307587919287,
+            -0.36289314814316664
           ],
           "face_up_axis": [
-            -0.265312094427565,
-            -0.9641625861598545
+            -0.36289314814316664,
+            -0.9318307587919287
           ],
-          "angle_deg": -15.385498318800126,
-          "sticker_angle_deg": 15.385498318800126,
-          "face_width": 84.33286252674506,
+          "angle_deg": -21.277980827579295,
+          "sticker_angle_deg": 21.277980827579295,
+          "face_width": 464.2757979250859,
           "face_bbox": [
-            167.6111602783203,
-            201.74606323242188,
-            245.4945526123047,
-            306.49945068359375
+            941.5425415039062,
+            1144.4813232421875,
+            1373.71826171875,
+            1748.1312255859375
           ],
           "face_center": [
-            206.5528564453125,
-            254.1227569580078
+            1157.6304016113281,
+            1446.3062744140625
           ],
           "brow_center": [
-            206.08855209350585,
-            227.4203239440918
+            1173.2223724365235,
+            1293.8761169433594
           ],
           "forehead_anchor": [
-            201.80406793447642,
-            211.85021080603966
+            1140.9597649207483,
+            1211.0327505258413
           ],
           "hat_anchor": [
-            199.89985275268555,
-            204.93016052246094
+            1126.6208282470704,
+            1174.2134765624999
           ],
-          "hat_width": 113.84936441110584,
-          "hat_angle_deg": 15.385498318800126
+          "hat_width": 626.772327198866,
+          "hat_angle_deg": 21.277980827579295
         },
         "sticker_boxes": [
           {
             "label": "glasses",
             "center": [
-              206.46491006704477,
-              238.75047067826918
+              1178.8697181114785,
+              1358.5313280621663
             ],
             "box": [
-              164.0,
-              215.0,
-              248.0,
-              263.0
+              949.0,
+              1211.0,
+              1408.0,
+              1506.0
             ],
             "clipped_box": [
-              164.0,
-              215.0,
-              248.0,
-              263.0
+              949.0,
+              1211.0,
+              1408.0,
+              1506.0
             ],
-            "width": 84.0,
-            "height": 48.0,
+            "width": 459.0,
+            "height": 295.0,
             "pose": {
-              "center_x": 206.46491006704477,
-              "center_y": 238.75047067826918,
-              "width": 78.94991385482517,
-              "angle_deg": 15.385498318800126,
-              "head_angle_deg": -15.385498318800126
+              "center_x": 1178.8697181114785,
+              "center_y": 1358.5313280621663,
+              "width": 434.6411725256124,
+              "angle_deg": 21.277980827579295,
+              "head_angle_deg": -21.277980827579295
+            }
+          }
+        ],
+        "face_detected": true
+      },
+      {
+        "frame_index": 114,
+        "before_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00114_before.jpg",
+        "after_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00114_after.jpg",
+        "landmark_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00114_landmarks.jpg",
+        "debug_geometry_path": null,
+        "geometry": {
+          "left_eye_center": [
+            958.0877309945913,
+            1363.043710561899
+          ],
+          "right_eye_center": [
+            1152.6847675030049,
+            1356.9429368239182
+          ],
+          "eye_center": [
+            1055.386249248798,
+            1359.9933236929087
+          ],
+          "eye_distance": 194.69264510519878,
+          "face_x_axis": [
+            0.9995089254823492,
+            -0.03133540938171686
+          ],
+          "face_up_axis": [
+            -0.03133540938171686,
+            -0.9995089254823492
+          ],
+          "angle_deg": -1.7956806541815349,
+          "sticker_angle_deg": 1.7956806541815349,
+          "face_width": 457.5277159972172,
+          "face_bbox": [
+            838.7703857421875,
+            1183.180908203125,
+            1275.6861572265625,
+            1714.31298828125
+          ],
+          "face_center": [
+            1057.228271484375,
+            1448.7469482421875
+          ],
+          "brow_center": [
+            1052.6089599609375,
+            1305.5721862792968
+          ],
+          "forehead_anchor": [
+            1049.8636117788462,
+            1218.0035198505107
+          ],
+          "hat_anchor": [
+            1048.6434570312501,
+            1179.084112548828
+          ],
+          "hat_width": 617.6624165962432,
+          "hat_angle_deg": 1.7956806541815349
+        },
+        "sticker_boxes": [
+          {
+            "label": "glasses",
+            "center": [
+              1055.386249248798,
+              1365.8341030460647
+            ],
+            "box": [
+              839.0,
+              1287.0,
+              1271.0,
+              1444.0
+            ],
+            "clipped_box": [
+              839.0,
+              1287.0,
+              1271.0,
+              1444.0
+            ],
+            "width": 432.0,
+            "height": 157.0,
+            "pose": {
+              "center_x": 1055.386249248798,
+              "center_y": 1365.8341030460647,
+              "width": 428.32381923143737,
+              "angle_deg": 1.7956806541815349,
+              "head_angle_deg": -1.7956806541815349
+            }
+          }
+        ],
+        "face_detected": true
+      },
+      {
+        "frame_index": 228,
+        "before_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00228_before.jpg",
+        "after_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00228_after.jpg",
+        "landmark_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00228_landmarks.jpg",
+        "debug_geometry_path": null,
+        "geometry": {
+          "left_eye_center": [
+            995.4541625976562,
+            1301.2556715745193
+          ],
+          "right_eye_center": [
+            1207.445782001202,
+            1296.3798452524038
+          ],
+          "eye_center": [
+            1101.4499722994292,
+            1298.8177584134614
+          ],
+          "eye_distance": 212.04768421197434,
+          "face_x_axis": [
+            0.9997356028261425,
+            -0.02299400882511564
+          ],
+          "face_up_axis": [
+            -0.02299400882511564,
+            -0.9997356028261425
+          ],
+          "angle_deg": -1.3175757829170787,
+          "sticker_angle_deg": 1.3175757829170787,
+          "face_width": 498.3120578981397,
+          "face_bbox": [
+            874.0460205078125,
+            1116.0723876953125,
+            1353.178466796875,
+            1670.1845703125
+          ],
+          "face_center": [
+            1113.6122436523438,
+            1393.1284790039062
+          ],
+          "brow_center": [
+            1098.5640258789062,
+            1245.1575073242188
+          ],
+          "forehead_anchor": [
+            1096.3699040339543,
+            1149.7612785926233
+          ],
+          "hat_anchor": [
+            1095.3947387695312,
+            1107.3629547119142
+          ],
+          "hat_width": 672.7212781624886,
+          "hat_angle_deg": 1.3175757829170787
+        },
+        "sticker_boxes": [
+          {
+            "label": "glasses",
+            "center": [
+              1101.4499722994292,
+              1305.1791889398207
+            ],
+            "box": [
+              869.0,
+              1221.0,
+              1333.0,
+              1390.0
+            ],
+            "clipped_box": [
+              869.0,
+              1221.0,
+              1333.0,
+              1390.0
+            ],
+            "width": 464.0,
+            "height": 169.0,
+            "pose": {
+              "center_x": 1101.4499722994292,
+              "center_y": 1305.1791889398207,
+              "width": 466.5049052663436,
+              "angle_deg": 1.3175757829170787,
+              "head_angle_deg": -1.3175757829170787
+            }
+          }
+        ],
+        "face_detected": true
+      },
+      {
+        "frame_index": 342,
+        "before_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00342_before.jpg",
+        "after_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00342_after.jpg",
+        "landmark_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00342_landmarks.jpg",
+        "debug_geometry_path": null,
+        "geometry": {
+          "left_eye_center": [
+            803.7630709134615,
+            1232.4786658653845
+          ],
+          "right_eye_center": [
+            1025.1560950646033,
+            1224.2564603365386
+          ],
+          "eye_center": [
+            914.4595829890325,
+            1228.3675631009614
+          ],
+          "eye_distance": 221.5456517437131,
+          "face_x_axis": [
+            0.9993110783652485,
+            -0.037112917649846346
+          ],
+          "face_up_axis": [
+            -0.037112917649846346,
+            -0.9993110783652485
+          ],
+          "angle_deg": -2.1269019921212555,
+          "sticker_angle_deg": 2.1269019921212555,
+          "face_width": 520.6322815977259,
+          "face_bbox": [
+            677.2554321289062,
+            1036.6026611328125,
+            1196.99951171875,
+            1694.1429443359375
+          ],
+          "face_center": [
+            937.1274719238281,
+            1365.372802734375
+          ],
+          "brow_center": [
+            910.6374359130859,
+            1174.1946716308594
+          ],
+          "forehead_anchor": [
+            906.9374434251052,
+            1074.5678107628455
+          ],
+          "hat_anchor": [
+            905.2930023193361,
+            1030.2892059326173
+          ],
+          "hat_width": 702.85358015693,
+          "hat_angle_deg": 2.1269019921212555
+        },
+        "sticker_boxes": [
+          {
+            "label": "glasses",
+            "center": [
+              914.4595829890325,
+              1235.0139326532728
+            ],
+            "box": [
+              670.0,
+              1146.0,
+              1158.0,
+              1324.0
+            ],
+            "clipped_box": [
+              670.0,
+              1146.0,
+              1158.0,
+              1324.0
+            ],
+            "width": 488.0,
+            "height": 178.0,
+            "pose": {
+              "center_x": 914.4595829890325,
+              "center_y": 1235.0139326532728,
+              "width": 487.4004338361689,
+              "angle_deg": 2.1269019921212555,
+              "head_angle_deg": -2.1269019921212555
+            }
+          }
+        ],
+        "face_detected": true
+      },
+      {
+        "frame_index": 456,
+        "before_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00456_before.jpg",
+        "after_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00456_after.jpg",
+        "landmark_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00456_landmarks.jpg",
+        "debug_geometry_path": null,
+        "geometry": {
+          "left_eye_center": [
+            824.1075110802284,
+            1377.4088322566106
+          ],
+          "right_eye_center": [
+            1065.496089054988,
+            1376.6275353064905
+          ],
+          "eye_center": [
+            944.8018000676082,
+            1377.0181837815505
+          ],
+          "eye_distance": 241.38984237453093,
+          "face_x_axis": [
+            0.9999947620009241,
+            -0.003236660426282117
+          ],
+          "face_up_axis": [
+            -0.003236660426282117,
+            -0.9999947620009241
+          ],
+          "angle_deg": -0.18544730593403133,
+          "sticker_angle_deg": 0.18544730593403133,
+          "face_width": 567.2661295801477,
+          "face_bbox": [
+            682.6018676757812,
+            1163.857666015625,
+            1226.211669921875,
+            1796.82080078125
+          ],
+          "face_center": [
+            954.4067687988281,
+            1480.3392333984375
+          ],
+          "brow_center": [
+            942.8897186279297,
+            1313.8065856933595
+          ],
+          "forehead_anchor": [
+            942.5381350003756,
+            1205.1817256047177
+          ],
+          "hat_anchor": [
+            942.3818756103516,
+            1156.904010009766
+          ],
+          "hat_width": 765.8092749331994,
+          "hat_angle_deg": 0.18544730593403133
+        },
+        "sticker_boxes": [
+          {
+            "label": "glasses",
+            "center": [
+              944.8018000676082,
+              1384.2598790527866
+            ],
+            "box": [
+              681.0,
+              1288.0,
+              1209.0,
+              1480.0
+            ],
+            "clipped_box": [
+              681.0,
+              1288.0,
+              1209.0,
+              1480.0
+            ],
+            "width": 528.0,
+            "height": 192.0,
+            "pose": {
+              "center_x": 944.8018000676082,
+              "center_y": 1384.2598790527866,
+              "width": 531.057653223968,
+              "angle_deg": 0.18544730593403133,
+              "head_angle_deg": -0.18544730593403133
+            }
+          }
+        ],
+        "face_detected": true
+      },
+      {
+        "frame_index": 570,
+        "before_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00570_before.jpg",
+        "after_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00570_after.jpg",
+        "landmark_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00570_landmarks.jpg",
+        "debug_geometry_path": null,
+        "geometry": {
+          "left_eye_center": [
+            886.210679274339,
+            1494.3616661658655
+          ],
+          "right_eye_center": [
+            1138.8192608173076,
+            1491.6694711538462
+          ],
+          "eye_center": [
+            1012.5149700458232,
+            1493.015568659856
+          ],
+          "eye_distance": 252.62292727132544,
+          "face_x_axis": [
+            0.9999432128805102,
+            -0.010656970216831412
+          ],
+          "face_up_axis": [
+            -0.010656970216831412,
+            -0.9999432128805102
+          ],
+          "angle_deg": -0.6106109741442659,
+          "sticker_angle_deg": 0.6106109741442659,
+          "face_width": 593.6638790876148,
+          "face_bbox": [
+            741.5801391601562,
+            1266.0767822265625,
+            1299.534423828125,
+            1947.803955078125
+          ],
+          "face_center": [
+            1020.5572814941406,
+            1606.9403686523438
+          ],
+          "brow_center": [
+            1010.6599914550782,
+            1424.6310546875
+          ],
+          "forehead_anchor": [
+            1009.4485036996695,
+            1310.957192993164
+          ],
+          "hat_anchor": [
+            1008.9100646972656,
+            1260.4354766845702
+          ],
+          "hat_width": 801.44623676828,
+          "hat_angle_deg": 0.6106109741442659
+        },
+        "sticker_boxes": [
+          {
+            "label": "glasses",
+            "center": [
+              1012.5149700458232,
+              1500.5942564779957
+            ],
+            "box": [
+              737.0,
+              1400.0,
+              1289.0,
+              1601.0
+            ],
+            "clipped_box": [
+              737.0,
+              1400.0,
+              1289.0,
+              1601.0
+            ],
+            "width": 552.0,
+            "height": 201.0,
+            "pose": {
+              "center_x": 1012.5149700458232,
+              "center_y": 1500.5942564779957,
+              "width": 555.770439996916,
+              "angle_deg": 0.6106109741442659,
+              "head_angle_deg": -0.6106109741442659
+            }
+          }
+        ],
+        "face_detected": true
+      },
+      {
+        "frame_index": 684,
+        "before_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00684_before.jpg",
+        "after_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00684_after.jpg",
+        "landmark_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00684_landmarks.jpg",
+        "debug_geometry_path": null,
+        "geometry": {
+          "left_eye_center": [
+            870.3926109900841,
+            1531.1197228064905
+          ],
+          "right_eye_center": [
+            1121.7938608022837,
+            1528.1734337439905
+          ],
+          "eye_center": [
+            996.0932358961838,
+            1529.6465782752405
+          ],
+          "eye_distance": 251.4185136905709,
+          "face_x_axis": [
+            0.9999313341005883,
+            -0.011718663909238185
+          ],
+          "face_up_axis": [
+            -0.011718663909238185,
+            -0.9999313341005883
+          ],
+          "angle_deg": -0.6714453520683155,
+          "sticker_angle_deg": 0.6714453520683155,
+          "face_width": 590.8335071728417,
+          "face_bbox": [
+            725.3170776367188,
+            1308.576904296875,
+            1283.5697021484375,
+            1975.768798828125
+          ],
+          "face_center": [
+            1004.4433898925781,
+            1642.1728515625
+          ],
+          "brow_center": [
+            994.5844146728516,
+            1463.6306213378907
+          ],
+          "forehead_anchor": [
+            993.2585845947266,
+            1350.500058922401
+          ],
+          "hat_anchor": [
+            992.6693267822266,
+            1300.219808959961
+          ],
+          "hat_width": 797.6252346833363,
+          "hat_angle_deg": 0.6714453520683155
+        },
+        "sticker_boxes": [
+          {
+            "label": "glasses",
+            "center": [
+              996.0932358961838,
+              1537.1891336859576
+            ],
+            "box": [
+              720.0,
+              1437.0,
+              1272.0,
+              1638.0
+            ],
+            "clipped_box": [
+              720.0,
+              1437.0,
+              1272.0,
+              1638.0
+            ],
+            "width": 552.0,
+            "height": 201.0,
+            "pose": {
+              "center_x": 996.0932358961838,
+              "center_y": 1537.1891336859576,
+              "width": 553.120730119256,
+              "angle_deg": 0.6714453520683155,
+              "head_angle_deg": -0.6714453520683155
+            }
+          }
+        ],
+        "face_detected": true
+      },
+      {
+        "frame_index": 798,
+        "before_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00798_before.jpg",
+        "after_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00798_after.jpg",
+        "landmark_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/outputs/keyframes/keyframe_00798_landmarks.jpg",
+        "debug_geometry_path": null,
+        "geometry": {
+          "left_eye_center": [
+            878.7940157376803,
+            1648.8841928335337
+          ],
+          "right_eye_center": [
+            1094.9807504507212,
+            1640.7381779597356
+          ],
+          "eye_center": [
+            986.8873830942007,
+            1644.8111853966348
+          ],
+          "eye_distance": 216.340153055809,
+          "face_x_axis": [
+            0.9992908466569841,
+            -0.03765373537337138
+          ],
+          "face_up_axis": [
+            -0.03765373537337138,
+            -0.9992908466569841
+          ],
+          "angle_deg": -2.157910240336768,
+          "sticker_angle_deg": 2.157910240336768,
+          "face_width": 508.39935968115117,
+          "face_bbox": [
+            745.54736328125,
+            1455.7802734375,
+            1250.55859375,
+            2074.85009765625
+          ],
+          "face_center": [
+            998.052978515625,
+            1765.315185546875
+          ],
+          "brow_center": [
+            984.1163635253906,
+            1590.8215270996093
+          ],
+          "forehead_anchor": [
+            980.4506568321815,
+            1493.5374964787409
+          ],
+          "hat_anchor": [
+            978.8214538574218,
+            1450.3001495361327
+          ],
+          "hat_width": 686.3391355695542,
+          "hat_angle_deg": 2.157910240336768
+        },
+        "sticker_boxes": [
+          {
+            "label": "glasses",
+            "center": [
+              986.8873830942007,
+              1651.301389988309
+            ],
+            "box": [
+              751.0,
+              1565.0,
+              1223.0,
+              1737.0
+            ],
+            "clipped_box": [
+              751.0,
+              1565.0,
+              1223.0,
+              1737.0
+            ],
+            "width": 472.0,
+            "height": 172.0,
+            "pose": {
+              "center_x": 986.8873830942007,
+              "center_y": 1651.301389988309,
+              "width": 475.94833672277986,
+              "angle_deg": 2.157910240336768,
+              "head_angle_deg": -2.157910240336768
             }
           }
         ],
@@ -196,15 +819,17 @@
   "raw_options": {
     "effects": [
       "glasses",
+      "lipstick",
+      "smooth",
       "whiten"
     ],
     "smooth_strength": 0.55,
     "whiten_strength": 0.35,
     "lipstick_alpha": 0.45,
-    "fast_mode": true,
-    "process_width": 720,
-    "process_height": 720,
-    "max_frames": 30,
+    "fast_mode": false,
+    "process_width": null,
+    "process_height": null,
+    "max_frames": null,
     "fps": null,
     "max_keyframes": null,
     "device": "cpu",

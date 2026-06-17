@@ -1,0 +1,63 @@
+{
+  "covers_stage1": true,
+  "covers_stage2": true,
+  "covers_stage3": true,
+  "covers_stage4": true,
+  "covers_packaging": true,
+  "covers_performance": true,
+  "covers_usage": true,
+  "covers_limitations": true,
+  "covers_future_work": true,
+  "uses_real_metrics_only": true,
+  "metrics_sources": [
+    "stage-1/reports/stage1_task2_2_dataset_summary.json",
+    "stage-1/reports/assets/evaluation/lfw_insightface_verification_summary.json",
+    "stage-2/reports/task3_v2/summaries/task3_v2_baseline_comparison.json",
+    "stage-2/reports/task4/summaries/300w_full_eval_summary.json",
+    "stage-2/reports/task4_v2/summaries/task4_v2_results_comparison.json",
+    "stage-2/reports/task5/summaries/insightface_full_lfw_eval_summary.json",
+    "stage-2/reports/task6/final/summaries/final_latency_summary.json",
+    "stage-3/reports/task7/summaries/task7_evaluation_summary.json",
+    "stage-3/reports/task8/summaries/task8_reconstruction_summary.json",
+    "stage-3/reports/task9/summaries/task9_effects_summary.json",
+    "stage-3/reports/task9/summaries/task9_performance_summary.json",
+    "stage-4/reports/summaries/stage4_integration_summary.json",
+    "stage-4/reports/summaries/stage4_ui_v3_summary.json",
+    "stage-4/reports/summaries/stage4_packaging_summary.json"
+  ],
+  "generated_files": [
+    "reports/final/final_technical_documentation.md",
+    "reports/final/final_project_summary.md",
+    "reports/final/final_delivery_index.md",
+    "reports/final/final_technical_documentation_assets.md",
+    "reports/final/final_documentation_checklist.json"
+  ],
+  "missing_items": [
+    {
+      "item": "Stage3 Task7 FID/IS",
+      "status": "not recorded",
+      "reason": "stage-3/reports/task7/summaries/fid_is_summary.json records available=false, reason=skipped"
+    },
+    {
+      "item": "Stage2 Task4 official 300W test NME",
+      "status": "not recorded",
+      "reason": "stage-2/reports/task4/summaries/300w_full_eval_summary.json records official Test images missing"
+    },
+    {
+      "item": "Stage4 realtime preview FPS automatic benchmark",
+      "status": "manual observation only",
+      "reason": "realtime preview was manually accepted around 30 FPS; no standalone automatic benchmark summary was found"
+    },
+    {
+      "item": "Mobile deployment metrics",
+      "status": "not recorded",
+      "reason": "Android/iOS deployment is listed as future work and was not implemented"
+    },
+    {
+      "item": "Apple notarization",
+      "status": "not done",
+      "reason": "stage-4/reports/summaries/stage4_packaging_summary.json records notarized=false"
+    }
+  ],
+  "generated_at": "2026-06-15T15:11:44+0800"
+}

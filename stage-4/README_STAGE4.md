@@ -70,6 +70,46 @@ python stage-4/code/stage4_desktop_app.py --safe
 
 Safe mode 只打开窗口和命令预览，不启动导出进程，也不启动实时摄像头 worker。
 
+## macOS 应用打包
+
+Stage4 支持用 PyInstaller 打包为可双击运行的 macOS `.app`：
+
+```bash
+conda activate cv-stage4
+python -m pip install -r stage-4/requirements-packaging.txt
+bash stage-4/packaging/build_macos_app.sh
+open stage-4/packaging/dist/Stage4FaceEffects.app
+```
+
+打包入口是 `stage-4/code/stage4_app_main.py`。源码运行时可使用：
+
+```bash
+python stage-4/code/stage4_app_main.py --gui
+python stage-4/code/stage4_app_main.py --run-cli --help
+python stage-4/code/stage4_app_main.py --live-worker --help
+python stage-4/code/stage4_app_main.py --write-report
+python stage-4/code/stage4_app_main.py --check-env
+```
+
+打包后，GUI 启动本地导出或实时 worker 时，会调用当前 `.app` executable 自身并附加 `--run-cli` 或 `--live-worker`，不会再依赖源码目录中的 `stage4_run_cli.py` 或 `stage4_live_camera_worker.py` 路径。
+
+如果 macOS 阻止打开：
+
+- 右键 `Stage4FaceEffects.app`，选择“打开”。
+- 或到系统设置中允许打开该应用。
+- 当前版本没有 Apple notarization，只用于课程项目本地演示。
+
+摄像头权限：
+
+- 第一次进入实时视频时允许摄像头权限。
+- 如果没有弹窗，请到“系统设置 > 隐私与安全性 > 摄像头”中为 Terminal / Python / Stage4FaceEffects 授权。
+
+输出目录：
+
+- 用户在界面选择的路径优先。
+- 源码模式默认写入 `stage-4/reports/`。
+- 打包模式默认写入 `~/Documents/Stage4FaceEffects/`，避免写入 `.app` bundle 内部。
+
 ## 如何使用本地导入
 
 1. 打开桌面应用。
@@ -130,6 +170,9 @@ macOS 第一次使用摄像头时可能弹出系统权限请求。如果摄像�
 - UI 检查：`stage-4/reports/summaries/stage4_ui_check_summary.json`
 - UI V2：`stage-4/reports/summaries/stage4_ui_v2_summary.json`
 - UI V3：`stage-4/reports/summaries/stage4_ui_v3_summary.json`
+- macOS 打包 summary：`stage-4/reports/summaries/stage4_packaging_summary.json`
+- macOS 打包 checklist：`stage-4/reports/summaries/stage4_packaging_checklist.json`
+- macOS app：`stage-4/packaging/dist/Stage4FaceEffects.app`
 
 ## 常见问题
 

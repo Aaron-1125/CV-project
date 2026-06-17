@@ -1,21 +1,17 @@
 {
   "camera_opened": true,
   "running": false,
-  "frame_count": 11886,
-  "fps": 30.163488550338844,
-  "enabled_effects": [
-    "glasses",
-    "hat",
-    "smooth",
-    "whiten"
-  ],
+  "frame_count": 114,
+  "fps": 29.989393742470515,
+  "enabled_effects": [],
   "last_error": null,
   "recording": false,
   "recording_output_path": null,
+  "user_selected_recording_path": false,
   "recording_frame_count": 0,
-  "last_recording_path": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/reports/assets/recordings/live_recording_20260611_233815.mp4",
-  "last_recording_frame_count": 1116,
-  "last_recording_saved": true,
+  "last_recording_path": null,
+  "last_recording_frame_count": 0,
+  "last_recording_saved": false,
   "recording_error": null,
-  "updated_at": "2026-06-11T23:39:42"
+  "updated_at": "2026-06-13T19:05:12"
 }

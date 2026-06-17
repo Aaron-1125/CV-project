@@ -1,6 +1,7 @@
 {
   "desktop_app_entry": "/Users/aaron/Documents/字节实习/task/CV project/stage-4/code/stage4_desktop_app.py",
   "gui_subprocess_mode": true,
+  "frozen_mode": false,
   "imports_cv2_in_gui_process": false,
   "imports_numpy_in_gui_process": false,
   "imports_mediapipe_in_gui_process": false,
@@ -12,6 +13,7 @@
   "notes": [
     "Stage4 UI V3 opened.",
     "Stage4 UI V3 keeps cv2, numpy, mediapipe, stage4_backend, and Stage3 Task9 out of the GUI process.",
-    "Realtime preview is embedded through preview image polling from a worker subprocess."
+    "Realtime preview is embedded through preview image polling from a worker subprocess.",
+    "Packaged mode starts CLI and worker subprocesses through the current app executable and stage4_app_main modes."
   ]
 }

@@ -23,3 +23,8 @@ stage-2/reports/task5/*.tar.gz
 *.tar
 *.tar.gz
 *.zip
+
+# Stage4 packaging build artifacts. Keep source packaging files, but do not
+# commit generated app bundles or PyInstaller build output.
+stage-4/packaging/build/
+stage-4/packaging/dist/

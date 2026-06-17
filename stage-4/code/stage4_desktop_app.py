@@ -17,6 +17,20 @@ import time
 from pathlib import Path
 from typing import Dict, List, Optional
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from stage4_packaging_utils import (
+    bundled_or_source_path,
+    current_executable_command,
+    is_frozen,
+    source_repo_root,
+    source_script_command,
+    source_stage4_root,
+    user_data_dir,
+)
+
 try:
     from PySide6.QtCore import QProcess, QSize, QTimer, Qt
     from PySide6.QtGui import QPixmap
@@ -93,27 +107,36 @@ EFFECT_LABELS = {
 IMAGE_EXTS = {".jpg", ".jpeg", ".png"}
 VIDEO_EXTS = {".mp4", ".mov", ".avi", ".mkv"}
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-STAGE4_ROOT = REPO_ROOT / "stage-4"
-DEFAULT_INPUT_VIDEO = REPO_ROOT / "stage-3" / "reports" / "task9" / "assets" / "videos" / "task9_dynamic_effects_demo.mp4"
+FROZEN_MODE = is_frozen()
+SOURCE_REPO_ROOT = source_repo_root()
+SOURCE_STAGE4_ROOT = source_stage4_root()
+RESOURCE_STAGE4_ROOT = bundled_or_source_path("stage-4")
+USER_DATA_ROOT = user_data_dir()
+PROCESS_WORK_DIR = USER_DATA_ROOT if FROZEN_MODE else SOURCE_REPO_ROOT
+REPORT_DIR = USER_DATA_ROOT
+ASSET_DIR = REPORT_DIR / "assets"
+SUMMARY_DIR = REPORT_DIR / "summaries"
+DEFAULT_INPUT_VIDEO = bundled_or_source_path(
+    "stage-3/reports/task9/assets/videos/task9_dynamic_effects_demo.mp4"
+)
 
-LOCAL_VIDEO_OUTPUT = STAGE4_ROOT / "reports" / "assets" / "videos" / "stage4_desktop_export.mp4"
-LOCAL_VIDEO_DIR = STAGE4_ROOT / "reports" / "assets" / "videos"
-LOCAL_VIDEO_SUMMARY = STAGE4_ROOT / "reports" / "summaries" / "stage4_desktop_export_summary.json"
-LOCAL_IMAGE_OUTPUT = STAGE4_ROOT / "reports" / "assets" / "images" / "stage4_image_effects_export.jpg"
-LOCAL_IMAGE_DIR = STAGE4_ROOT / "reports" / "assets" / "images"
-LOCAL_IMAGE_SUMMARY = STAGE4_ROOT / "reports" / "summaries" / "stage4_image_effects_summary.json"
+LOCAL_VIDEO_OUTPUT = ASSET_DIR / "videos" / "stage4_desktop_export.mp4"
+LOCAL_VIDEO_DIR = ASSET_DIR / "videos"
+LOCAL_VIDEO_SUMMARY = SUMMARY_DIR / "stage4_desktop_export_summary.json"
+LOCAL_IMAGE_OUTPUT = ASSET_DIR / "images" / "stage4_image_effects_export.jpg"
+LOCAL_IMAGE_DIR = ASSET_DIR / "images"
+LOCAL_IMAGE_SUMMARY = SUMMARY_DIR / "stage4_image_effects_summary.json"
 
-RUNTIME_DIR = STAGE4_ROOT / "reports" / "runtime"
+RUNTIME_DIR = REPORT_DIR / "runtime"
 LIVE_CONTROLS = RUNTIME_DIR / "live_controls.json"
 LIVE_PREVIEW = RUNTIME_DIR / "live_preview.jpg"
 LIVE_STATUS = RUNTIME_DIR / "live_status.json"
-SCREENSHOT_DIR = STAGE4_ROOT / "reports" / "assets" / "screenshots"
-RECORDINGS_DIR = STAGE4_ROOT / "reports" / "assets" / "recordings"
+SCREENSHOT_DIR = ASSET_DIR / "screenshots"
+RECORDINGS_DIR = ASSET_DIR / "recordings"
 
-UI_CHECK_SUMMARY = STAGE4_ROOT / "reports" / "summaries" / "stage4_ui_check_summary.json"
-UI_V3_SUMMARY = STAGE4_ROOT / "reports" / "summaries" / "stage4_ui_v3_summary.json"
-ERROR_LOG = STAGE4_ROOT / "reports" / "summaries" / "stage4_desktop_error_log.txt"
+UI_CHECK_SUMMARY = SUMMARY_DIR / "stage4_ui_check_summary.json"
+UI_V3_SUMMARY = SUMMARY_DIR / "stage4_ui_v3_summary.json"
+ERROR_LOG = SUMMARY_DIR / "stage4_desktop_error_log.txt"
 
 
 APP_STYLE = """
@@ -185,6 +208,8 @@ QSlider::handle:horizontal {
 
 def ensure_dirs() -> None:
     for path in [
+        REPORT_DIR,
+        ASSET_DIR,
         LOCAL_VIDEO_OUTPUT.parent,
         LOCAL_IMAGE_OUTPUT.parent,
         LOCAL_VIDEO_SUMMARY.parent,
@@ -196,8 +221,9 @@ def ensure_dirs() -> None:
 
 
 def rel(path: Path) -> str:
+    base = USER_DATA_ROOT if FROZEN_MODE else SOURCE_REPO_ROOT
     try:
-        return os.path.relpath(str(path), str(REPO_ROOT))
+        return os.path.relpath(str(path), str(base))
     except ValueError:
         return str(path)
 
@@ -219,6 +245,19 @@ def read_json(path: Path) -> Dict:
 
 def quote_command(command: List[str]) -> str:
     return shlex.join([str(part) for part in command])
+
+
+def local_cli_base(is_image: bool) -> List[str]:
+    if FROZEN_MODE:
+        return current_executable_command("run-cli")
+    script_name = "stage4_process_image_cli.py" if is_image else "stage4_run_cli.py"
+    return source_script_command(script_name)
+
+
+def live_worker_base() -> List[str]:
+    if FROZEN_MODE:
+        return current_executable_command("live-worker")
+    return source_script_command("stage4_live_camera_worker.py")
 
 
 def default_effects() -> set[str]:
@@ -247,8 +286,11 @@ def write_ui_check_summary(command: List[str], safe_mode: bool, note: str) -> No
     atomic_write_json(
         UI_CHECK_SUMMARY,
         {
-            "desktop_app_entry": str(STAGE4_ROOT / "code" / "stage4_desktop_app.py"),
+            "desktop_app_entry": quote_command(current_executable_command("gui"))
+            if FROZEN_MODE
+            else str(SOURCE_STAGE4_ROOT / "code" / "stage4_desktop_app.py"),
             "gui_subprocess_mode": True,
+            "frozen_mode": FROZEN_MODE,
             "imports_cv2_in_gui_process": False,
             "imports_numpy_in_gui_process": False,
             "imports_mediapipe_in_gui_process": False,
@@ -261,6 +303,7 @@ def write_ui_check_summary(command: List[str], safe_mode: bool, note: str) -> No
                 note,
                 "Stage4 UI V3 keeps cv2, numpy, mediapipe, stage4_backend, and Stage3 Task9 out of the GUI process.",
                 "Realtime preview is embedded through preview image polling from a worker subprocess.",
+                "Packaged mode starts CLI and worker subprocesses through the current app executable and stage4_app_main modes.",
             ],
         },
     )
@@ -276,6 +319,9 @@ def write_ui_v3_summary(command: List[str], note: str) -> None:
             "realtime_camera_page": True,
             "embedded_realtime_preview": True,
             "realtime_worker_subprocess": True,
+            "frozen_mode": FROZEN_MODE,
+            "user_data_dir": str(USER_DATA_ROOT),
+            "packaged_subprocess_entry": quote_command(current_executable_command("run-cli")) if FROZEN_MODE else None,
             "gui_imports_cv2": False,
             "gui_imports_mediapipe": False,
             "gui_imports_backend": False,
@@ -300,7 +346,7 @@ def write_ui_v3_summary(command: List[str], note: str) -> None:
             "default_fast_mode": False,
             "default_process_width": None,
             "camera_permission_note": "实时视频需要摄像头权限。首次进入实时视频时，macOS 可能弹出权限请求。",
-            "worker_script": str(STAGE4_ROOT / "code" / "stage4_live_camera_worker.py"),
+            "worker_script": quote_command(live_worker_base()),
             "controls_path": str(LIVE_CONTROLS),
             "preview_path": str(LIVE_PREVIEW),
             "status_path": str(LIVE_STATUS),
@@ -318,13 +364,15 @@ def write_ui_v3_summary(command: List[str], note: str) -> None:
 
 
 def load_home_status() -> Dict[str, str]:
-    summary_path = STAGE4_ROOT / "reports" / "summaries" / "stage4_integration_summary.json"
+    summary_path = SUMMARY_DIR / "stage4_integration_summary.json"
+    report_path = REPORT_DIR / "stage4_project_integration_report.md"
+    readme_path = RESOURCE_STAGE4_ROOT / "README_STAGE4.md"
     status = {
         "smoke": "CLI smoke test: not found",
         "environment": "Environment: not checked",
         "summary": rel(summary_path),
-        "report": rel(STAGE4_ROOT / "reports" / "stage4_project_integration_report.md"),
-        "readme": rel(STAGE4_ROOT / "README_STAGE4.md"),
+        "report": rel(report_path),
+        "readme": str(readme_path),
     }
     data = read_json(summary_path)
     if data:
@@ -506,7 +554,8 @@ class ProcessPage(QWidget):
         super().__init__()
         self.window = window
         self.process = QProcess(self)
-        self.process.setWorkingDirectory(str(REPO_ROOT))
+        PROCESS_WORK_DIR.mkdir(parents=True, exist_ok=True)
+        self.process.setWorkingDirectory(str(PROCESS_WORK_DIR))
         self.process.readyReadStandardOutput.connect(self.append_stdout)
         self.process.readyReadStandardError.connect(self.append_stderr)
         self.process.started.connect(self.on_started)
@@ -746,10 +795,10 @@ class LocalImportPage(ProcessPage):
     def choose_input(self, mode: str) -> None:
         if mode == "image":
             file_filter = "Images (*.jpg *.jpeg *.png)"
-            base = str(REPO_ROOT)
+            base = str(Path.home() if FROZEN_MODE else SOURCE_REPO_ROOT)
         else:
             file_filter = "Videos (*.mp4 *.mov *.avi *.mkv)"
-            base = str(DEFAULT_INPUT_VIDEO.parent)
+            base = str(DEFAULT_INPUT_VIDEO.parent if DEFAULT_INPUT_VIDEO.exists() else Path.home())
         path, _ = QFileDialog.getOpenFileName(self, "选择输入文件", base, file_filter)
         if path:
             self.input_edit.setText(path)
@@ -781,8 +830,7 @@ class LocalImportPage(ProcessPage):
         ]
         if self.is_image():
             command = [
-                sys.executable,
-                str(STAGE4_ROOT / "code" / "stage4_process_image_cli.py"),
+                *local_cli_base(is_image=True),
                 "--image",
                 self.input_edit.text().strip(),
                 "--effects",
@@ -798,8 +846,7 @@ class LocalImportPage(ProcessPage):
                 command.extend(["--process-width", str(self.process_width.value())])
             return command
         command = [
-            sys.executable,
-            str(STAGE4_ROOT / "code" / "stage4_run_cli.py"),
+            *local_cli_base(is_image=False),
             "--video",
             self.input_edit.text().strip(),
             "--effects",
@@ -826,9 +873,14 @@ class LocalImportPage(ProcessPage):
         input_path = self.input_path()
         kind = "图片" if self.is_image() else "视频" if self.is_video() else "未知类型"
         exists = "存在" if input_path.exists() else "未找到"
+        runner_note = (
+            "打包模式通过 Stage4FaceEffects --run-cli 分发本地处理。"
+            if FROZEN_MODE
+            else "源码模式下视频调用 stage4_run_cli.py，图片调用 stage4_process_image_cli.py。"
+        )
         self.file_info.setText(
-            "类型：{}\n状态：{}\n路径：{}\n\n本地视频继续调用已通过 smoke test 的 stage4_run_cli.py；图片调用 stage4_process_image_cli.py。".format(
-                kind, exists, self.input_edit.text().strip() or "未选择"
+            "类型：{}\n状态：{}\n路径：{}\n\n{}".format(
+                kind, exists, self.input_edit.text().strip() or "未选择", runner_note
             )
         )
         self.command_preview.setPlainText(quote_command(self.command()))
@@ -1014,8 +1066,7 @@ class RealtimeCameraPage(ProcessPage):
 
     def command(self) -> List[str]:
         return [
-            sys.executable,
-            str(STAGE4_ROOT / "code" / "stage4_live_camera_worker.py"),
+            *live_worker_base(),
             "--camera",
             str(self.camera_index.value()),
             "--process-width",

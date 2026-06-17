@@ -1,0 +1,19 @@
+{
+  "app_bundle_exists": true,
+  "executable_exists": true,
+  "info_plist_exists": true,
+  "launches_to_home_page": "manual_check_required",
+  "local_import_page_available": "manual_check_required",
+  "realtime_page_available": "manual_check_required",
+  "local_export_test_required": true,
+  "realtime_camera_test_required": true,
+  "recording_test_required": true,
+  "output_path_selection_test_required": true,
+  "camera_permission_test_required": true,
+  "known_limitations": [
+    "No Apple notarization is performed.",
+    "First camera use may require macOS privacy approval.",
+    "Packaged app writes generated files to user-selected paths or ~/Documents/Stage4FaceEffects/.",
+    "The build is onedir .app, not onefile."
+  ]
+}

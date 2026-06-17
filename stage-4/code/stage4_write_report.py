@@ -23,12 +23,22 @@ from stage4_common import (
     write_json,
     write_text,
 )
+from stage4_packaging_utils import APP_NAME, source_repo_root, user_data_dir
 
 
 CHECKLIST_PATH = stage4_summary_path().with_name("stage4_delivery_checklist.json")
 UI_V2_SUMMARY_PATH = stage4_summary_path().with_name("stage4_ui_v2_summary.json")
 UI_V3_SUMMARY_PATH = stage4_summary_path().with_name("stage4_ui_v3_summary.json")
+PACKAGING_SUMMARY_PATH = stage4_summary_path().with_name("stage4_packaging_summary.json")
+PACKAGING_CHECKLIST_PATH = stage4_summary_path().with_name("stage4_packaging_checklist.json")
 README_PATH = stage4_summary_path().parents[2] / "README_STAGE4.md"
+SOURCE_REPO_ROOT = source_repo_root()
+PACKAGING_DIR = SOURCE_REPO_ROOT / "stage-4" / "packaging"
+PACKAGING_SPEC_PATH = PACKAGING_DIR / "stage4_face_effects.spec"
+PACKAGING_BUILD_SCRIPT = PACKAGING_DIR / "build_macos_app.sh"
+DIST_APP_PATH = PACKAGING_DIR / "dist" / "{}.app".format(APP_NAME)
+DIST_EXECUTABLE_PATH = DIST_APP_PATH / "Contents" / "MacOS" / APP_NAME
+DIST_INFO_PLIST = DIST_APP_PATH / "Contents" / "Info.plist"
 
 
 def fmt(value: Any, digits: int = 3) -> str:
@@ -179,6 +189,67 @@ def render_list(values: List[str]) -> str:
     return "\n".join("  - {}".format(value) for value in values) if values else "  - None"
 
 
+def codesign_status() -> str:
+    signature_path = DIST_APP_PATH / "Contents" / "_CodeSignature" / "CodeResources"
+    return "ad_hoc" if signature_path.exists() else "not_done"
+
+
+def build_packaging_summary() -> Dict[str, Any]:
+    return {
+        "packaging_target": "macOS",
+        "app_name": "{}.app".format(APP_NAME),
+        "unified_entry": str(SOURCE_REPO_ROOT / "stage-4" / "code" / "stage4_app_main.py"),
+        "pyinstaller_spec": str(PACKAGING_SPEC_PATH),
+        "build_script": str(PACKAGING_BUILD_SCRIPT),
+        "dist_app_path": str(DIST_APP_PATH),
+        "source_mode_supported": True,
+        "frozen_mode_supported": True,
+        "gui_mode": "--gui",
+        "run_cli_mode": "--run-cli",
+        "live_worker_mode": "--live-worker",
+        "write_report_mode": "--write-report",
+        "check_env_mode": "--check-env",
+        "user_data_dir": str(user_data_dir()),
+        "frozen_user_data_dir": str(Path.home() / "Documents" / APP_NAME),
+        "notarized": False,
+        "codesign": codesign_status(),
+        "app_bundle_exists": DIST_APP_PATH.exists(),
+        "executable_exists": DIST_EXECUTABLE_PATH.exists(),
+        "info_plist_exists": DIST_INFO_PLIST.exists(),
+        "known_limitations": [
+            "The current build is for local course-project demonstration on macOS only.",
+            "The app is not Apple-notarized; macOS may require right-click Open or manual permission approval.",
+            "Camera permission must be granted to Stage4FaceEffects after packaging.",
+            "Local export, realtime camera, and recording should be manually verified after building the .app.",
+            "PyInstaller may warn about optional MediaPipe genai/torch submodules; Stage4 Task9 face effects do not use that path.",
+            "Windows, Android, and iOS packaging are out of scope for this stage.",
+        ],
+        "manual_check_required": True,
+    }
+
+
+def build_packaging_checklist() -> Dict[str, Any]:
+    return {
+        "app_bundle_exists": DIST_APP_PATH.exists(),
+        "executable_exists": DIST_EXECUTABLE_PATH.exists(),
+        "info_plist_exists": DIST_INFO_PLIST.exists(),
+        "launches_to_home_page": "manual_check_required",
+        "local_import_page_available": "manual_check_required",
+        "realtime_page_available": "manual_check_required",
+        "local_export_test_required": True,
+        "realtime_camera_test_required": True,
+        "recording_test_required": True,
+        "output_path_selection_test_required": True,
+        "camera_permission_test_required": True,
+        "known_limitations": [
+            "No Apple notarization is performed.",
+            "First camera use may require macOS privacy approval.",
+            "Packaged app writes generated files to user-selected paths or ~/Documents/Stage4FaceEffects/.",
+            "The build is onedir .app, not onefile.",
+        ],
+    }
+
+
 def render_report(summary: Dict[str, Any]) -> str:
     environment = summary["environment"]
     output_files = summary["output_files"]
@@ -305,6 +376,23 @@ python stage-4/code/stage4_desktop_app.py --safe
 Safe mode 只打开 GUI，不启动导出进程，也不会加载视频处理依赖。普通模式下进入“实时视频”页面会自动启动 worker 子进程，GUI 通过预览图片轮询把实时画面嵌入应用窗口内部。
 
 UI 检查 summary: `stage-4/reports/summaries/stage4_ui_check_summary.json`
+
+## macOS 应用封装
+
+Stage4 已增加 macOS `.app` 封装准备，应用名为 `Stage4FaceEffects.app`。打包入口统一为 `stage-4/code/stage4_app_main.py`，源码模式和 PyInstaller frozen 模式都通过该入口分发不同运行模式：
+
+- GUI: `--gui`
+- 本地导出 CLI: `--run-cli`
+- 实时摄像头 worker: `--live-worker`
+- 报告生成: `--write-report`
+- 环境检查: `--check-env`
+
+PyInstaller spec 位于 `stage-4/packaging/stage4_face_effects.spec`，构建脚本位于 `stage-4/packaging/build_macos_app.sh`。打包后 GUI 主进程仍不直接 import OpenCV/MediaPipe，实时 worker 和本地导出 CLI 会通过当前 app executable 加 `--live-worker` / `--run-cli` 作为子进程启动，从而继续保持 GUI 与 CV 处理进程分离。
+
+用户生成内容不会默认写入 `.app` bundle 内部。源码模式继续使用 `stage-4/reports/`；打包模式默认写入 `~/Documents/Stage4FaceEffects/`，用户在界面中选择的输出路径优先。当前版本只做本地课程项目演示，不做 Apple notarization；如果 macOS 阻止打开，可右键 app 选择“打开”，或在系统设置中允许。
+
+Packaging summary: `stage-4/reports/summaries/stage4_packaging_summary.json`
+Packaging checklist: `stage-4/reports/summaries/stage4_packaging_checklist.json`
 
 ## 应用界面 V3：嵌入式实时预览与实时特效控制
 
@@ -471,6 +559,46 @@ python stage-4/code/stage4_desktop_app.py --safe
 
 Safe mode 只打开窗口和命令预览，不启动导出进程，也不启动实时摄像头 worker。
 
+## macOS 应用打包
+
+Stage4 支持用 PyInstaller 打包为可双击运行的 macOS `.app`：
+
+```bash
+conda activate cv-stage4
+python -m pip install -r stage-4/requirements-packaging.txt
+bash stage-4/packaging/build_macos_app.sh
+open stage-4/packaging/dist/Stage4FaceEffects.app
+```
+
+打包入口是 `stage-4/code/stage4_app_main.py`。源码运行时可使用：
+
+```bash
+python stage-4/code/stage4_app_main.py --gui
+python stage-4/code/stage4_app_main.py --run-cli --help
+python stage-4/code/stage4_app_main.py --live-worker --help
+python stage-4/code/stage4_app_main.py --write-report
+python stage-4/code/stage4_app_main.py --check-env
+```
+
+打包后，GUI 启动本地导出或实时 worker 时，会调用当前 `.app` executable 自身并附加 `--run-cli` 或 `--live-worker`，不会再依赖源码目录中的 `stage4_run_cli.py` 或 `stage4_live_camera_worker.py` 路径。
+
+如果 macOS 阻止打开：
+
+- 右键 `Stage4FaceEffects.app`，选择“打开”。
+- 或到系统设置中允许打开该应用。
+- 当前版本没有 Apple notarization，只用于课程项目本地演示。
+
+摄像头权限：
+
+- 第一次进入实时视频时允许摄像头权限。
+- 如果没有弹窗，请到“系统设置 > 隐私与安全性 > 摄像头”中为 Terminal / Python / Stage4FaceEffects 授权。
+
+输出目录：
+
+- 用户在界面选择的路径优先。
+- 源码模式默认写入 `stage-4/reports/`。
+- 打包模式默认写入 `~/Documents/Stage4FaceEffects/`，避免写入 `.app` bundle 内部。
+
 ## 如何使用本地导入
 
 1. 打开桌面应用。
@@ -531,6 +659,9 @@ macOS 第一次使用摄像头时可能弹出系统权限请求。如果摄像�
 - UI 检查：`stage-4/reports/summaries/stage4_ui_check_summary.json`
 - UI V2：`stage-4/reports/summaries/stage4_ui_v2_summary.json`
 - UI V3：`stage-4/reports/summaries/stage4_ui_v3_summary.json`
+- macOS 打包 summary：`stage-4/reports/summaries/stage4_packaging_summary.json`
+- macOS 打包 checklist：`stage-4/reports/summaries/stage4_packaging_checklist.json`
+- macOS app：`stage-4/packaging/dist/Stage4FaceEffects.app`
 
 ## 常见问题
 
@@ -674,13 +805,19 @@ def main() -> None:
     write_json(stage4_summary_path(), summary)
     write_text(stage4_report_path(), render_report(summary))
     checklist = build_checklist(summary)
+    packaging_summary = build_packaging_summary()
+    packaging_checklist = build_packaging_checklist()
     write_json(CHECKLIST_PATH, checklist)
+    write_json(PACKAGING_SUMMARY_PATH, packaging_summary)
+    write_json(PACKAGING_CHECKLIST_PATH, packaging_checklist)
     print("Wrote {}".format(rel_to_repo(stage4_summary_path())))
     print("Wrote {}".format(rel_to_repo(stage4_report_path())))
     print("Wrote {}".format(rel_to_repo(README_PATH)))
     print("Wrote {}".format(rel_to_repo(CHECKLIST_PATH)))
     print("Wrote {}".format(rel_to_repo(UI_V2_SUMMARY_PATH)))
     print("Wrote {}".format(rel_to_repo(UI_V3_SUMMARY_PATH)))
+    print("Wrote {}".format(rel_to_repo(PACKAGING_SUMMARY_PATH)))
+    print("Wrote {}".format(rel_to_repo(PACKAGING_CHECKLIST_PATH)))
 
 
 if __name__ == "__main__":

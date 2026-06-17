@@ -121,6 +121,23 @@ Safe mode 只打开 GUI，不启动导出进程，也不会加载视频处理依
 
 UI 检查 summary: `stage-4/reports/summaries/stage4_ui_check_summary.json`
 
+## macOS 应用封装
+
+Stage4 已增加 macOS `.app` 封装准备，应用名为 `Stage4FaceEffects.app`。打包入口统一为 `stage-4/code/stage4_app_main.py`，源码模式和 PyInstaller frozen 模式都通过该入口分发不同运行模式：
+
+- GUI: `--gui`
+- 本地导出 CLI: `--run-cli`
+- 实时摄像头 worker: `--live-worker`
+- 报告生成: `--write-report`
+- 环境检查: `--check-env`
+
+PyInstaller spec 位于 `stage-4/packaging/stage4_face_effects.spec`，构建脚本位于 `stage-4/packaging/build_macos_app.sh`。打包后 GUI 主进程仍不直接 import OpenCV/MediaPipe，实时 worker 和本地导出 CLI 会通过当前 app executable 加 `--live-worker` / `--run-cli` 作为子进程启动，从而继续保持 GUI 与 CV 处理进程分离。
+
+用户生成内容不会默认写入 `.app` bundle 内部。源码模式继续使用 `stage-4/reports/`；打包模式默认写入 `~/Documents/Stage4FaceEffects/`，用户在界面中选择的输出路径优先。当前版本只做本地课程项目演示，不做 Apple notarization；如果 macOS 阻止打开，可右键 app 选择“打开”，或在系统设置中允许。
+
+Packaging summary: `stage-4/reports/summaries/stage4_packaging_summary.json`
+Packaging checklist: `stage-4/reports/summaries/stage4_packaging_checklist.json`
+
 ## 应用界面 V3：嵌入式实时预览与实时特效控制
 
 Stage4 UI V3 将应用入口分为两个页面：
